@@ -116,6 +116,31 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - AI service for summary generation and question formulation.
 - User authentication system and role/quota management.
 
+## Clarifications
+
+### Session 2025-11-04
+- Q: What testing strategy should be used for implementing features? → A: Test-Driven Development (TDD)
+
+## Development Requirements
+
+### Testing Strategy
+- All features MUST be implemented using Test-Driven Development (TDD) approach:
+  - Write failing tests first for each new functionality
+  - Implement minimal code to make tests pass
+  - Refactor while maintaining test coverage
+- Unit tests MUST be written for:
+  - All API endpoints
+  - Service layer business logic
+  - Data model validations
+  - UI components
+- Integration tests MUST be written for:
+  - API-to-database flows
+  - Authentication flows
+  - AI service integration
+- End-to-end tests MUST cover:
+  - Critical user journeys from User Scenarios
+  - Edge cases described in specification
+
 ## Notes
 
 - This document focuses on the "what" and user value. Technical choices (APIs, frameworks) are intentionally excluded from this spec.
