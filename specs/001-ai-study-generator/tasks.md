@@ -46,6 +46,13 @@ Phase 2: Foundational (blocking prerequisites)
 - [ ] T014 [P] Add test harness & fixtures: `backend/test/helpers/testApp.ts`, `backend/test/fixtures/ai/` (mock prompts/responses)
 - [ ] T015 [P] Add linter & formatter configs: `.eslintrc.js`, `.prettierrc` at repo root
 
+- [X] T010 Initialize dependencies (lockfiles): run `npm install` in `frontend/` and `backend/` and commit `package-lock.json` or `pnpm-lock.yaml` in each folder
+- [X] T011 [P] Setup Prisma client and migration scripts: add `backend/package.json` scripts `prisma:generate`, `prisma:migrate` and run `npx prisma generate`
+- [X] T012 [P] Implement AI Adapter scaffold: create `backend/src/features/ai/adapter.ts` (interface) and `backend/src/features/ai/openai-adapter.ts` + `backend/src/features/ai/mock-adapter.ts` (for CI/local)
+- [X] T013 Create job queue scaffolding (optional, feature-flagged): `backend/src/jobs/worker.ts`, `backend/src/jobs/index.ts`, and `backend/src/config/queue.ts` (guarded by `USE_QUEUE` env var)
+- [X] T014 [P] Add test harness & fixtures: `backend/test/helpers/testApp.ts`, `backend/test/fixtures/ai/` (mock prompts/responses)
+- [X] T015 [P] Add linter & formatter configs: `.eslintrc.js`, `.prettierrc` at repo root
+
 Phase 3: User Story Phases (priority order)
 
 User Story US1 (P1) — Authenticate (FR-001)

@@ -1,0 +1,10 @@
+{
+  "summary": [
+    "Mock summary point 1",
+    "Mock summary point 2",
+    "Mock summary point 3"
+  ],
+  "quiz": [
+    { "prompt": "Mock question 1", "options": ["A","B","C","D"], "answer": "A" }
+  ]
+}
