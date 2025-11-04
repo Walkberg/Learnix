@@ -1,0 +1,149 @@
+openapi: 3.0.3
+info:
+  title: AI-assisted Study Generator API
+  version: 0.1.0
+servers:
+  - url: /api
+paths:
+  /auth/signup:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                displayName:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Created
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+  /courses:
+    post:
+      summary: Create a course
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                emoji:
+                  type: string
+                sourceText:
+                  type: string
+      responses:
+        '201':
+          description: Created
+    get:
+      summary: List courses for authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+  /courses/{courseId}/summaries:
+    post:
+      summary: Generate or regenerate a summary for a course
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                regenerate:
+                  type: boolean
+      responses:
+        '201':
+          description: Summary created
+  /courses/{courseId}/quizzes:
+    post:
+      summary: Generate a quiz from a course or summary
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                count:
+                  type: integer
+                type:
+                  type: string
+      responses:
+        '201':
+          description: Quiz created
+  /quizzes/{quizId}/attempts:
+    post:
+      summary: Submit quiz answers and get score
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: quizId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answers:
+                  type: array
+                  items:
+                    type: object
+      responses:
+        '200':
+          description: Score returned
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
