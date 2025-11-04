@@ -19,6 +19,24 @@ Phase 1: Setup (project initialization)
 - [ ] T004 [P] Add environment templates: `frontend/.env.example` and `backend/.env.example` (include AI_PROVIDER, OPENAI_API_KEY, USE_QUEUE)
 - [ ] T005 Add `README.md` and `docs/quickstart.md` (copy `specs/001-ai-study-generator/quickstart.md`) in repo root and `specs/001-ai-study-generator/quickstart.md`
 - [ ] T006 [P] Create basic GitHub Actions CI: `.github/workflows/ci.yml` running lint and tests for frontend and backend
+ - [X] T001 [P] Scaffold the frontend using Vite CLI into `frontend/` (commands):
+ 	Run in repository root:
+ 	- `npm create vite@latest frontend -- --template react-ts` (ran)
+ 	- `cd frontend; npm install` (ran)
+ 	Result: `frontend/` folder with `package.json`, `vite.config.ts`, `tsconfig.json`, `index.html`, `src/` files (main.tsx, App.tsx) and styles.
+ - [X] T002 [P] Scaffold the backend using the NestJS CLI into `backend/` (commands):
+ 	Run in repository root:
+ 	- `npx @nestjs/cli new backend --package-manager npm --skip-install` (ran)
+ 	- `cd backend; npm install` (ran)
+ 	Result: `backend/` folder with `package.json`, `tsconfig.json`, `src/main.ts`, `src/app.module.ts`, and feature folders.
+ - [X] T003 Create `backend/prisma/schema.prisma` (if missing) and add `backend/.env.example` with `DATABASE_URL` (dev: `file:./dev.db`)  
+ 	- `backend/prisma/schema.prisma` exists (created earlier) and `backend/.env.example` created (ran)
+ - [X] T004 [P] Add environment templates: `frontend/.env.example` and `backend/.env.example` (include AI_PROVIDER, OPENAI_API_KEY, USE_QUEUE)
+ 	- `frontend/.env.example` created (ran)
+ - [X] T005 Add `README.md` and `docs/quickstart.md` (copy `specs/001-ai-study-generator/quickstart.md`) in repo root and `specs/001-ai-study-generator/quickstart.md`
+ 	- `README.md` created (ran); `specs/001-ai-study-generator/quickstart.md` exists already
+ - [X] T006 [P] Create basic GitHub Actions CI: `.github/workflows/ci.yml` running lint and tests for frontend and backend
+ 	- `.github/workflows/ci.yml` created (ran)
 
 Phase 2: Foundational (blocking prerequisites)
 - [ ] T010 Initialize dependencies (lockfiles): run `npm install` in `frontend/` and `backend/` and commit `package-lock.json` or `pnpm-lock.yaml` in each folder
