@@ -36,6 +36,18 @@ Phase 3: User Story Phases (priority order)
 
 User Story US1 (P1) — Authenticate (FR-001)
 Independent test criteria: Register a user, login, logout; protected routes require auth. Files: `backend/src/features/auth/*`, `frontend/src/features/auth/*`.
+- [X] T100 [US1] Create backend auth domain & model files: `backend/src/features/auth/domain/user.entity.ts`, `backend/src/features/auth/dto/` and `backend/src/features/auth/auth.module.ts`
+- [X] T101 [US1] Implement auth service (registration/login) in `backend/src/features/auth/application/auth.service.ts` and password hashing (bcrypt) in `backend/src/features/auth/infrastructure/password.util.ts`
+- [X] T102 [US1] Add auth controller endpoints in `backend/src/features/auth/auth.controller.ts` (`POST /api/auth/signup`, `POST /api/auth/login`, `POST /api/auth/logout`)
+- [X] T103 [US1] Add auth guards and JWT strategy: `backend/src/common/guards/jwt.guard.ts`, `backend/src/common/strategies/jwt.strategy.ts`
+- [X] T104 [P] Create frontend auth pages & forms: `frontend/src/features/auth/SignUp.tsx`, `frontend/src/features/auth/Login.tsx`, using `react-hook-form` + `zod` schemas in `frontend/src/features/auth/schema.ts`
+- [X] T105 [US1] Create backend acceptance tests stubs (executable): `backend/test/acceptance/auth.spec.ts` (wire to testApp harness) and CI job to run them
+
+User Story US2 (P1) — Generate a study sheet from text (FR-002, FR-003)
+Independent test criteria: Create a course and generate a summary with 3–6 bullets and suggested flashcards.
+- [ ] T200 [US2] Create Course domain, repository & DTOs: `backend/src/features/courses/domain/course.entity.ts`, `backend/src/features/courses/infrastructure/course.repository.ts`
+- [ ] T201 [US2] Add course endpoints/controllers: `backend/src/features/courses/courses.controller.ts` (`POST /api/courses`, `GET /api/courses`, `GET /api/courses/:id`)
+- [ ] T202 [US2] Implement summary generation controller and service: `backend/src/features/summaries/summaries.controller.ts` and `backend/src/features/summaries/summaries.service.ts` (calls AI Adapter)
 - [ ] T203 [US2] Persist StudySheet: implement `backend/src/features/summaries/infrastructure/studySheet.repository.ts` and `backend/prisma` mapping
 - [ ] T204 [P] Create frontend Course editor and generate UI: `frontend/src/features/courses/CourseEditor.tsx`, `frontend/src/features/courses/CourseList.tsx` and `frontend/src/features/courses/CourseView.tsx` (Add "Generate summary" button)
 - [ ] T205 [US2] Add acceptance test stubs: `backend/test/acceptance/summary.spec.ts` (use mock AI adapter)
