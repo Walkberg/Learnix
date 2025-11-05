@@ -88,12 +88,54 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 
 ### Key Entities *(include if feature involves data)*
 
-- **User**: id, display_name, email (business-level), role (Free / Premium), signup_date
-- **Course**: id, author (User), title, source_text, created_at
-- **Summary / Study Sheet**: id, linked_to Course, summary_title, key_points, suggested_flashcards
-- **Quiz**: id, linked_to Course or Summary, question_list, parameters (count, type)
-- **Question**: id, type (MCQ / open), prompt, options (for MCQ), correct_answer
-- **Flashcard**: id, prompt, answer
+#### Domain Layer
+
+- **User**: Entity representing an authenticated user
+  - Properties: id, email, displayName, role (USER/ADMIN), passwordHash, createdAt
+  - Methods: create() - factory method for new users
+  - Domain Errors: EmailAlreadyRegisteredError, InvalidCredentialsError
+
+- **Course**: Entity for a learning course
+  - Properties: id, authorId, title, sourceText, createdAt
+  - Methods: create() - factory method for new courses
+  - Domain Errors: CourseQuotaExceededError, InvalidSourceTextError
+
+- **Summary**: Value Object for an AI-generated study sheet
+  - Properties: title, keyPoints, suggestedFlashcards
+  - Methods: create() - factory method for new summaries
+
+- **Quiz**: Entity for a test of knowledge
+  - Properties: id, courseId, questionList, parameters (count, type)
+  - Methods: create(), grade()
+  - Domain Errors: QuizQuotaExceededError, InvalidQuestionsCountError
+
+#### Domain Ports (Interfaces)
+
+- **IUserRepository**: Interface for user persistence operations
+  - Methods: findByEmail(), create()
+  - Location: domain/ports/i-user-repository.ts
+
+- **IPasswordService**: Interface for password hashing operations
+  - Methods: hash(), compare()
+  - Location: domain/ports/i-password-service.ts
+
+- **ITokenService**: Interface for JWT operations
+  - Methods: generateToken()
+  - Location: domain/ports/i-token-service.ts
+
+- **ICourseRepository**: Interface for course persistence
+  - Methods: findById(), create(), findByAuthor()
+
+- **IAIService**: Interface for AI operations
+  - Methods: generateSummary(), generateQuestions()
+
+#### Infrastructure Layer
+
+- **PrismaUserRepository**: Concrete implementation of IUserRepository
+- **BcryptPasswordService**: Concrete implementation of IPasswordService
+- **JwtTokenService**: Concrete implementation of ITokenService
+- **PrismaCourseRepository**: Concrete implementation of ICourseRepository
+- **OpenAIService**: Concrete implementation of IAIService
 
 ## Success Criteria *(mandatory)*
 
@@ -121,6 +163,14 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 ### Session 2025-11-04
 - Q: What testing strategy should be used for implementing features? → A: Test-Driven Development (TDD)
 
+- Q: Implementation layering and invocation rules — should we prefer use-case classes over services, and must the application layer avoid direct external service calls; should controllers always type requests/responses? → A: Yes: use explicit use-case classes; application layer must not call external services directly; controllers must use typed request and response DTOs.
+
+- Q: Repository pattern requirement — should use-cases depend only on repository interfaces/ports (no concrete DB or external client instantiation inside use-cases)? → A: Yes: use-cases must depend on repository interfaces; concrete repositories/adapters are implemented in the infrastructure layer and injected.
+
+- Q: Where should ports/interfaces be defined? → A: All ports (repository interfaces, service interfaces) MUST be defined in the domain layer to maintain proper dependency direction.
+
+- Q: How should domain errors be handled? → A: Use domain-specific error classes instead of framework exceptions. Controllers should map domain errors to HTTP responses.
+
 ## Development Requirements
 
 ### Testing Strategy
@@ -140,6 +190,47 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - End-to-end tests MUST cover:
   - Critical user journeys from User Scenarios
   - Edge cases described in specification
+
+### Clean Architecture Principles
+
+1. **Domain Layer**
+   - Contains business logic, entities, and interfaces (ports)
+   - MUST be framework and infrastructure agnostic
+   - Defines domain-specific error types
+   - All ports/interfaces MUST be defined here
+
+2. **Application Layer**
+   - Contains use-case classes implementing business logic
+   - MUST depend only on domain interfaces, never on concrete implementations
+   - MUST NOT use framework-specific code or exceptions
+   - MUST NOT instantiate external services directly
+
+3. **Infrastructure Layer**
+   - Implements domain interfaces (repositories, services)
+   - Contains framework-specific code
+   - Handles external service integration
+   - Maps between domain and external models
+
+4. **Interface Layer (Controllers)**
+   - Maps HTTP requests to use-case inputs
+   - Converts domain errors to HTTP responses
+   - Uses typed DTOs for request/response
+   - No business logic
+
+### Architecture & Implementation Constraints
+
+- Domain layer MUST NOT depend on any external frameworks or libraries
+- Use-cases MUST receive all dependencies through constructor injection
+- Domain errors MUST extend from domain-specific error classes
+- Controllers MUST map domain errors to appropriate HTTP responses
+- Infrastructure implementations MUST use mappers to convert between domain and external models
+
+Notes / follow-up actions:
+
+- Existing use-case implementations MUST be refactored to follow the repository/port pattern: do NOT instantiate database clients (e.g., PrismaClient) inside use-cases. Define repository interfaces in the application layer (for example `IUserRepository`) and implement them in the infrastructure layer (for example `PrismaUserRepository`). Inject repository implementations into use-cases via dependency injection.
+- Add a refactor task to the implementation plan to update current use-cases (auth, summaries, quizzes) to accept repository interfaces and remove direct external I/O.
+
+These constraints are intended to improve testability (allow mocking adapters), support TDD (small, focused use-cases), and prevent leakage of infrastructure concerns into core business logic.
 
 ## Notes
 

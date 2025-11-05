@@ -1,29 +1,100 @@
-import request from "supertest";
-import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
+import { Test } from '@nestjs/testing';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
+import request from 'supertest';
+import { AppModule } from '../../src/app.module';
+import { PrismaClient } from '@prisma/client';
 
-// NOTE: these stubs assume a test harness that can start the Nest app and expose it
-// Replace `app` import with your actual testing bootstrap that returns an http server
-// e.g. import { createTestApp } from '../helpers/testApp';
+describe('AuthController (e2e)', () => {
+  let app: INestApplication;
+  let prisma: PrismaClient;
 
-let server: any;
+  beforeAll(async () => {
+    const moduleFixture = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
 
-beforeAll(async () => {
-  // server = await createTestApp();
-});
+    app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe());
+    await app.init();
 
-afterAll(async () => {
-  if (server && server.close) await server.close();
-});
+    prisma = new PrismaClient();
+  });
 
-describe("Auth acceptance", () => {
-  it("should sign up a new user and allow login (FR-001)", async () => {
-    // Example flow (replace baseUrl with server.url or similar)
-    // const res = await request(server).post('/api/auth/signup').send({
-    //   email: 'test@example.com', displayName: 'Test', password: 'password123'
-    // });
-    // expect(res.status).toBe(201);
-    // const login = await request(server).post('/api/auth/login').send({ email: 'test@example.com', password: 'password123' });
-    // expect(login.status).toBe(200);
-    expect(true).toBe(true);
+  afterAll(async () => {
+    await prisma.$disconnect();
+    await app.close();
+  });
+
+  beforeEach(async () => {
+    // Clean up users before each test
+    await prisma.user.deleteMany();
+  });
+
+  describe('/auth/signup (POST)', () => {
+    const signupDto = {
+      email: 'test@example.com',
+      password: 'password123',
+      displayName: 'Test User',
+    };
+
+    it('should create a new user and return token', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(signupDto)
+        .expect(201);
+
+      expect(response.body.token).toBeDefined();
+      expect(response.body.user).toBeDefined();
+      expect(response.body.user.email).toBe(signupDto.email);
+      expect(response.body.user.displayName).toBe(signupDto.displayName);
+      expect(response.body.user.passwordHash).toBeUndefined();
+    });
+
+    it('should fail if email already exists', async () => {
+      await request(app.getHttpServer()).post('/auth/signup').send(signupDto);
+
+      await request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(signupDto)
+        .expect(409);
+    });
+  });
+
+  describe('/auth/login (POST)', () => {
+    const userDto = {
+      email: 'test@example.com',
+      password: 'password123',
+      displayName: 'Test User',
+    };
+
+    beforeEach(async () => {
+      // Create a user for login tests
+      await request(app.getHttpServer()).post('/auth/signup').send(userDto);
+    });
+
+    it('should login and return token', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: userDto.email,
+          password: userDto.password,
+        })
+        .expect(200);
+
+      expect(response.body.token).toBeDefined();
+      expect(response.body.user).toBeDefined();
+      expect(response.body.user.email).toBe(userDto.email);
+      expect(response.body.user.passwordHash).toBeUndefined();
+    });
+
+    it('should fail with invalid credentials', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: userDto.email,
+          password: 'wrongpassword',
+        })
+        .expect(401);
+    });
   });
 });

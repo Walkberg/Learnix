@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { AIAdapter } from './adapter';
 
 const OPENAI_API = process.env.OPENAI_API_KEY;
@@ -14,16 +13,31 @@ export class OpenAIAdapter implements AIAdapter {
     return bullets;
   }
 
-  async generateQuizQuestions(text: string, count: number, type: 'mcq' | 'open' = 'mcq') {
+  async generateQuizQuestions(
+    text: string,
+    count: number,
+    type: 'mcq' | 'open' = 'mcq',
+  ) {
     // Placeholder simple split-based questions
     const sentences = text.split(/(?<=\.|\?|!)\s+/).filter(Boolean);
-    const questions = [];
+    const questions: Question[] = [];
     for (let i = 0; i < count; i++) {
       const prompt = sentences[i % sentences.length] || `Question ${i + 1}`;
-      questions.push({ prompt, type, options: type === 'mcq' ? ['A', 'B', 'C', 'D'] : [] });
+      questions.push({
+        prompt,
+        type,
+        options: type === 'mcq' ? ['A', 'B', 'C', 'D'] : [],
+      });
     }
     return questions;
   }
 }
 
 export default OpenAIAdapter;
+
+export type Question = {
+  prompt: string;
+
+  type: 'mcq' | 'open';
+  options: string[];
+};

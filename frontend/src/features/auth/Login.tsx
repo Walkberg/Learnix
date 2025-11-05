@@ -1,0 +1,71 @@
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormData, loginSchema } from './schema';
+import axios from 'axios';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+export function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string>('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      setError('');
+      const response = await axios.post('/api/auth/login', {
+        email: data.email,
+        password: data.password,
+      });
+
+      // Store token
+      localStorage.setItem('token', response.data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setError('Invalid email or password');
+    }
+  };
+
+  return (
+    <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-bold mb-6">Login</h2>
+      {error && <div className="text-red-600 mb-4">{error}</div>}
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block mb-1">Email</label>
+          <input {...register('email')} type="email" className="w-full p-2 border rounded" />
+          {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+        </div>
+
+        <div>
+          <label className="block mb-1">Password</label>
+          <input {...register('password')} type="password" className="w-full p-2 border rounded" />
+          {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-blue-400"
+        >
+          {isSubmitting ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+
+      <p className="mt-4 text-center">
+        Don't have an account?{' '}
+        <Link to="/signup" className="text-blue-600 hover:underline">
+          Sign up
+        </Link>
+      </p>
+    </div>
+  );
+}

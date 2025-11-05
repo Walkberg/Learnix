@@ -1,6 +1,10 @@
 export interface AIAdapter {
   generateSummary(text: string, maxPoints?: number): Promise<string[]>;
-  generateQuizQuestions(text: string, count: number, type?: 'mcq' | 'open'): Promise<any[]>;
+  generateQuizQuestions(
+    text: string,
+    count: number,
+    type?: 'mcq' | 'open',
+  ): Promise<any[]>;
 }
 
 export type AIResponse = {
