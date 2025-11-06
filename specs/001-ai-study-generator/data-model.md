@@ -2,6 +2,13 @@
 
 This document describes the domain entities and their fields, validation rules and relationships. It maps to the Prisma schema to be implemented under `backend/prisma/schema.prisma`.
 
+## Clarifications
+
+### Session 2025-11-06
+- Q: Should StudySheet content be stored as structured JSON or Markdown? → A: Store as Markdown with defined sections for better formatting and readability
+- Q: How should summary/flashcard generation be handled after course creation? → A: Use domain events (CourseCreatedEvent) with message queue for async generation
+- Q: Which AI provider should be used by default? → A: Gemini as the default AI provider
+
 ## Entities
 
 ### User
@@ -30,10 +37,17 @@ Business rules:
 ### StudySheet (Summary)
 - id: string (cuid)
 - courseId: string -> Course
-- summaryTitle: string
-- keyPoints: string[] (3-10 bullets)
-- suggestedFlashcards: {prompt:string, answer:string}[]
-- generatedAt: DateTime
+- content: string (markdown formatted)
+- status: enum (PENDING, GENERATED, ERROR)
+- createdAt: DateTime
+- updatedAt: DateTime
+
+Validation rules:
+- content must be valid markdown with sections:
+  - Title (H1)
+  - Summary (2-3 paragraphs)
+  - Key Points (3-10 bullet points)
+- status tracks async generation state
 
 ### Quiz
 - id: string (cuid)
@@ -46,7 +60,7 @@ Business rules:
 ### Question (part of Quiz.questions)
 - id: string
 - type: enum (MCQ, OPEN)
-- prompt: string
+- question: string
 - options?: string[] (for MCQ)
 - correctAnswer?: string or index
 
@@ -61,7 +75,7 @@ Business rules:
 ### Flashcard
 - id: string (cuid)
 - courseId: string -> Course
-- prompt: string
+- question: string
 - answer: string
 - createdAt: DateTime
 
@@ -105,14 +119,20 @@ model Course {
   flashcards Flashcard[]
 }
 
+enum GenerationStatus {
+  PENDING
+  GENERATED
+  ERROR
+}
+
 model StudySheet {
-  id                 String   @id @default(cuid())
-  course             Course   @relation(fields: [courseId], references: [id])
-  courseId           String
-  summaryTitle       String
-  keyPoints          Json
-  suggestedFlashcards Json
-  generatedAt        DateTime @default(now())
+  id        String   @id @default(cuid())
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  String
+  content   String   @db.Text
+  status    GenerationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Quiz {
@@ -138,7 +158,7 @@ model Flashcard {
   id        String   @id @default(cuid())
   course    Course   @relation(fields: [courseId], references: [id])
   courseId  String
-  prompt    String
+  question  String
   answer    String
   createdAt DateTime @default(now())
 }
