@@ -101,7 +101,9 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
   - Domain Errors: CourseQuotaExceededError, InvalidSourceTextError
 
 - **Summary**: Value Object for an AI-generated study sheet
-  - Properties: title, keyPoints, suggestedFlashcards
+ - **Summary**: Value Object for an AI-generated study sheet
+ - **Storage note**: The study sheet `summary` is stored as a plain text string. Key points are NOT persisted as structured data; they are extracted on-demand when needed (for example when generating flashcards) by invoking the AI again.
+  - Properties: title, summary (plain text string)
   - Methods: create() - factory method for new summaries
 
 - **Quiz**: Entity for a test of knowledge
@@ -170,6 +172,11 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - Q: How should study materials generation be orchestrated? → A: StudySheet generation triggers StudySheetGeneratedEvent for flashcards
 - Q: How should AI suggestions be integrated? → A: AI suggests title and emoji during study sheet generation, updates course metadata
 
+ - Q: How should StudySheet.summary be stored? → A: C (Plain text summary only)
+ - Q: How should keyPoints for flashcards be produced? → A: B (Re-run AI to extract keyPoints when generating flashcards)
+
+- Q: How should modules expose repositories / implementations? → A: Use provider-token pattern; DO NOT export concrete classes from modules
+
 - Q: Implementation layering and invocation rules — should we prefer use-case classes over services, and must the application layer avoid direct external service calls; should controllers always type requests/responses? → A: Yes: use explicit use-case classes; application layer must not call external services directly; controllers must use typed request and response DTOs.
 
 - Q: Repository pattern requirement — should use-cases depend only on repository interfaces/ports (no concrete DB or external client instantiation inside use-cases)? → A: Yes: use-cases must depend on repository interfaces; concrete repositories/adapters are implemented in the infrastructure layer and injected.
@@ -211,6 +218,8 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
    - Handlers MUST be in the application layer under `handlers/`
    - Handlers MUST use use cases to perform actions
    - Handlers MUST NOT access repositories directly
+ 
+    **Flashcards generation note:** When a `StudySheetGeneratedEvent` triggers flashcard creation, the flashcards feature SHOULD re-run the AI (or call a dedicated extraction use-case) to extract key points from the stored plain-text summary and then generate flashcards from those key points. This avoids persisting structured keyPoints but requires an additional AI call at flashcard generation time.
    
 Example flow:
 ```typescript
@@ -346,6 +355,29 @@ Controller -> Use Case -> Domain Entities/Ports -> Infrastructure
 
 Dependencies MUST flow inward: infrastructure depends on domain, never the reverse.
 
+### Module provider-token pattern (modules export tokens, not implementations)
+
+- All feature modules MUST provide infrastructure implementations using provider tokens, following the pattern:
+
+  { provide: SOME_REPOSITORY, useClass: PrismaSomeRepository }
+
+- Modules MUST NOT export concrete implementation classes (for example `PrismaSomeRepository`) directly. Instead they should export the provider token constant (e.g., `SOME_REPOSITORY`) and any use-cases the module offers.
+
+- Rationale: this keeps the infrastructure implementation private to the module, enforces dependency inversion, and allows tests to override providers easily via token names.
+
+- Example (recommended):
+
+  providers: [
+    { provide: SOME_REPOSITORY, useClass: PrismaSomeRepository },
+    SomeUseCase,
+  ],
+  exports: [SOME_REPOSITORY, SomeUseCase]
+
+ - Anti-pattern (forbidden):
+
+  // exports: [PrismaSomeRepository]  // DO NOT export implementation classes
+
+
 ### Architecture & Implementation Constraints
 
 - Domain layer MUST NOT depend on any external frameworks or libraries
@@ -391,6 +423,11 @@ For each feature implementation, verify:
    - [ ] Use cases depend only on domain
    - [ ] Infrastructure implements domain interfaces
    - [ ] Controllers use only use cases
+
+6. **Module exports and provider pattern**
+  - [ ] Modules provide implementations via provider tokens (e.g., `{ provide: X_REPOSITORY, useClass: PrismaXRepository }`)
+  - [ ] Modules do NOT export concrete implementation classes (e.g., `PrismaXRepository`) directly
+  - [ ] Modules export only tokens and use-cases that other modules can inject
 
 This checklist MUST be reviewed before any feature is considered complete.
 

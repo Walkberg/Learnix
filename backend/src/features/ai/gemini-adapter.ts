@@ -8,7 +8,7 @@ export class GeminiAdapter implements AIAdapter {
 
   constructor() {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    this.model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
   }
 
   async generateSummary(
