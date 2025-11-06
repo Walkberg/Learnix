@@ -1,9 +1,10 @@
 import { Global, Module } from '@nestjs/common';
-import { MockAdapter } from './mock-adapter';
+import { GeminiAdapter } from './gemini-adapter';
+import { AI_ADAPTER } from './adapter';
 
 @Global()
 @Module({
-  providers: [{ provide: 'AIAdapter', useClass: MockAdapter }],
-  exports: ['AIAdapter'],
+  providers: [{ provide: AI_ADAPTER, useClass: GeminiAdapter }, GeminiAdapter],
+  exports: [AI_ADAPTER],
 })
 export class AiModule {}

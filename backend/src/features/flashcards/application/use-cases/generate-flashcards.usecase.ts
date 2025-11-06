@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import type { AIAdapter } from '../../../ai/adapter';
+import { AI_ADAPTER } from '../../../ai/adapter';
 import type { IFlashcardRepository } from '../../domain/ports/i-flashcard-repository';
 import { Flashcard } from '../../domain/entities/flashcard.entity';
 import type { IStudySheetRepository } from 'src/features/summaries/domain/ports/i-study-sheet-repository';
@@ -13,7 +14,7 @@ export class GenerateFlashcardsUseCase {
     private readonly flashcardRepository: IFlashcardRepository,
     @Inject(STUDY_SHEET_REPOSITORY)
     private readonly studySheetRepository: IStudySheetRepository,
-    @Inject('AIAdapter')
+    @Inject(AI_ADAPTER)
     private readonly aiAdapter: AIAdapter,
   ) {}
 

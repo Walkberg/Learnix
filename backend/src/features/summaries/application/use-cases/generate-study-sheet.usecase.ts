@@ -4,6 +4,7 @@ import type { IStudySheetRepository } from '../../domain/ports/i-study-sheet-rep
 import type { ICourseRepository } from '../../../courses/domain/ports/i-course-repository';
 import { COURSE_REPOSITORY } from '../../../courses/domain/ports/tokens';
 import type { AIAdapter } from '../../../ai/adapter';
+import { AI_ADAPTER } from '../../../ai/adapter';
 import { StudySheet } from '../../domain/entities/study-sheet.entity';
 import { StudySheetGeneratedEvent } from '../../domain/events/study-sheet-generated.event';
 import { STUDY_SHEET_REPOSITORY } from '../../domain/ports/tokens';
@@ -19,7 +20,7 @@ export class GenerateStudySheetUseCase {
     private readonly studySheetRepository: IStudySheetRepository,
     @Inject(COURSE_REPOSITORY)
     private readonly courseRepository: ICourseRepository,
-    @Inject('AIAdapter')
+    @Inject(AI_ADAPTER)
     private readonly aiAdapter: AIAdapter,
     private readonly eventEmitter: EventEmitter2,
   ) {}

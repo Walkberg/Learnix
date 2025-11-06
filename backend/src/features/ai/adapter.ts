@@ -15,3 +15,6 @@ export interface AIAdapter {
     type?: 'mcq' | 'open',
   ): Promise<any[]>;
 }
+
+// DI token for NestJS providers. Use this constant when binding or injecting the adapter.
+export const AI_ADAPTER = 'AIAdapter';

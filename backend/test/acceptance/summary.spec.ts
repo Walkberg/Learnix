@@ -5,6 +5,7 @@ import { AppModule } from '../../src/app.module';
 import { PrismaService } from '../../src/common/prisma.service';
 import { JwtAuthGuard } from '../../src/common/guards/jwt.guard';
 import type { AIAdapter } from '../../src/features/ai/adapter';
+import { AI_ADAPTER } from '../../src/features/ai/adapter';
 import { MockAdapter } from '../../src/features/ai/mock-adapter';
 
 describe('Summary (e2e)', () => {
@@ -16,7 +17,7 @@ describe('Summary (e2e)', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     })
-      .overrideProvider('AIAdapter')
+      .overrideProvider(AI_ADAPTER)
       .useClass(MockAdapter)
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: () => true })
@@ -24,7 +25,7 @@ describe('Summary (e2e)', () => {
 
     app = moduleRef.createNestApplication();
     prisma = moduleRef.get(PrismaService);
-    mockAi = moduleRef.get('AIAdapter') as MockAdapter;
+    mockAi = moduleRef.get(AI_ADAPTER) as MockAdapter;
     await app.init();
   });
 

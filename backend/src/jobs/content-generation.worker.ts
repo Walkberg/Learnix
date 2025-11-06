@@ -3,6 +3,7 @@ import type { Job } from 'bull';
 import { Logger, Inject } from '@nestjs/common';
 import { PrismaService } from '../common/prisma.service';
 import type { AIAdapter } from '../features/ai/adapter';
+import { AI_ADAPTER } from '../features/ai/adapter';
 import { CourseCreatedEvent } from '../features/courses/domain/events/course-created.event';
 
 @Processor('content-generation')
@@ -11,7 +12,7 @@ export class ContentGenerationWorker {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject('AIAdapter') private readonly aiAdapter: AIAdapter,
+    @Inject(AI_ADAPTER) private readonly aiAdapter: AIAdapter,
   ) {}
 
   @Process('generate-study-materials')
