@@ -43,8 +43,9 @@ Independent test criteria: Register a user, login, logout; protected routes requ
 - [X] T104 [P] Create frontend auth pages & forms: `frontend/src/features/auth/SignUp.tsx`, `frontend/src/features/auth/Login.tsx`, using `react-hook-form` + `zod` schemas in `frontend/src/features/auth/schema.ts`
 - [X] T105 [US1] Create backend acceptance tests stubs (executable): `backend/test/acceptance/auth.spec.ts` (wire to testApp harness) and CI job to run them
 
-User Story US2 (P1) — Generate a study sheet from text (FR-002, FR-003)
-Independent test criteria: Create a course which triggers async generation of a markdown summary and flashcards using Gemini AI.
+
+User Story US2 (P1) — Generate a study sheet from text (FR-002, FR-003, FR-009 à FR-015)
+Independent test criteria: Create a course which triggers async generation of a markdown summary and flashcards using Gemini AI. Gérer flashcards (CRUD), summaries, et appliquer la règle de format GET array.
 - [X] T200 [US2] Create Course domain, repository & DTOs: `backend/src/features/courses/domain/course.entity.ts`, `backend/src/features/courses/infrastructure/course.repository.ts`
 - [X] T201 [US2] Create domain events: `backend/src/features/courses/domain/events/course-created.event.ts` for async generation triggers
 - [X] T202 [US2] Add course endpoints/controllers: `backend/src/features/courses/courses.controller.ts` (`POST /api/courses`, `GET /api/courses`, `GET /api/courses/:id`)
@@ -55,6 +56,13 @@ Independent test criteria: Create a course which triggers async generation of a 
 - [X] T207 [P] Create frontend course creation form: `frontend/src/features/courses/CourseForm.tsx` and `frontend/src/features/courses/schema.ts`
 - [X] T208 [P] Create study sheet viewer component: `frontend/src/features/summaries/StudySheetView.tsx` with markdown rendering
 - [X] T209 [US2] Add acceptance tests: `backend/test/acceptance/summary.spec.ts` and `backend/test/acceptance/courses.spec.ts` (use mock AI adapter)
+- [ ] T210 [US2] Implement DELETE flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (DELETE `/courses/:courseId/flashcards/:flashcardId`)
+- [ ] T211 [US2] Implement PATCH flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (PATCH `/flashcards/:flashcardId`)
+- [ ] T212 [US2] Implement GET flashcards for course endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (GET `/courses/:courseId/flashcards`)
+- [ ] T213 [US2] Implement GET summaries for course endpoint in `backend/src/features/summaries/summaries.controller.ts` (GET `/courses/:courseId/summaries`)
+- [ ] T214 [US2] Implement PATCH summary endpoint in `backend/src/features/summaries/summaries.controller.ts` (PATCH `/summaries/:summaryId`)
+- [ ] T215 [US2] Implement PATCH course endpoint in `backend/src/features/courses/courses.controller.ts` (PATCH `/courses/:courseId`)
+- [ ] T216 [US2] Enforce GET array response format rule (wrap arrays in `{ items: [...] }`) in all relevant backend endpoints (middleware or DTO)
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
 Independent test criteria: Generate quiz with requested number of questions and MCQ options count.
