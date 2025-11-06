@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { AIAdapter, AiSummary } from './adapter';
 
 @Injectable()
 export class GeminiAdapter implements AIAdapter {
-  private model: any;
+  private model: GenerativeModel;
 
   constructor() {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
@@ -23,6 +23,7 @@ export class GeminiAdapter implements AIAdapter {
 
     const result = await this.model.generateContent(prompt);
     const response = await result.response;
+
     const responseText = response.text();
 
     return {
