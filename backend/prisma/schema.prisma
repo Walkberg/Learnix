@@ -36,13 +36,14 @@ model Course {
 }
 
 model StudySheet {
-  id                 String   @id @default(cuid())
-  course             Course   @relation(fields: [courseId], references: [id])
-  courseId           String
-  summaryTitle       String
-  keyPoints          Json
-  suggestedFlashcards Json
-  generatedAt        DateTime @default(now())
+  id          String   @id @default(cuid())
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    String
+  title       String
+  summary     Json
+  summaryMd   String?
+  keyPoints   Json
+  generatedAt DateTime @default(now())
 }
 
 model Quiz {

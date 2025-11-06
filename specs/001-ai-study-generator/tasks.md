@@ -46,15 +46,15 @@ Independent test criteria: Register a user, login, logout; protected routes requ
 User Story US2 (P1) — Generate a study sheet from text (FR-002, FR-003)
 Independent test criteria: Create a course which triggers async generation of a markdown summary and flashcards using Gemini AI.
 - [X] T200 [US2] Create Course domain, repository & DTOs: `backend/src/features/courses/domain/course.entity.ts`, `backend/src/features/courses/infrastructure/course.repository.ts`
-- [ ] T201 [US2] Create domain events: `backend/src/features/courses/domain/events/course-created.event.ts` for async generation triggers
+- [X] T201 [US2] Create domain events: `backend/src/features/courses/domain/events/course-created.event.ts` for async generation triggers
 - [X] T202 [US2] Add course endpoints/controllers: `backend/src/features/courses/courses.controller.ts` (`POST /api/courses`, `GET /api/courses`, `GET /api/courses/:id`)
-- [ ] T203 [P] [US2] Implement GeminiAdapter: `backend/src/features/ai/gemini-adapter.ts` as default provider
-- [ ] T204 [US2] Create content generation worker: `backend/src/jobs/content-generation.worker.ts` to handle async generation
-- [ ] T205 [US2] Implement StudySheet markdown generation: `backend/src/features/summaries/application/use-cases/generate-study-sheet.usecase.ts`
-- [ ] T206 [P] [US2] Implement parallel Flashcard generation: `backend/src/features/flashcards/application/use-cases/generate-flashcards.usecase.ts`
+- [X] T203 [P] [US2] Implement GeminiAdapter: `backend/src/features/ai/gemini-adapter.ts` as default provider
+- [X] T204 [US2] Create content generation worker: `backend/src/jobs/content-generation.worker.ts` to handle async generation
+- [X] T205 [US2] Implement StudySheet markdown generation: `backend/src/features/summaries/application/use-cases/generate-study-sheet.usecase.ts`
+- [X] T206 [P] [US2] Implement parallel Flashcard generation: `backend/src/features/flashcards/application/use-cases/generate-flashcards.usecase.ts`
 - [X] T207 [P] Create frontend course creation form: `frontend/src/features/courses/CourseForm.tsx` and `frontend/src/features/courses/schema.ts`
 - [X] T208 [P] Create study sheet viewer component: `frontend/src/features/summaries/StudySheetView.tsx` with markdown rendering
-- [ ] T209 [US2] Add acceptance tests: `backend/test/acceptance/summary.spec.ts` and `backend/test/acceptance/courses.spec.ts` (use mock AI adapter)
+- [X] T209 [US2] Add acceptance tests: `backend/test/acceptance/summary.spec.ts` and `backend/test/acceptance/courses.spec.ts` (use mock AI adapter)
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
 Independent test criteria: Generate quiz with requested number of questions and MCQ options count.

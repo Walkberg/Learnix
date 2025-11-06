@@ -163,6 +163,13 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 ### Session 2025-11-04
 - Q: What testing strategy should be used for implementing features? → A: Test-Driven Development (TDD)
 
+### Session 2025-11-06
+- Q: What should be the base URL structure for API endpoints? → A: Direct resource paths without /api prefix
+- Q: How should event-driven features be handled? → A: Domain events emitted by entities, caught by feature-specific handlers
+- Q: How should course creation handle related content generation? → A: Course entity emits CourseCreatedEvent, separate handlers per feature
+- Q: How should study materials generation be orchestrated? → A: StudySheet generation triggers StudySheetGeneratedEvent for flashcards
+- Q: How should AI suggestions be integrated? → A: AI suggests title and emoji during study sheet generation, updates course metadata
+
 - Q: Implementation layering and invocation rules — should we prefer use-case classes over services, and must the application layer avoid direct external service calls; should controllers always type requests/responses? → A: Yes: use explicit use-case classes; application layer must not call external services directly; controllers must use typed request and response DTOs.
 
 - Q: Repository pattern requirement — should use-cases depend only on repository interfaces/ports (no concrete DB or external client instantiation inside use-cases)? → A: Yes: use-cases must depend on repository interfaces; concrete repositories/adapters are implemented in the infrastructure layer and injected.
@@ -191,31 +198,153 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
   - Critical user journeys from User Scenarios
   - Edge cases described in specification
 
+### Event-Driven Architecture
+
+1. **Domain Events**
+   - Events MUST be created in the domain layer
+   - Events MUST be named in past tense (e.g., `CourseCreatedEvent`)
+   - Events MUST contain only primitive values and value objects
+   - Events MUST NOT contain references to entities
+
+2. **Event Handlers**
+   - Each feature MUST have its own event handlers
+   - Handlers MUST be in the application layer under `handlers/`
+   - Handlers MUST use use cases to perform actions
+   - Handlers MUST NOT access repositories directly
+   
+Example flow:
+```typescript
+// 1. Course creation emits event
+@Injectable()
+class CreateCourseUseCase {
+  constructor(
+    private readonly courseRepository: ICourseRepository,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+
+  async execute(command: CreateCourseCommand) {
+    const course = await this.courseRepository.create(...);
+    await this.eventEmitter.emit('course.created', new CourseCreatedEvent(...));
+    return course;
+  }
+}
+
+// 2. Summary feature handles event
+@Injectable()
+class CourseCreatedHandler {
+  constructor(
+    private readonly generateSummaryUseCase: GenerateSummaryUseCase,
+  ) {}
+
+  @OnEvent('course.created')
+  async handle(event: CourseCreatedEvent) {
+    await this.generateSummaryUseCase.execute({
+      courseId: event.courseId,
+      // ...
+    });
+  }
+}
+```
+
 ### Clean Architecture Principles
 
-1. **Domain Layer**
+1. **Domain Layer** (`src/features/*/domain/`)
    - Contains business logic, entities, and interfaces (ports)
    - MUST be framework and infrastructure agnostic
-   - Defines domain-specific error types
-   - All ports/interfaces MUST be defined here
+   - MUST define all interfaces (ports) used by use cases
+   - MUST contain domain events (e.g., `CourseCreatedEvent`)
+   - Example structure:
+     ```
+     domain/
+       ├── entities/
+       │   └── course.entity.ts
+       ├── events/
+       │   └── course-created.event.ts
+       └── ports/
+           ├── i-course-repository.ts
+           └── i-ai-service.ts
+     ```
 
-2. **Application Layer**
-   - Contains use-case classes implementing business logic
+2. **Application Layer** (`src/features/*/application/`)
+   - MUST implement business logic in use case classes
+   - MUST follow Single Responsibility Principle: one use case = one action
+   - MUST follow naming convention: `[Action][Entity]UseCase`
+   - MUST have a single public `execute` method
    - MUST depend only on domain interfaces, never on concrete implementations
-   - MUST NOT use framework-specific code or exceptions
-   - MUST NOT instantiate external services directly
+   - MUST NOT use framework decorators except `@Injectable()`
+   - MUST split use cases if multiple actions are present (e.g., `GetCourseByIdUseCase` and `ListCoursesByAuthorUseCase` instead of `GetCoursesUseCase`)
+   - Example structure:
+     ```
+     application/
+       └── use-cases/
+           ├── create-course.usecase.ts
+           ├── get-course-by-id.usecase.ts
+           └── list-courses-by-author.usecase.ts
+     ```
+   - Example of proper separation:
+     ```typescript
+     // ✅ Good: Single responsibility
+     @Injectable()
+     export class GetCourseByIdUseCase {
+       async execute(query: { id: string }): Promise<Course> {
+         // Single focused action
+       }
+     }
 
-3. **Infrastructure Layer**
-   - Implements domain interfaces (repositories, services)
-   - Contains framework-specific code
-   - Handles external service integration
-   - Maps between domain and external models
+     // ❌ Bad: Multiple responsibilities
+     @Injectable()
+     export class GetCoursesUseCase {
+       async getById() { /* ... */ }    // Should be separate use case
+       async listByAuthor() { /* ... */ }  // Should be separate use case
+     }
+     ```
 
-4. **Interface Layer (Controllers)**
-   - Maps HTTP requests to use-case inputs
-   - Converts domain errors to HTTP responses
-   - Uses typed DTOs for request/response
-   - No business logic
+3. **Infrastructure Layer** (`src/features/*/infrastructure/`)
+   - MUST implement domain interfaces
+   - MUST handle all external service integration
+   - MUST contain adapters for external services
+   - MUST use mappers to convert between domain and external models
+   - Example structure:
+     ```
+     infrastructure/
+       ├── repositories/
+       │   └── prisma-course.repository.ts
+       ├── services/
+       │   └── openai-service.ts
+       └── mappers/
+           └── course.mapper.ts
+     ```
+
+4. **Interface Layer** (`src/features/*/[name].controller.ts`)
+   - MUST only use use cases, never repositories directly
+   - MUST define typed DTOs for all requests and responses
+   - MUST map domain errors to HTTP responses
+   - MUST NOT contain business logic
+   - Example structure:
+     ```typescript
+     @Controller('courses')  // Direct resource path without /api prefix
+     export class CoursesController {
+       constructor(
+         private readonly createCourseUseCase: CreateCourseUseCase,
+         private readonly getCoursesUseCase: GetCoursesUseCase,
+       ) {}
+     
+       @Post()
+       async create(@Body() dto: CreateCourseDto) {
+         return this.createCourseUseCase.execute(dto);
+       }
+     }
+     ```
+
+Mandatory Flow Pattern:
+```
+Controller -> Use Case -> Domain Entities/Ports -> Infrastructure
+     ↑          ↑              ↑                        ↑
+   Express   Business        Domain               Implementation
+    /Nest     Logic          Rules                   Details
+```
+
+Dependencies MUST flow inward: infrastructure depends on domain, never the reverse.
 
 ### Architecture & Implementation Constraints
 
@@ -224,6 +353,46 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - Domain errors MUST extend from domain-specific error classes
 - Controllers MUST map domain errors to appropriate HTTP responses
 - Infrastructure implementations MUST use mappers to convert between domain and external models
+
+### Technical Validation Checklist
+
+For each feature implementation, verify:
+
+1. **Controller Layer**
+   - [ ] Uses only use cases, no direct repository access
+   - [ ] All request/response data uses typed DTOs
+   - [ ] No business logic present
+   - [ ] Proper error mapping to HTTP responses
+
+2. **Use Case Layer**
+   - [ ] Single responsibility (exactly one primary action)
+   - [ ] No multiple public methods (only one `execute` method)
+   - [ ] Use case name reflects single specific action
+   - [ ] Dependencies injected via constructor
+   - [ ] Uses only domain interfaces
+   - [ ] No framework-specific code except `@Injectable()`
+   - [ ] Clear input/output types defined
+   - [ ] Separated if multiple actions were present (e.g., get vs list)
+
+3. **Domain Layer**
+   - [ ] No framework imports
+   - [ ] Interfaces defined for all external dependencies
+   - [ ] Domain events properly defined
+   - [ ] Entity business rules encapsulated
+
+4. **Infrastructure Layer**
+   - [ ] Implements domain interfaces
+   - [ ] Uses mappers for data conversion
+   - [ ] External service integration isolated
+   - [ ] No domain logic present
+
+5. **Dependency Flow**
+   - [ ] Domain layer has no outward dependencies
+   - [ ] Use cases depend only on domain
+   - [ ] Infrastructure implements domain interfaces
+   - [ ] Controllers use only use cases
+
+This checklist MUST be reviewed before any feature is considered complete.
 
 Notes / follow-up actions:
 
