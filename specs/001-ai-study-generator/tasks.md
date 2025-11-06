@@ -44,13 +44,17 @@ Independent test criteria: Register a user, login, logout; protected routes requ
 - [X] T105 [US1] Create backend acceptance tests stubs (executable): `backend/test/acceptance/auth.spec.ts` (wire to testApp harness) and CI job to run them
 
 User Story US2 (P1) — Generate a study sheet from text (FR-002, FR-003)
-Independent test criteria: Create a course and generate a summary with 3–6 bullets and suggested flashcards.
-- [ ] T200 [US2] Create Course domain, repository & DTOs: `backend/src/features/courses/domain/course.entity.ts`, `backend/src/features/courses/infrastructure/course.repository.ts`
-- [ ] T201 [US2] Add course endpoints/controllers: `backend/src/features/courses/courses.controller.ts` (`POST /api/courses`, `GET /api/courses`, `GET /api/courses/:id`)
-- [ ] T202 [US2] Implement summary generation controller and service: `backend/src/features/summaries/summaries.controller.ts` and `backend/src/features/summaries/summaries.service.ts` (calls AI Adapter)
-- [ ] T203 [US2] Persist StudySheet: implement `backend/src/features/summaries/infrastructure/studySheet.repository.ts` and `backend/prisma` mapping
-- [ ] T204 [P] Create frontend Course editor and generate UI: `frontend/src/features/courses/CourseEditor.tsx`, `frontend/src/features/courses/CourseList.tsx` and `frontend/src/features/courses/CourseView.tsx` (Add "Generate summary" button)
-- [ ] T205 [US2] Add acceptance test stubs: `backend/test/acceptance/summary.spec.ts` (use mock AI adapter)
+Independent test criteria: Create a course which triggers async generation of a markdown summary and flashcards using Gemini AI.
+- [X] T200 [US2] Create Course domain, repository & DTOs: `backend/src/features/courses/domain/course.entity.ts`, `backend/src/features/courses/infrastructure/course.repository.ts`
+- [ ] T201 [US2] Create domain events: `backend/src/features/courses/domain/events/course-created.event.ts` for async generation triggers
+- [X] T202 [US2] Add course endpoints/controllers: `backend/src/features/courses/courses.controller.ts` (`POST /api/courses`, `GET /api/courses`, `GET /api/courses/:id`)
+- [ ] T203 [P] [US2] Implement GeminiAdapter: `backend/src/features/ai/gemini-adapter.ts` as default provider
+- [ ] T204 [US2] Create content generation worker: `backend/src/jobs/content-generation.worker.ts` to handle async generation
+- [ ] T205 [US2] Implement StudySheet markdown generation: `backend/src/features/summaries/application/use-cases/generate-study-sheet.usecase.ts`
+- [ ] T206 [P] [US2] Implement parallel Flashcard generation: `backend/src/features/flashcards/application/use-cases/generate-flashcards.usecase.ts`
+- [X] T207 [P] Create frontend course creation form: `frontend/src/features/courses/CourseForm.tsx` and `frontend/src/features/courses/schema.ts`
+- [X] T208 [P] Create study sheet viewer component: `frontend/src/features/summaries/StudySheetView.tsx` with markdown rendering
+- [ ] T209 [US2] Add acceptance tests: `backend/test/acceptance/summary.spec.ts` and `backend/test/acceptance/courses.spec.ts` (use mock AI adapter)
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
 Independent test criteria: Generate quiz with requested number of questions and MCQ options count.
