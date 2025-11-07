@@ -12,6 +12,11 @@ import {
   InvalidSourceTextError,
   NotCourseOwnerError,
 } from '../../features/courses/domain/errors/course.errors';
+import {
+  FlashcardNotFoundError,
+  NotFlashcardOwnerError,
+} from '../../features/flashcards/domain/errors/flashcard.errors';
+import { SummaryNotFoundError } from '../../features/summaries/domain/errors/summary.errors';
 
 @Catch()
 export class DomainExceptionFilter implements ExceptionFilter {
@@ -29,10 +34,17 @@ export class DomainExceptionFilter implements ExceptionFilter {
     } else if (exception instanceof InvalidSourceTextError) {
       status = HttpStatus.BAD_REQUEST;
       message = exception.message;
-    } else if (exception instanceof CourseNotFoundError) {
+    } else if (
+      exception instanceof CourseNotFoundError ||
+      exception instanceof FlashcardNotFoundError ||
+      exception instanceof SummaryNotFoundError
+    ) {
       status = HttpStatus.NOT_FOUND;
       message = exception.message;
-    } else if (exception instanceof NotCourseOwnerError) {
+    } else if (
+      exception instanceof NotCourseOwnerError ||
+      exception instanceof NotFlashcardOwnerError
+    ) {
       status = HttpStatus.FORBIDDEN;
       message = exception.message;
     } else if (exception instanceof HttpException) {

@@ -56,13 +56,13 @@ Independent test criteria: Create a course which triggers async generation of a 
 - [X] T207 [P] Create frontend course creation form: `frontend/src/features/courses/CourseForm.tsx` and `frontend/src/features/courses/schema.ts`
 - [X] T208 [P] Create study sheet viewer component: `frontend/src/features/summaries/StudySheetView.tsx` with markdown rendering
 - [X] T209 [US2] Add acceptance tests: `backend/test/acceptance/summary.spec.ts` and `backend/test/acceptance/courses.spec.ts` (use mock AI adapter)
-- [ ] T210 [US2] Implement DELETE flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (DELETE `/courses/:courseId/flashcards/:flashcardId`)
-- [ ] T211 [US2] Implement PATCH flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (PATCH `/flashcards/:flashcardId`)
-- [ ] T212 [US2] Implement GET flashcards for course endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (GET `/courses/:courseId/flashcards`)
-- [ ] T213 [US2] Implement GET summaries for course endpoint in `backend/src/features/summaries/summaries.controller.ts` (GET `/courses/:courseId/summaries`)
-- [ ] T214 [US2] Implement PATCH summary endpoint in `backend/src/features/summaries/summaries.controller.ts` (PATCH `/summaries/:summaryId`)
-- [ ] T215 [US2] Implement PATCH course endpoint in `backend/src/features/courses/courses.controller.ts` (PATCH `/courses/:courseId`)
-- [ ] T216 [US2] Enforce GET array response format rule (wrap arrays in `{ items: [...] }`) in all relevant backend endpoints (middleware or DTO)
+- [X] T210 [US2] Implement DELETE flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (DELETE `/courses/:courseId/flashcards/:flashcardId`)
+- [X] T211 [US2] Implement PATCH flashcard endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (PATCH `/flashcards/:flashcardId`)
+- [X] T212 [US2] Implement GET flashcards for course endpoint in `backend/src/features/flashcards/flashcards.controller.ts` (GET `/courses/:courseId/flashcards`)
+- [X] T213 [US2] Implement GET summaries for course endpoint in `backend/src/features/summaries/summaries.controller.ts` (GET `/courses/:courseId/summaries`)
+- [X] T214 [US2] Implement PATCH summary endpoint in `backend/src/features/summaries/summaries.controller.ts` (PATCH `/summaries/:summaryId`)
+- [X] T215 [US2] Implement PATCH course endpoint in `backend/src/features/courses/courses.controller.ts` (PATCH `/courses/:courseId`)
+- [X] T216 [US2] Enforce GET array response format rule (wrap arrays in `{ items: [...] }`) in all relevant backend endpoints (middleware or DTO)
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
 Independent test criteria: Generate quiz with requested number of questions and MCQ options count.

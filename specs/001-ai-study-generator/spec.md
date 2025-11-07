@@ -202,13 +202,16 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 
 - Q: How should modules expose repositories / implementations? → A: Use provider-token pattern; DO NOT export concrete classes from modules
 
-- Q: Implementation layering and invocation rules — should we prefer use-case classes over services, and must the application layer avoid direct external service calls; should controllers always type requests/responses? → A: Yes: use explicit use-case classes; application layer must not call external services directly; controllers must use typed request and response DTOs.
+- Q: Implementation layering and invocation rules — should we prefer use-case classes over services, and must the application layer avoid direct external service calls; should controllers always type requests/responses? → A: Yes: use explicit use-case classes; application layer must not call external services directly; controllers must use typed request and response DTOs as TypeScript interfaces in separate files (dto/requests/ and dto/responses/), imported with `import type`, and map entities to plain objects matching interface shapes.
 
 - Q: Repository pattern requirement — should use-cases depend only on repository interfaces/ports (no concrete DB or external client instantiation inside use-cases)? → A: Yes: use-cases must depend on repository interfaces; concrete repositories/adapters are implemented in the infrastructure layer and injected.
 
 - Q: Where should ports/interfaces be defined? → A: All ports (repository interfaces, service interfaces) MUST be defined in the domain layer to maintain proper dependency direction.
 
 - Q: How should domain errors be handled? → A: Use domain-specific error classes instead of framework exceptions. Controllers should map domain errors to HTTP responses.
+
+### Session 2025-11-07
+- Q: Should DTOs be TypeScript classes or interfaces? → A: TypeScript interfaces. All request and response DTOs must be defined as interfaces (not classes), imported using `import type` syntax, and controllers must return plain objects that match the interface shape rather than class instances.
 
 ## Development Requirements
 
@@ -351,11 +354,32 @@ class CourseCreatedHandler {
 
 4. **Interface Layer** (`src/features/*/[name].controller.ts`)
    - MUST only use use cases, never repositories directly
-   - MUST define typed DTOs for all requests and responses
+   - MUST define typed DTOs for all requests and responses in separate files under `dto/`
+   - DTOs MUST be TypeScript interfaces (not classes or inline types)
+   - Request DTOs MUST be in `dto/requests/` (e.g., `create-course.dto.ts`)
+   - Response DTOs MUST be in `dto/responses/` (e.g., `course.response.dto.ts`)
+   - Controllers MUST NOT return raw domain entities directly
+   - Controllers MUST map domain entities to response DTOs (plain objects matching interface shape)
+   - Controllers MUST use `import type` for DTO interfaces to comply with `isolatedModules` and `emitDecoratorMetadata`
    - MUST map domain errors to HTTP responses
    - MUST NOT contain business logic
    - Example structure:
+     ```
+     features/courses/
+       ├── dto/
+       │   ├── requests/
+       │   │   ├── create-course.dto.ts    // export interface CreateCourseRequestDto
+       │   │   └── update-course.dto.ts    // export interface UpdateCourseRequestDto
+       │   └── responses/
+       │       ├── course.response.dto.ts         // export interface CourseResponseDto
+       │       └── course-list.response.dto.ts    // export interface CourseListResponseDto
+       └── courses.controller.ts
+     ```
+   - Example controller:
      ```typescript
+     import type { CreateCourseRequestDto } from './dto/requests/create-course.dto';
+     import type { CourseResponseDto } from './dto/responses/course.response.dto';
+     
      @Controller('courses')  // Direct resource path without /api prefix
      export class CoursesController {
        constructor(
@@ -364,8 +388,27 @@ class CourseCreatedHandler {
        ) {}
      
        @Post()
-       async create(@Body() dto: CreateCourseDto) {
-         return this.createCourseUseCase.execute(dto);
+       async create(@Body() dto: CreateCourseRequestDto): Promise<CourseResponseDto> {
+         const course = await this.createCourseUseCase.execute(dto);
+         return {
+           id: course.id,
+           title: course.title,
+           sourceText: course.sourceText,
+           emoji: course.emoji,
+         };
+       }
+       
+       @Get()
+       async list(): Promise<CourseListResponseDto> {
+         const courses = await this.getCoursesUseCase.execute();
+         return {
+           items: courses.map(c => ({
+             id: c.id,
+             title: c.title,
+             sourceText: c.sourceText,
+             emoji: c.emoji,
+           })),
+         };
        }
      }
      ```
@@ -417,7 +460,12 @@ For each feature implementation, verify:
 
 1. **Controller Layer**
    - [ ] Uses only use cases, no direct repository access
-   - [ ] All request/response data uses typed DTOs
+   - [ ] All request DTOs are TypeScript interfaces in `dto/requests/` directory
+   - [ ] All response DTOs are TypeScript interfaces in `dto/responses/` directory
+   - [ ] DTOs are imported using `import type` syntax
+   - [ ] No inline interfaces or types for request/response bodies
+   - [ ] Controllers map domain entities to plain objects matching response DTO interfaces
+   - [ ] No raw domain entities returned directly
    - [ ] No business logic present
    - [ ] Proper error mapping to HTTP responses
 
