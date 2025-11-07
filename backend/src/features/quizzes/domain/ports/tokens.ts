@@ -1,0 +1,1 @@
+export const QUIZ_REPOSITORY = 'QUIZ_REPOSITORY';

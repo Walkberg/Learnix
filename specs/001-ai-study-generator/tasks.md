@@ -66,22 +66,22 @@ Independent test criteria: Create a course which triggers async generation of a 
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
 Independent test criteria: Generate quiz with requested number of questions and MCQ options count. Response must follow array format rule (FR-015).
-- [ ] T300 [US3] Create Quiz domain entity with factory method: `backend/src/features/quizzes/domain/quiz.entity.ts` (properties: id, courseId, params, questions, createdAt)
-- [ ] T301 [US3] Create Quiz domain errors: `backend/src/features/quizzes/domain/errors/quiz-quota-exceeded.error.ts`, `invalid-questions-count.error.ts`
-- [ ] T302 [US3] Create Quiz repository interface (port): `backend/src/features/quizzes/domain/ports/i-quiz-repository.ts` with methods: create(), findById(), findByCourseId()
-- [ ] T303 [US3] Create Quiz repository token: `backend/src/features/quizzes/domain/ports/tokens.ts` (export const QUIZ_REPOSITORY = 'QUIZ_REPOSITORY')
-- [ ] T304 [US3] Implement Prisma Quiz repository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz.repository.ts` implementing IQuizRepository
-- [ ] T305 [US3] Create request DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/requests/create-quiz.dto.ts` (count, type properties)
-- [ ] T306 [US3] Create response DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/responses/quiz.response.dto.ts`, `quiz-list.response.dto.ts` (with items array wrapper)
-- [ ] T307 [US3] Create GenerateQuizUseCase: `backend/src/features/quizzes/application/use-cases/generate-quiz.usecase.ts` (inject QUIZ_REPOSITORY, IAI_SERVICE, emit QuizGeneratedEvent)
-- [ ] T308 [US3] Create GetQuizByIdUseCase: `backend/src/features/quizzes/application/use-cases/get-quiz-by-id.usecase.ts`
-- [ ] T309 [US3] Create ListQuizzesByCourseUseCase: `backend/src/features/quizzes/application/use-cases/list-quizzes-by-course.usecase.ts`
-- [ ] T310 [US3] Implement quizzes controller: `backend/src/features/quizzes/quizzes.controller.ts` (POST `/courses/:courseId/quizzes`, GET `/courses/:courseId/quizzes`, GET `/quizzes/:id`) using JwtAuthGuard, DomainExceptionFilter, import type for DTOs
-- [ ] T311 [US3] Create QuizGeneratedEvent: `backend/src/features/quizzes/domain/events/quiz-generated.event.ts`
-- [ ] T312 [US3] Create Quizzes module: `backend/src/features/quizzes/quizzes.module.ts` (provide QUIZ_REPOSITORY with PrismaQuizRepository, export QUIZ_REPOSITORY and use cases)
-- [ ] T313 [US3] Persist questions structure as Json in Prisma schema and implement MCQ options count validation in quiz entity
+- [X] T300 [US3] Create Quiz domain entity with factory method: `backend/src/features/quizzes/domain/quiz.entity.ts` (properties: id, courseId, params, questions, createdAt)
+- [X] T301 [US3] Create Quiz domain errors: `backend/src/features/quizzes/domain/errors/quiz.errors.ts`
+- [X] T302 [US3] Create Quiz repository interface (port): `backend/src/features/quizzes/domain/ports/i-quiz-repository.ts` with methods: create(), findById(), findByCourseId()
+- [X] T303 [US3] Create Quiz repository token: `backend/src/features/quizzes/domain/ports/tokens.ts` (export const QUIZ_REPOSITORY = 'QUIZ_REPOSITORY')
+- [X] T304 [US3] Implement Prisma Quiz repository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz.repository.ts` implementing IQuizRepository
+- [X] T305 [US3] Create request DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/requests/create-quiz.dto.ts` (count, type properties)
+- [X] T306 [US3] Create response DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/responses/quiz.response.dto.ts`, `quiz-list.response.dto.ts` (with items array wrapper)
+- [X] T307 [US3] Create GenerateQuizUseCase: `backend/src/features/quizzes/application/use-cases/generate-quiz.usecase.ts` (inject QUIZ_REPOSITORY, IAI_SERVICE, emit QuizGeneratedEvent)
+- [X] T308 [US3] Create GetQuizByIdUseCase: `backend/src/features/quizzes/application/use-cases/get-quiz-by-id.usecase.ts`
+- [X] T309 [US3] Create ListQuizzesByCourseUseCase: `backend/src/features/quizzes/application/use-cases/list-quizzes-by-course.usecase.ts`
+- [X] T310 [US3] Implement quizzes controller: `backend/src/features/quizzes/quizzes.controller.ts` (POST `/courses/:courseId/quizzes`, GET `/courses/:courseId/quizzes`, GET `/quizzes/:id`) using JwtAuthGuard, DomainExceptionFilter, import type for DTOs
+- [X] T311 [US3] Create QuizGeneratedEvent: `backend/src/features/quizzes/domain/events/quiz-generated.event.ts`
+- [X] T312 [US3] Create Quizzes module: `backend/src/features/quizzes/quizzes.module.ts` (provide QUIZ_REPOSITORY with PrismaQuizRepository, export QUIZ_REPOSITORY and use cases)
+- [X] T313 [US3] Persist questions structure as Json in Prisma schema and implement MCQ options count validation in quiz entity
 - [ ] T314 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
-- [ ] T315 [US3] Add acceptance test following TDD: `backend/test/acceptance/quiz.spec.ts` (generation assertions, array format validation)
+- [X] T315 [US3] Add acceptance test following TDD: `backend/test/acceptance/quiz.spec.ts` (generation assertions, array format validation)
 
 User Story US4 (P2) — Complete a quiz and view results (FR-005)
 Independent test criteria: Submit answers, compute score, show breakdown.
