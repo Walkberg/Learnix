@@ -56,12 +56,13 @@ As a user I want to generate a quiz based on a course summary to test my knowled
 
 **Why this priority**: Allows learners to assess knowledge and complements the study sheet.
 
-**Independent Test**: From an existing study sheet, generate a quiz of X questions and verify that each question matches the requested type (MCQ or open) and has plausible answers.
+**Independent Test**: From an existing study sheet, generate a quiz of X questions and verify that each question matches the requested type (MCQ or OPEN), includes a plausible correct answer, and provides a concise `explanation` justifying the answer.
 
 **Acceptance Scenarios**:
 
-1. **Given** a study sheet, **When** the user requests "Generate quiz (10 questions)", **Then** the system creates a quiz of 10 questions with multiple-choice or open questions according to configuration.
-2. **Given** the user selects "MCQ - 4 choices", **When** the quiz is generated, **Then** each question has exactly 4 options with one correct answer.
+1. **Given** a study sheet, **When** the user requests "Generate quiz (10 questions)", **Then** the system creates a quiz of 10 questions with multiple-choice or open questions according to configuration, each containing an `explanation`.
+2. **Given** the user selects "MCQ - 4 choices", **When** the quiz is generated, **Then** each question has exactly 4 options with one correct answer and an `explanation` clarifying why the answer is correct.
+3. **Given** the user selects "OPEN", **When** the quiz is generated, **Then** each question has a textual correct answer and an `explanation` providing reasoning/context.
 
 ---
 
@@ -132,8 +133,11 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
   - Methods: create() - factory method for new summaries
 
 - **Quiz**: Entity for a test of knowledge
-  - Properties: id, courseId, questionList, parameters (count, type)
-  - Methods: create(), grade()
+  - Properties: id, courseId, questions (discriminated), parameters (count, types)
+  - Question discriminated union:
+    - MCQQuestion: `{ id: string, type: 'MCQ', question: string, options: string[], correctAnswer: number /* index 0-3 */, explanation: string }`
+    - OpenQuestion: `{ id: string, type: 'OPEN', question: string, correctAnswer: string, explanation: string }`
+  - Methods: create()
   - Domain Errors: QuizQuotaExceededError, InvalidQuestionsCountError
 
 #### Domain Ports (Interfaces)
@@ -212,6 +216,10 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 
 ### Session 2025-11-07
 - Q: Should DTOs be TypeScript classes or interfaces? → A: TypeScript interfaces. All request and response DTOs must be defined as interfaces (not classes), imported using `import type` syntax, and controllers must return plain objects that match the interface shape rather than class instances.
+
+### Session 2025-11-08
+- Q: How should quiz questions be typed and what data must be returned? → A: Use discriminated unions (`type: 'MCQ' | 'OPEN'`). MCQ questions include `options: string[]` (4 choices), `correctAnswer: number` (index 0-3), and `explanation: string`. OPEN questions include `correctAnswer: string` and `explanation: string`.
+- Q: Should AI responses include explanations? → A: Yes, adapters must request and return a short `explanation` for both MCQ and OPEN questions. Controllers and DTOs must expose it in API responses.
 
 ## Development Requirements
 

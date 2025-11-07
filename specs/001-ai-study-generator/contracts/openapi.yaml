@@ -116,6 +116,45 @@ paths:
       responses:
         '201':
           description: Quiz created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResponse'
+    get:
+      summary: List quizzes for a course
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: courseId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizListResponse'
+  /quizzes/{quizId}:
+    get:
+      summary: Get quiz by id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: quizId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizResponse'
   /quizzes/{quizId}/attempts:
     post:
       summary: Submit quiz answers and get score
@@ -147,3 +186,86 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  schemas:
+    QuizQuestionMCQ:
+      type: object
+      required: [id, type, question, options, correctAnswer, explanation]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [MCQ]
+        question:
+          type: string
+        options:
+          type: array
+          minItems: 4
+          maxItems: 4
+          items:
+            type: string
+        correctAnswer:
+          type: integer
+          minimum: 0
+          maximum: 3
+        explanation:
+          type: string
+    QuizQuestionOPEN:
+      type: object
+      required: [id, type, question, correctAnswer, explanation]
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [OPEN]
+        question:
+          type: string
+        correctAnswer:
+          type: string
+        explanation:
+          type: string
+    QuizQuestion:
+      oneOf:
+        - $ref: '#/components/schemas/QuizQuestionMCQ'
+        - $ref: '#/components/schemas/QuizQuestionOPEN'
+      discriminator:
+        propertyName: type
+        mapping:
+          MCQ: '#/components/schemas/QuizQuestionMCQ'
+          OPEN: '#/components/schemas/QuizQuestionOPEN'
+    QuizParams:
+      type: object
+      required: [count, types]
+      properties:
+        count:
+          type: integer
+        types:
+          type: array
+          items:
+            type: string
+    QuizResponse:
+      type: object
+      required: [id, courseId, params, questions, createdAt]
+      properties:
+        id:
+          type: string
+        courseId:
+          type: string
+        params:
+          $ref: '#/components/schemas/QuizParams'
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizQuestion'
+        createdAt:
+          type: string
+          format: date-time
+    QuizListResponse:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuizResponse'

@@ -83,6 +83,13 @@ Independent test criteria: Generate quiz with requested number of questions and 
 - [ ] T314 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
 - [X] T315 [US3] Add acceptance test following TDD: `backend/test/acceptance/quiz.spec.ts` (generation assertions, array format validation)
 
+Enhancement 2025-11-08 — Quiz explanations + discriminated types
+- [X] T316 [US3] Enhance QuizQuestion typing to discriminated union (MCQ | OPEN) with mandatory `explanation` field in domain (`quiz.entity.ts`)
+- [X] T317 [US3] Update AI adapter and prompts to include `explanation` (Gemini Zod schemas, response schema, `prompts.ts`, `mock-adapter.ts`)
+- [X] T318 [US3] Update DTOs and controller mappings to expose `explanation` on all quiz endpoints
+- [X] T319 [US3] Update acceptance tests to assert presence of `explanation` in responses and persisted data
+- [X] T320 [US3] Update specs and contracts (`spec.md`, `data-model.md`, `contracts/openapi.yaml`) to reflect new question shapes
+
 User Story US4 (P2) — Complete a quiz and view results (FR-005)
 Independent test criteria: Submit answers, compute score, show breakdown.
 - [ ] T400 [US4] Implement QuizAttempt domain & repository: `backend/src/features/quizzes/infrastructure/quizAttempt.repository.ts`
@@ -118,8 +125,8 @@ Implementation strategy
 - Keep database simple (SQLite for local dev, Postgres for prod). Use Prisma migrations and seed scripts.
 
 Validation checklist
-- Total tasks: 49
-- Tasks per story: US1:6, US2:17, US3:16, US4:5, Setup+Foundational+Polish:16
+- Total tasks: 54
+- Tasks per story: US1:6, US2:17, US3:21, US4:5, Setup+Foundational+Polish:16
 - Parallel opportunities: T001/T002, T012/T013, T203/T204 (frontend/backend), T300-T306 (domain/dto setup), T314 (frontend UI parallel to backend)
 
 Path to generated file:

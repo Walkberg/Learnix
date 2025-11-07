@@ -58,11 +58,20 @@ Validation rules:
 - createdAt: DateTime
 
 ### Question (part of Quiz.questions)
-- id: string
-- type: enum (MCQ, OPEN)
-- question: string
-- options?: string[] (for MCQ)
-- correctAnswer?: string or index
+Discriminated union stored as JSON:
+1. MCQQuestion
+  - id: string
+  - type: 'MCQ'
+  - question: string
+  - options: string[4]
+  - correctAnswer: number (0-3 index)
+  - explanation: string (short justification)
+2. OpenQuestion
+  - id: string
+  - type: 'OPEN'
+  - question: string
+  - correctAnswer: string (expected concise answer)
+  - explanation: string (short reasoning / context)
 
 ### QuizAttempt
 - id: string (cuid)
