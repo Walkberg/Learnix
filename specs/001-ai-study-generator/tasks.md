@@ -65,12 +65,23 @@ Independent test criteria: Create a course which triggers async generation of a 
 - [X] T216 [US2] Enforce GET array response format rule (wrap arrays in `{ items: [...] }`) in all relevant backend endpoints (middleware or DTO)
 
 User Story US3 (P2) — Generate a quiz from a course (FR-004)
-Independent test criteria: Generate quiz with requested number of questions and MCQ options count.
-- [ ] T300 [US3] Create Quiz domain, DTOs and repository: `backend/src/features/quizzes/domain/quiz.entity.ts`, `backend/src/features/quizzes/infrastructure/quiz.repository.ts`
-- [ ] T301 [US3] Implement quiz generation service `backend/src/features/quizzes/quizzes.service.ts` (uses summary or course text + AI Adapter) and controller `backend/src/features/quizzes/quizzes.controller.ts` (`POST /api/courses/:id/quizzes`)
-- [ ] T302 [US3] Persist questions structure in `Quiz.questions` (Json) and implement validation for MCQ options count
-- [ ] T303 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
-- [ ] T304 [US3] Add acceptance test stubs: `backend/test/acceptance/quiz.spec.ts` (generation assertions)
+Independent test criteria: Generate quiz with requested number of questions and MCQ options count. Response must follow array format rule (FR-015).
+- [ ] T300 [US3] Create Quiz domain entity with factory method: `backend/src/features/quizzes/domain/quiz.entity.ts` (properties: id, courseId, params, questions, createdAt)
+- [ ] T301 [US3] Create Quiz domain errors: `backend/src/features/quizzes/domain/errors/quiz-quota-exceeded.error.ts`, `invalid-questions-count.error.ts`
+- [ ] T302 [US3] Create Quiz repository interface (port): `backend/src/features/quizzes/domain/ports/i-quiz-repository.ts` with methods: create(), findById(), findByCourseId()
+- [ ] T303 [US3] Create Quiz repository token: `backend/src/features/quizzes/domain/ports/tokens.ts` (export const QUIZ_REPOSITORY = 'QUIZ_REPOSITORY')
+- [ ] T304 [US3] Implement Prisma Quiz repository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz.repository.ts` implementing IQuizRepository
+- [ ] T305 [US3] Create request DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/requests/create-quiz.dto.ts` (count, type properties)
+- [ ] T306 [US3] Create response DTOs as TypeScript interfaces: `backend/src/features/quizzes/dto/responses/quiz.response.dto.ts`, `quiz-list.response.dto.ts` (with items array wrapper)
+- [ ] T307 [US3] Create GenerateQuizUseCase: `backend/src/features/quizzes/application/use-cases/generate-quiz.usecase.ts` (inject QUIZ_REPOSITORY, IAI_SERVICE, emit QuizGeneratedEvent)
+- [ ] T308 [US3] Create GetQuizByIdUseCase: `backend/src/features/quizzes/application/use-cases/get-quiz-by-id.usecase.ts`
+- [ ] T309 [US3] Create ListQuizzesByCourseUseCase: `backend/src/features/quizzes/application/use-cases/list-quizzes-by-course.usecase.ts`
+- [ ] T310 [US3] Implement quizzes controller: `backend/src/features/quizzes/quizzes.controller.ts` (POST `/courses/:courseId/quizzes`, GET `/courses/:courseId/quizzes`, GET `/quizzes/:id`) using JwtAuthGuard, DomainExceptionFilter, import type for DTOs
+- [ ] T311 [US3] Create QuizGeneratedEvent: `backend/src/features/quizzes/domain/events/quiz-generated.event.ts`
+- [ ] T312 [US3] Create Quizzes module: `backend/src/features/quizzes/quizzes.module.ts` (provide QUIZ_REPOSITORY with PrismaQuizRepository, export QUIZ_REPOSITORY and use cases)
+- [ ] T313 [US3] Persist questions structure as Json in Prisma schema and implement MCQ options count validation in quiz entity
+- [ ] T314 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
+- [ ] T315 [US3] Add acceptance test following TDD: `backend/test/acceptance/quiz.spec.ts` (generation assertions, array format validation)
 
 User Story US4 (P2) — Complete a quiz and view results (FR-005)
 Independent test criteria: Submit answers, compute score, show breakdown.
@@ -97,7 +108,9 @@ Dependencies (story completion order)
 Parallel execution examples
 - Frontend scaffold (T001) and backend scaffold (T002) are parallelizable.
 - AI adapter (T012) and job queue scaffolding (T013) can be implemented in parallel by different engineers.
-- Frontend UI for courses (T204) and backend course endpoints (T201) can be worked on in parallel once the contracts are agreed.
+- Frontend UI for courses (T207) and backend course endpoints (T202) can be worked on in parallel once the contracts are agreed.
+- Quiz domain setup (T300-T306: entity, errors, ports, DTOs) can be parallelized across multiple developers.
+- Frontend quiz UI (T314) can be developed in parallel with backend use cases (T307-T309) once DTOs are defined.
 
 Implementation strategy
 - MVP-first: deliver US1 and US2 (Authentication + Study sheet generation) as first release. US3 and US4 follow in next sprint.
@@ -105,9 +118,9 @@ Implementation strategy
 - Keep database simple (SQLite for local dev, Postgres for prod). Use Prisma migrations and seed scripts.
 
 Validation checklist
-- Total tasks: 38
-- Tasks per story: US1:6, US2:6, US3:5, US4:5, Setup+Foundational+Polish:16
-- Parallel opportunities: T001/T002, T012/T013, T203/T204 (frontend/backend)
+- Total tasks: 49
+- Tasks per story: US1:6, US2:17, US3:16, US4:5, Setup+Foundational+Polish:16
+- Parallel opportunities: T001/T002, T012/T013, T203/T204 (frontend/backend), T300-T306 (domain/dto setup), T314 (frontend UI parallel to backend)
 
 Path to generated file:
 `C:\Users\samue\Documents\Code\Learnix\specs\001-ai-study-generator\tasks.md`
