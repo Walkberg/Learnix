@@ -1,10 +1,21 @@
-export interface QuizQuestionDto {
+export interface MCQQuestionDto {
   id: string;
-  type: 'MCQ' | 'OPEN';
+  type: 'MCQ';
   question: string;
-  options?: string[];
-  correctAnswer: string | number;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
 }
+
+export interface OpenQuestionDto {
+  id: string;
+  type: 'OPEN';
+  question: string;
+  correctAnswer: string;
+  explanation: string;
+}
+
+export type QuizQuestionDto = MCQQuestionDto | OpenQuestionDto;
 
 export interface QuizResponseDto {
   id: string;

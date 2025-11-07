@@ -73,6 +73,7 @@ describe('Quiz (e2e)', () => {
               'An IDE',
             ],
             correctAnswer: 0,
+            explanation: 'JavaScript is a programming language for the web.',
           },
           {
             question: 'What is a variable?',
@@ -83,6 +84,7 @@ describe('Quiz (e2e)', () => {
               'A condition',
             ],
             correctAnswer: 0,
+            explanation: 'A variable stores data values.',
           },
         ],
       });
@@ -109,6 +111,9 @@ describe('Quiz (e2e)', () => {
       expect(firstQuestion.question).toBe('What is JavaScript?');
       expect(firstQuestion.options).toHaveLength(4);
       expect(firstQuestion.correctAnswer).toBe(0);
+      expect(firstQuestion.explanation).toBe(
+        'JavaScript is a programming language for the web.',
+      );
 
       // Verify quiz persisted
       const savedQuiz = await prisma.quiz.findUnique({
@@ -147,6 +152,7 @@ describe('Quiz (e2e)', () => {
               question: 'Q1',
               options: ['A', 'B', 'C', 'D'],
               correctAnswer: 0,
+              explanation: 'Explanation for Q1',
             },
           ],
         },
@@ -157,7 +163,13 @@ describe('Quiz (e2e)', () => {
           courseId: course.id,
           params: { count: 3, types: ['OPEN'] },
           questions: [
-            { id: '2', type: 'OPEN', question: 'Q2', correctAnswer: 'Answer' },
+            {
+              id: '2',
+              type: 'OPEN',
+              question: 'Q2',
+              correctAnswer: 'Answer',
+              explanation: 'Explanation for Q2',
+            },
           ],
         },
       });
@@ -207,6 +219,7 @@ describe('Quiz (e2e)', () => {
               question: 'Sample question',
               options: ['A', 'B', 'C', 'D'],
               correctAnswer: 2,
+              explanation: 'Sample explanation',
             },
           ],
         },
@@ -222,6 +235,7 @@ describe('Quiz (e2e)', () => {
       expect(response.body.courseId).toBe(course.id);
       expect(response.body.questions).toHaveLength(1);
       expect(response.body.questions[0].question).toBe('Sample question');
+      expect(response.body.questions[0].explanation).toBe('Sample explanation');
     });
 
     it('should return 400 when question count is invalid', async () => {

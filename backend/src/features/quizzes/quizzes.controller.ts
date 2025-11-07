@@ -44,13 +44,26 @@ export class QuizzesController {
       id: quiz.id,
       courseId: quiz.courseId,
       params: quiz.params,
-      questions: quiz.questions.map((q) => ({
-        id: q.id,
-        type: q.type,
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-      })),
+      questions: quiz.questions.map((q) => {
+        if (q.type === 'MCQ') {
+          return {
+            id: q.id,
+            type: q.type,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+          };
+        } else {
+          return {
+            id: q.id,
+            type: q.type,
+            question: q.question,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+          };
+        }
+      }),
       createdAt: quiz.createdAt,
     };
   }
@@ -70,13 +83,26 @@ export class QuizzesController {
         id: quiz.id,
         courseId: quiz.courseId,
         params: quiz.params,
-        questions: quiz.questions.map((q) => ({
-          id: q.id,
-          type: q.type,
-          question: q.question,
-          options: q.options,
-          correctAnswer: q.correctAnswer,
-        })),
+        questions: quiz.questions.map((q) => {
+          if (q.type === 'MCQ') {
+            return {
+              id: q.id,
+              type: q.type,
+              question: q.question,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+            };
+          } else {
+            return {
+              id: q.id,
+              type: q.type,
+              question: q.question,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+            };
+          }
+        }),
         createdAt: quiz.createdAt,
       })),
     };
@@ -96,13 +122,26 @@ export class QuizzesController {
       id: quiz.id,
       courseId: quiz.courseId,
       params: quiz.params,
-      questions: quiz.questions.map((q) => ({
-        id: q.id,
-        type: q.type,
-        question: q.question,
-        options: q.options,
-        correctAnswer: q.correctAnswer,
-      })),
+      questions: quiz.questions.map((q) => {
+        if (q.type === 'MCQ') {
+          return {
+            id: q.id,
+            type: q.type,
+            question: q.question,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+          };
+        } else {
+          return {
+            id: q.id,
+            type: q.type,
+            question: q.question,
+            correctAnswer: q.correctAnswer,
+            explanation: q.explanation,
+          };
+        }
+      }),
       createdAt: quiz.createdAt,
     };
   }

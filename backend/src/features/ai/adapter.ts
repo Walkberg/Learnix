@@ -6,6 +6,21 @@ export type AiSummary = {
   summary: string;
 };
 
+export type AiMCQQuestion = {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+};
+
+export type AiOpenQuestion = {
+  question: string;
+  answer: string;
+  explanation: string;
+};
+
+export type AiQuizQuestion = AiMCQQuestion | AiOpenQuestion;
+
 export interface AIAdapter {
   generateSummary(text: string, maxPoints?: number): Promise<AiSummary>;
   generateFlashcards(text: string, count: number): Promise<AiFlashCard[]>;
@@ -13,7 +28,7 @@ export interface AIAdapter {
     text: string,
     count: number,
     type?: 'mcq' | 'open',
-  ): Promise<any[]>;
+  ): Promise<AiQuizQuestion[]>;
 }
 
 // DI token for NestJS providers. Use this constant when binding or injecting the adapter.

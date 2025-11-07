@@ -42,11 +42,20 @@ export class MockAdapter implements AIAdapter {
     }
     const questions: any[] = [];
     for (let i = 0; i < count; i++) {
-      questions.push({
-        prompt: `Mock question ${i + 1}`,
-        type,
-        options: type === 'mcq' ? ['A', 'B', 'C', 'D'] : [],
-      });
+      if (type === 'mcq') {
+        questions.push({
+          question: `Mock MCQ question ${i + 1}`,
+          options: ['A', 'B', 'C', 'D'],
+          correctAnswer: 0,
+          explanation: 'Mock explanation for MCQ',
+        });
+      } else {
+        questions.push({
+          question: `Mock OPEN question ${i + 1}`,
+          answer: `Mock answer ${i + 1}`,
+          explanation: 'Mock explanation for OPEN',
+        });
+      }
     }
     return questions;
   }

@@ -3,13 +3,24 @@ export interface QuizParams {
   types: string[];
 }
 
-export interface QuizQuestion {
+export interface MCQQuestion {
   id: string;
-  type: 'MCQ' | 'OPEN';
+  type: 'MCQ';
   question: string;
-  options?: string[];
-  correctAnswer: string | number;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
 }
+
+export interface OpenQuestion {
+  id: string;
+  type: 'OPEN';
+  question: string;
+  correctAnswer: string;
+  explanation: string;
+}
+
+export type QuizQuestion = MCQQuestion | OpenQuestion;
 
 export class Quiz {
   constructor(

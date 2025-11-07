@@ -53,13 +53,26 @@ export class GenerateQuizUseCase {
       aiType,
     );
 
-    const questions: QuizQuestion[] = aiQuestions.map((q) => ({
-      id: crypto.randomUUID(),
-      type: command.type === 'MCQ' ? 'MCQ' : 'OPEN',
-      question: q.question,
-      options: q.options || undefined,
-      correctAnswer: q.correctAnswer,
-    }));
+    const questions: QuizQuestion[] = aiQuestions.map((q) => {
+      if ('options' in q) {
+        return {
+          id: crypto.randomUUID(),
+          type: 'MCQ' as const,
+          question: q.question,
+          options: q.options,
+          correctAnswer: q.correctAnswer,
+          explanation: q.explanation,
+        };
+      } else {
+        return {
+          id: crypto.randomUUID(),
+          type: 'OPEN' as const,
+          question: q.question,
+          correctAnswer: q.answer,
+          explanation: q.explanation,
+        };
+      }
+    });
 
     const quiz = Quiz.create({
       courseId: command.courseId,

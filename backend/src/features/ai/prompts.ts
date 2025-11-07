@@ -40,21 +40,22 @@ export const quizPrompt = (
 ) =>
   type === 'mcq'
     ? `You are a study helper assistant. Create a JSON array of exactly ${count} multiple-choice questions from the content.
-Each question object must contain: "question" (string), "options" (array of 4 strings), and "correctAnswer" (one of the options as string).
+Each question object must contain: "question" (string), "options" (array of 4 strings), "correctAnswer" (integer index 0-3), and "explanation" (a short, concise explanation of why this is the correct answer, max 10 words).
 
 Requirements:
 - Return ONLY valid JSON (no extra text).
 - All the text MUST be in the french language.
+- The explanation should be clear and help the learner understand the concept.
 
 Content:
 ${content}`
     : `You are a study helper assistant. Create a JSON array of exactly ${count} open-ended questions from the content.
-Each question object must contain: "question" (string) and "answer" (string).
+Each question object must contain: "question" (string), "answer" (string a brief answer mostly one word and max 3 words), and "explanation" (a short, concise explanation helping understand the answer, max 10 words).
 
 Requirements:
 - Return ONLY valid JSON (no extra text).
 - All the text MUST be in the french language.
-
+- The explanation should provide additional context or reasoning.
 
 Content:
 ${content}`;

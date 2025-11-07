@@ -27,13 +27,13 @@ const quizMCQQuestionSchema = z.object({
   question: z.string(),
   options: z.array(z.string()),
   correctAnswer: z.number(),
-  explanation: z.string().optional(),
+  explanation: z.string(),
 });
 
 const quizOpenQuestionSchema = z.object({
   question: z.string(),
   answer: z.string(),
-  keywords: z.array(z.string()).optional(),
+  explanation: z.string(),
 });
 
 const quizMCQResponseSchema = z.array(quizMCQQuestionSchema);
@@ -111,11 +111,11 @@ const quizMCQSchema: Schema = {
       },
       explanation: {
         type: SchemaType.STRING,
-        description: 'Optional explanation',
-        nullable: true,
+        description: 'Short explanation of why this is the correct answer',
+        nullable: false,
       },
     },
-    required: ['question', 'options', 'correctAnswer'],
+    required: ['question', 'options', 'correctAnswer', 'explanation'],
   },
 };
 
@@ -134,16 +134,13 @@ const quizOpenSchema: Schema = {
         description: 'The expected answer',
         nullable: false,
       },
-      keywords: {
-        type: SchemaType.ARRAY,
-        description: 'Optional keywords for grading',
-        items: {
-          type: SchemaType.STRING,
-        },
-        nullable: true,
+      explanation: {
+        type: SchemaType.STRING,
+        description: 'Short explanation providing additional context',
+        nullable: false,
       },
     },
-    required: ['question', 'answer'],
+    required: ['question', 'answer', 'explanation'],
   },
 };
 
