@@ -549,7 +549,7 @@
 								"quizzes"
 							]
 						},
-						"description": "Récupérer tous les quizzes d'un cours. Chaque quiz inclut lastAttemptSummary (attemptId, score, submittedAt) si l'utilisateur a déjà tenté le quiz."
+						"description": "Récupérer tous les quizzes d'un cours. Chaque quiz inclut lastAttemptSummary (attemptId, score, submittedAt, answers) si l'utilisateur a déjà tenté le quiz. Le champ 'answers' contient un tableau d'objets { questionId, answer } pour reconstituer les choix utilisateur."
 					},
 					"response": []
 				},
@@ -578,7 +578,7 @@
 								"{{quiz_id}}"
 							]
 						},
-						"description": "Récupérer un quiz spécifique par son ID. Inclut lastAttemptSummary (attemptId, score, submittedAt) si l'utilisateur a déjà tenté le quiz."
+						"description": "Récupérer un quiz spécifique par son ID. Inclut lastAttemptSummary (attemptId, score, submittedAt, answers) si l'utilisateur a déjà tenté le quiz. Le champ 'answers' permet de reconstituer les réponses fournies par l'utilisateur."
 					},
 					"response": []
 				},

@@ -346,10 +346,13 @@ describe('Quiz (e2e)', () => {
       // Fetch quiz and verify lastAttemptSummary present
       const quizRes = await request(app.getHttpServer())
         .get(`/quizzes/${quiz.id}`)
-        .set('Authorization', 'Bearer dummy-token`')
+        .set('Authorization', 'Bearer dummy-token')
         .expect(200);
       expect(quizRes.body.lastAttemptSummary).toBeDefined();
       expect(quizRes.body.lastAttemptSummary.score).toBe(1);
+      expect(quizRes.body.lastAttemptSummary.answers).toHaveLength(2);
+      expect(quizRes.body.lastAttemptSummary.answers[0].questionId).toBe('q1');
+      expect(quizRes.body.lastAttemptSummary.answers[0].answer).toBe(1);
     });
 
     it('should reject invalid answer count', async () => {

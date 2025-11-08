@@ -30,5 +30,9 @@ export interface QuizResponseDto {
     attemptId: string;
     score: number;
     submittedAt: Date;
+    answers: {
+      questionId: string;
+      answer: number | string;
+    }[];
   } | null;
 }

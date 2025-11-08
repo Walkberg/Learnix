@@ -10,6 +10,7 @@ export interface LastAttemptSummary {
   attemptId: string;
   score: number;
   submittedAt: Date;
+  answers: AttemptAnswer[];
 }
 
 export class QuizAttempt {

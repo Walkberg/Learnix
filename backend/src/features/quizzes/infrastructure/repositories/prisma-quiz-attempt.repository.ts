@@ -35,6 +35,7 @@ export class PrismaQuizAttemptRepository implements IQuizAttemptRepository {
       attemptId: attempt.id,
       score: attempt.score,
       submittedAt: attempt.submittedAt,
+      answers: (attempt.answers as any) ?? [],
     };
   }
 
@@ -84,6 +85,7 @@ export class PrismaQuizAttemptRepository implements IQuizAttemptRepository {
           attemptId: attempt.id,
           score: attempt.score,
           submittedAt: attempt.submittedAt,
+          answers: (attempt.answers as any) ?? [],
         });
       }
     });
