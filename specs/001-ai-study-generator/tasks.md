@@ -80,7 +80,8 @@ Independent test criteria: Generate quiz with requested number of questions and 
 - [X] T311 [US3] Create QuizGeneratedEvent: `backend/src/features/quizzes/domain/events/quiz-generated.event.ts`
 - [X] T312 [US3] Create Quizzes module: `backend/src/features/quizzes/quizzes.module.ts` (provide QUIZ_REPOSITORY with PrismaQuizRepository, export QUIZ_REPOSITORY and use cases)
 - [X] T313 [US3] Persist questions structure as Json in Prisma schema and implement MCQ options count validation in quiz entity
-- [ ] T314 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
+// Deferred Frontend (Quiz UI) — moved to Deferred Frontend Phase
+// - [ ] T314 [P] Create frontend quiz creation UI: `frontend/src/features/quizzes/QuizCreateModal.tsx`, `frontend/src/features/quizzes/QuizList.tsx`
 - [X] T315 [US3] Add acceptance test following TDD: `backend/test/acceptance/quiz.spec.ts` (generation assertions, array format validation)
 
 Enhancement 2025-11-08 — Quiz explanations + discriminated types
@@ -90,19 +91,41 @@ Enhancement 2025-11-08 — Quiz explanations + discriminated types
 - [X] T319 [US3] Update acceptance tests to assert presence of `explanation` in responses and persisted data
 - [X] T320 [US3] Update specs and contracts (`spec.md`, `data-model.md`, `contracts/openapi.yaml`) to reflect new question shapes
 
-User Story US4 (P2) — Complete a quiz and view results (FR-005)
-Independent test criteria: Submit answers, compute score, show breakdown.
-- [ ] T400 [US4] Implement QuizAttempt domain & repository: `backend/src/features/quizzes/infrastructure/quizAttempt.repository.ts`
-- [ ] T401 [US4] Implement attempt submission endpoint `backend/src/features/quizzes/quizzes.controller.ts` POST `/api/quizzes/:id/attempts`
-- [ ] T402 [US4] Implement scoring and result DTOs: `backend/src/features/quizzes/application/scoring.service.ts` and result persistence
-- [ ] T403 [P] Create frontend quiz player and results UI: `frontend/src/features/quizzes/QuizPlayer.tsx`, `frontend/src/features/quizzes/QuizResults.tsx`
-- [ ] T404 [US4] Add acceptance test for completing quiz and scoring in `backend/test/acceptance/quiz.spec.ts`
+User Story US4 (P2) — Complete a quiz and view results (FR-005, FR-016, FR-017)
+Independent test criteria: Submit answers; backend validates payload against stored quiz questions (no client-side scoring trust), computes score, persists attempt. Fetch single quiz and list quizzes: each includes requesting user's `lastAttemptSummary`.
+- [ ] T400 [US4] Create QuizAttempt domain entity & errors: `backend/src/features/quizzes/domain/quiz-attempt.entity.ts`, `backend/src/features/quizzes/domain/errors/quiz-attempt.errors.ts`
+- [ ] T401 [US4] Create QuizAttempt repository interface & token: `backend/src/features/quizzes/domain/ports/i-quiz-attempt-repository.ts`, `backend/src/features/quizzes/domain/ports/tokens.ts` (export const QUIZ_ATTEMPT_REPOSITORY)
+- [ ] T402 [US4] Implement Prisma QuizAttempt repository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz-attempt.repository.ts`
+- [ ] T403 [US4] Add Prisma schema for attempts (if not present) updating `backend/prisma/schema.prisma` (model QuizAttempt with answers Json & score Int)
+- [ ] T404 [US4] Create SubmitQuizAttemptUseCase: `backend/src/features/quizzes/application/use-cases/submit-quiz-attempt.usecase.ts` (validate answer count, MCQ indices 0-3, OPEN answer normalization, compute score, persist attempt)
+- [ ] T405 [US4] Create GetLastAttemptForUserUseCase: `backend/src/features/quizzes/application/use-cases/get-last-attempt-for-user.usecase.ts`
+- [ ] T406 [US4] Extend GetQuizByIdUseCase to include lastAttemptSummary (compose with GetLastAttemptForUserUseCase)
+- [ ] T407 [US4] Extend ListQuizzesByCourseUseCase to map each quiz with lastAttemptSummary for requesting user
+- [ ] T408 [US4] Create attempt submission request/response DTOs: `backend/src/features/quizzes/dto/requests/submit-quiz-attempt.dto.ts`, `backend/src/features/quizzes/dto/responses/quiz-attempt.response.dto.ts`
+- [ ] T409 [US4] Update quiz response DTOs to optionally include `lastAttemptSummary` field: modify `quiz.response.dto.ts`, `quiz-list.response.dto.ts`
+- [ ] T410 [US4] Implement POST `/quizzes/:id/attempts` in `backend/src/features/quizzes/quizzes.controller.ts` mapping to SubmitQuizAttemptUseCase and returning attempt response + score
+- [ ] T411 [US4] Update GET `/quizzes/:id` controller mapping to add `lastAttemptSummary`
+- [ ] T412 [US4] Update GET `/courses/:courseId/quizzes` controller mapping to add `lastAttemptSummary` per item
+- [ ] T413 [US4] Add backend validation (class-validator or manual) ensuring MCQ answers are numbers within range & OPEN answers are non-empty trimmed strings before use case execution
+- [ ] T414 [US4] Update acceptance test to cover: valid submission, invalid answer count, invalid MCQ index, lastAttemptSummary presence (modify `backend/test/acceptance/quiz.spec.ts`)
+// Deferred Frontend (Quiz Attempt & Results UI) — moved to Deferred Frontend Phase
+// - [ ] T415 [P] [US4] Create frontend quiz player component with answer form: `frontend/src/features/quizzes/QuizPlayer.tsx`
+// - [ ] T416 [P] [US4] Create frontend quiz results component showing score + per-question correctness: `frontend/src/features/quizzes/QuizResults.tsx`
+// - [ ] T417 [US4] Update frontend quiz fetch logic to display last attempt summary in list/detail views: `frontend/src/features/quizzes/hooks/useQuiz.ts` (create if missing)
+- [ ] T418 [US4] Update OpenAPI spec to add attempt submission endpoint and lastAttemptSummary schema: `specs/001-ai-study-generator/contracts/openapi.yaml`
+- [ ] T419 [US4] Update documentation in `specs/001-ai-study-generator/spec.md` already applied (verify) and regenerate quickstart if needed
 
 Final Phase: Polish & Cross-cutting concerns
 - [ ] T900 Implement quota enforcement (Free vs Premium) in `backend/src/common/guards/quota.guard.ts` and service `backend/src/features/users/user.quota.ts` (maps to FR-006)
 - [ ] T901 Implement graceful AI error handling and user-facing messages in `backend/src/features/ai/*` and frontend global error UI `frontend/src/ui/ErrorBanner.tsx` (maps to FR-007)
 - [ ] T902 Add logging and basic observability: `backend/src/common/interceptors/logging.interceptor.ts`
 - [ ] T903 Add end-to-end acceptance test that runs signup → create course → generate summary → generate quiz → take quiz (CI job)
+
+Deferred Frontend Phase (post-backend stabilization)
+// - [ ] T314 [Deferred] Quiz creation UI (depends on stable quiz DTOs)
+// - [ ] T415 [Deferred] Quiz player (depends on attempt submission endpoint)
+// - [ ] T416 [Deferred] Quiz results UI (depends on attempt scoring response shape)
+// - [ ] T417 [Deferred] Quiz hooks/data integration (depends on lastAttemptSummary in responses)
 
 Dependencies (story completion order)
 1. Phase 1 (Setup) must be completed first. (T001..T006)
@@ -125,9 +148,11 @@ Implementation strategy
 - Keep database simple (SQLite for local dev, Postgres for prod). Use Prisma migrations and seed scripts.
 
 Validation checklist
-- Total tasks: 54
-- Tasks per story: US1:6, US2:17, US3:21, US4:5, Setup+Foundational+Polish:16
-- Parallel opportunities: T001/T002, T012/T013, T203/T204 (frontend/backend), T300-T306 (domain/dto setup), T314 (frontend UI parallel to backend)
+// Updated after deferring frontend quiz tasks
+- Total active tasks (excluding deferred): 76
+- Tasks per story (active): US1:6, US2:17, US3:20 (T314 deferred), US4:17 (T415–T417 deferred), Setup+Foundational+Polish:16
+- Deferred tasks: 4 (T314, T415, T416, T417)
+- Parallel opportunities (active): T001/T002, T012/T013, T203/T204, T300-T306, T404–T409 (domain/DTO separation), T410–T412 (controller adjustments) 
 
 Path to generated file:
 `C:\Users\samue\Documents\Code\Learnix\specs\001-ai-study-generator\tasks.md`

@@ -72,11 +72,20 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 
 **Why this priority**: Measuring progress and providing immediate feedback increases engagement.
 
-**Independent Test**: Complete a saved quiz, submit answers, verify score calculation and display of corrections.
+**Independent Test**: Complete a saved quiz and submit answers; verify that scoring is computed server-side using the stored quiz questions (client answers are validated and cannot spoof correctness). Fetch the quiz by id and the list of quizzes for a course; both should include the requesting user's last attempt summary.
 
 **Acceptance Scenarios**:
 
-1. **Given** an uncompleted quiz, **When** the user submits their answers, **Then** the system displays the score, the list of answers and suggestions for improvement.
+1. Server-side validation and scoring
+  - **Given** a saved quiz with N questions, **When** the user submits answers via `POST /quizzes/:id/attempts`, **Then** the backend validates that the payload contains exactly N answers with the correct shapes (MCQ: number index 0-3; OPEN: string), compares them to the stored quiz questions, computes the score, persists the attempt, and returns the result.
+2. Invalid submission is rejected
+  - **Given** a quiz with N questions, **When** the user submits a payload with the wrong number of answers, or an MCQ index out of range, **Then** the backend returns 400 with a clear validation error and does not persist an attempt.
+3. GET quiz by id includes last attempt summary for the user
+  - **Given** one or more past attempts by the current user, **When** they call `GET /quizzes/:id`, **Then** the response includes a `lastAttemptSummary` with `{ attemptId, score, submittedAt }` for that user.
+4. GET quizzes by course includes last attempt summary for the user
+  - **Given** one or more past attempts by the current user, **When** they call `GET /courses/:courseId/quizzes`, **Then** each quiz item includes a `lastAttemptSummary` for that user if it exists (or `null` if no attempts).
+5. OPEN question scoring rule (initial)
+  - **Given** OPEN questions, **When** answers are submitted, **Then** the backend compares answers using a case-insensitive, trimmed comparison for scoring (no partial credit in MVP).
 
 ---
 
@@ -111,6 +120,8 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 
 # API Response Format Rule
 - **FR-015**: Any GET endpoint returning a list MUST return an object with an array property (e.g., `{ items: [...] }`), not a root array.
+ - **FR-016**: The system MUST validate and score quiz attempts on the server using the stored quiz questions; client-supplied correctness MUST be ignored.
+ - **FR-017**: The system MUST include the requesting user's last attempt summary in `GET /quizzes/:id` and `GET /courses/:courseId/quizzes` responses when available.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -139,6 +150,11 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
     - OpenQuestion: `{ id: string, type: 'OPEN', question: string, correctAnswer: string, explanation: string }`
   - Methods: create()
   - Domain Errors: QuizQuotaExceededError, InvalidQuestionsCountError
+
+- **QuizAttempt**: Entity representing a user's attempt at a quiz
+  - Properties: id, quizId, userId, answers (array aligned to questions; MCQ answers are numbers 0-3, OPEN answers are strings), score (0..N), submittedAt
+  - Methods: create()
+  - Domain Errors: InvalidAttemptAnswersError
 
 #### Domain Ports (Interfaces)
 
@@ -220,6 +236,11 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 ### Session 2025-11-08
 - Q: How should quiz questions be typed and what data must be returned? → A: Use discriminated unions (`type: 'MCQ' | 'OPEN'`). MCQ questions include `options: string[]` (4 choices), `correctAnswer: number` (index 0-3), and `explanation: string`. OPEN questions include `correctAnswer: string` and `explanation: string`.
 - Q: Should AI responses include explanations? → A: Yes, adapters must request and return a short `explanation` for both MCQ and OPEN questions. Controllers and DTOs must expose it in API responses.
+
+### Session 2025-11-08 (update — quiz attempts & last results)
+- Q: Where is scoring performed for quiz attempts? → A: On the backend only; the server loads the quiz, validates the payload, computes the score, persists the attempt, and returns the result.
+- Q: How are OPEN answers compared? → A: MVP uses a case-insensitive, trimmed string comparison; no partial credit.
+- Q: What extra data must GET quiz endpoints return? → A: Both `GET /quizzes/:id` and `GET /courses/:courseId/quizzes` must include a `lastAttemptSummary` for the requesting user when available: `{ attemptId: string, score: number, submittedAt: string }`.
 
 ## Development Requirements
 
