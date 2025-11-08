@@ -26,4 +26,9 @@ export interface QuizResponseDto {
   };
   questions: QuizQuestionDto[];
   createdAt: Date;
+  lastAttemptSummary?: {
+    attemptId: string;
+    score: number;
+    submittedAt: Date;
+  } | null;
 }

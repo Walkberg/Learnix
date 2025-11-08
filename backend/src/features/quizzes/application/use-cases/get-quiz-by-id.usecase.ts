@@ -1,9 +1,13 @@
 import { Injectable, Inject } from '@nestjs/common';
 import type { IQuizRepository } from '../../domain/ports/i-quiz-repository';
 import type { ICourseRepository } from '../../../courses/domain/ports/i-course-repository';
-import { QUIZ_REPOSITORY } from '../../domain/ports/tokens';
+import {
+  QUIZ_REPOSITORY,
+  QUIZ_ATTEMPT_REPOSITORY,
+} from '../../domain/ports/tokens';
+import type { IQuizAttemptRepository } from '../../domain/ports/i-quiz-attempt-repository';
 import { COURSE_REPOSITORY } from '../../../courses/domain/ports/tokens';
-import { Quiz } from '../../domain/quiz.entity';
+import type { QuizWithAttempt } from '../../domain/quiz-with-attempt';
 import {
   QuizNotFoundError,
   NotQuizOwnerError,
@@ -21,9 +25,11 @@ export class GetQuizByIdUseCase {
     private readonly quizRepository: IQuizRepository,
     @Inject(COURSE_REPOSITORY)
     private readonly courseRepository: ICourseRepository,
+    @Inject(QUIZ_ATTEMPT_REPOSITORY)
+    private readonly attemptRepository: IQuizAttemptRepository,
   ) {}
 
-  async execute(query: GetQuizByIdQuery): Promise<Quiz> {
+  async execute(query: GetQuizByIdQuery): Promise<QuizWithAttempt> {
     const quiz = await this.quizRepository.findById(query.id);
 
     if (!quiz) {
@@ -35,6 +41,15 @@ export class GetQuizByIdUseCase {
       throw new NotQuizOwnerError();
     }
 
-    return quiz;
+    const lastAttemptSummary =
+      await this.attemptRepository.findLastAttemptSummary(
+        query.id,
+        query.userId,
+      );
+
+    return {
+      quiz,
+      lastAttemptSummary,
+    };
   }
 }

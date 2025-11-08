@@ -474,6 +474,12 @@
 									"if (pm.response.code === 201) {",
 									"    const jsonData = pm.response.json();",
 									"    pm.environment.set(\"quiz_id\", jsonData.id);",
+									"    if (jsonData.questions && jsonData.questions.length > 0) {",
+									"        pm.environment.set(\"question_id_1\", jsonData.questions[0].id);",
+									"        if (jsonData.questions.length > 1) {",
+									"            pm.environment.set(\"question_id_2\", jsonData.questions[1].id);",
+									"        }",
+									"    }",
 									"}"
 								],
 								"type": "text/javascript"
@@ -513,7 +519,7 @@
 								"quizzes"
 							]
 						},
-						"description": "Générer un quiz pour un cours (MCQ ou OPEN)"
+						"description": "Générer un quiz pour un cours (MCQ ou OPEN). Chaque question inclut un 'explanation' et un 'id'."
 					},
 					"response": []
 				},
@@ -543,7 +549,7 @@
 								"quizzes"
 							]
 						},
-						"description": "Récupérer tous les quizzes d'un cours"
+						"description": "Récupérer tous les quizzes d'un cours. Chaque quiz inclut lastAttemptSummary (attemptId, score, submittedAt) si l'utilisateur a déjà tenté le quiz."
 					},
 					"response": []
 				},
@@ -572,7 +578,61 @@
 								"{{quiz_id}}"
 							]
 						},
-						"description": "Récupérer un quiz spécifique par son ID"
+						"description": "Récupérer un quiz spécifique par son ID. Inclut lastAttemptSummary (attemptId, score, submittedAt) si l'utilisateur a déjà tenté le quiz."
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Quiz Attempt",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set(\"attempt_id\", jsonData.attemptId);",
+									"    console.log(\"Quiz attempt submitted. Score: \" + jsonData.score);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{auth_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answers\": [\n    {\n      \"questionId\": \"{{question_id_1}}\",\n      \"answer\": 0\n    },\n    {\n      \"questionId\": \"{{question_id_2}}\",\n      \"answer\": \"TypeScript is a typed superset of JavaScript\"\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/quizzes/{{quiz_id}}/attempts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"quizzes",
+								"{{quiz_id}}",
+								"attempts"
+							]
+						},
+						"description": "Soumettre une tentative de quiz. Les réponses doivent inclure le questionId et l'answer (number 0-3 pour MCQ, string pour OPEN). La validation et le scoring sont effectués côté serveur."
 					},
 					"response": []
 				}

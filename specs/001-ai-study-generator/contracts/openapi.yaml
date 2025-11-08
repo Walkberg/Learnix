@@ -171,15 +171,14 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                answers:
-                  type: array
-                  items:
-                    type: object
+              $ref: '#/components/schemas/SubmitQuizAttemptRequest'
       responses:
-        '200':
-          description: Score returned
+        '201':
+          description: Attempt created with score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuizAttemptResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -261,6 +260,10 @@ components:
         createdAt:
           type: string
           format: date-time
+        lastAttemptSummary:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/LastAttemptSummary'
     QuizListResponse:
       type: object
       required: [items]
@@ -269,3 +272,47 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/QuizResponse'
+    LastAttemptSummary:
+      type: object
+      required: [attemptId, score, submittedAt]
+      properties:
+        attemptId:
+          type: string
+        score:
+          type: integer
+        submittedAt:
+          type: string
+          format: date-time
+    SubmitQuizAttemptRequest:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [questionId, answer]
+            properties:
+              questionId:
+                type: string
+              answer:
+                oneOf:
+                  - type: integer
+                    minimum: 0
+                    maximum: 3
+                  - type: string
+    QuizAttemptResponse:
+      type: object
+      required: [attemptId, quizId, userId, score, submittedAt]
+      properties:
+        attemptId:
+          type: string
+        quizId:
+          type: string
+        userId:
+          type: string
+        score:
+          type: integer
+        submittedAt:
+          type: string
+          format: date-time

@@ -241,6 +241,10 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - Q: Where is scoring performed for quiz attempts? → A: On the backend only; the server loads the quiz, validates the payload, computes the score, persists the attempt, and returns the result.
 - Q: How are OPEN answers compared? → A: MVP uses a case-insensitive, trimmed string comparison; no partial credit.
 - Q: What extra data must GET quiz endpoints return? → A: Both `GET /quizzes/:id` and `GET /courses/:courseId/quizzes` must include a `lastAttemptSummary` for the requesting user when available: `{ attemptId: string, score: number, submittedAt: string }`.
+- Q: How are quiz answers structured in submission payloads? → A: Answers must be an array of objects with explicit `questionId` and `answer` fields: `{ questionId: string, answer: number | string }[]`. This ensures clear mapping between questions and answers.
+- Q: Should validation and scoring be static or instance methods? → A: Instance methods on QuizAttempt entity. The `create` factory method receives the quiz and answers, instantiates the attempt, validates answers, computes score, and returns a fully initialized entity.
+- Q: How to avoid N+1 queries when listing quizzes with attempt summaries? → A: Use batch queries. Repository provides `findLastAttemptsByQuizIds(quizIds[], userId)` that returns a Map for O(1) lookups when building enriched responses.
+- Q: Should GET endpoints return Quiz or enriched types? → A: Use-cases return `QuizWithAttempt` type containing `{ quiz: Quiz, lastAttemptSummary: LastAttemptSummary | null }`. Controllers destructure and map to response DTOs.
 
 ## Development Requirements
 
@@ -530,6 +534,12 @@ For each feature implementation, verify:
   - [ ] Modules provide implementations via provider tokens (e.g., `{ provide: X_REPOSITORY, useClass: PrismaXRepository }`)
   - [ ] Modules do NOT export concrete implementation classes (e.g., `PrismaXRepository`) directly
   - [ ] Modules export only tokens and use-cases that other modules can inject
+
+7. **Code Quality**
+  - [ ] No unnecessary comments (avoid obvious statements like "Find the user" or "Create entity")
+  - [ ] Comments only for non-obvious business logic, complex algorithms, or important context
+  - [ ] Self-documenting code through clear naming and structure
+  - [ ] JSDoc for public API surfaces where needed
 
 This checklist MUST be reviewed before any feature is considered complete.
 

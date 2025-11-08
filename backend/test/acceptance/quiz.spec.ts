@@ -287,4 +287,144 @@ describe('Quiz (e2e)', () => {
         .expect(404);
     });
   });
+
+  describe('Quiz Attempts (US4)', () => {
+    it('should submit a valid attempt and compute score', async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: 'attempt@example.com',
+          displayName: 'Attempt User',
+          passwordHash: 'dummy-hash',
+        },
+      });
+      const course = await prisma.course.create({
+        data: {
+          title: 'Attempt Course',
+          sourceText: 'Content',
+          authorId: user.id,
+        },
+      });
+      const quiz = await prisma.quiz.create({
+        data: {
+          courseId: course.id,
+          params: { count: 2, types: ['MCQ'] },
+          questions: [
+            {
+              id: 'q1',
+              type: 'MCQ',
+              question: 'Q1',
+              options: ['A', 'B', 'C', 'D'],
+              correctAnswer: 1,
+              explanation: 'E1',
+            },
+            {
+              id: 'q2',
+              type: 'MCQ',
+              question: 'Q2',
+              options: ['A', 'B', 'C', 'D'],
+              correctAnswer: 3,
+              explanation: 'E2',
+            },
+          ],
+        },
+      });
+
+      const res = await request(app.getHttpServer())
+        .post(`/quizzes/${quiz.id}/attempts`)
+        .send({
+          answers: [
+            { questionId: 'q1', answer: 1 },
+            { questionId: 'q2', answer: 0 },
+          ],
+        }) // one correct, one incorrect
+        .set('Authorization', 'Bearer dummy-token')
+        .expect(201);
+
+      expect(res.body.score).toBe(1);
+      expect(res.body.quizId).toBe(quiz.id);
+
+      // Fetch quiz and verify lastAttemptSummary present
+      const quizRes = await request(app.getHttpServer())
+        .get(`/quizzes/${quiz.id}`)
+        .set('Authorization', 'Bearer dummy-token`')
+        .expect(200);
+      expect(quizRes.body.lastAttemptSummary).toBeDefined();
+      expect(quizRes.body.lastAttemptSummary.score).toBe(1);
+    });
+
+    it('should reject invalid answer count', async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: 'attempt2@example.com',
+          displayName: 'Attempt User2',
+          passwordHash: 'dummy-hash',
+        },
+      });
+      const course = await prisma.course.create({
+        data: {
+          title: 'Attempt Course2',
+          sourceText: 'Content',
+          authorId: user.id,
+        },
+      });
+      const quiz = await prisma.quiz.create({
+        data: {
+          courseId: course.id,
+          params: { count: 1, types: ['OPEN'] },
+          questions: [
+            {
+              id: 'oq1',
+              type: 'OPEN',
+              question: 'Define X',
+              correctAnswer: 'X',
+              explanation: 'Because X',
+            },
+          ],
+        },
+      });
+      await request(app.getHttpServer())
+        .post(`/quizzes/${quiz.id}/attempts`)
+        .send({ answers: [] })
+        .set('Authorization', 'Bearer dummy-token')
+        .expect(400);
+    });
+
+    it('should reject invalid MCQ index', async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: 'attempt3@example.com',
+          displayName: 'Attempt User3',
+          passwordHash: 'dummy-hash',
+        },
+      });
+      const course = await prisma.course.create({
+        data: {
+          title: 'Attempt Course3',
+          sourceText: 'Content',
+          authorId: user.id,
+        },
+      });
+      const quiz = await prisma.quiz.create({
+        data: {
+          courseId: course.id,
+          params: { count: 1, types: ['MCQ'] },
+          questions: [
+            {
+              id: 'm1',
+              type: 'MCQ',
+              question: 'Pick A',
+              options: ['A', 'B', 'C', 'D'],
+              correctAnswer: 0,
+              explanation: 'Because A',
+            },
+          ],
+        },
+      });
+      await request(app.getHttpServer())
+        .post(`/quizzes/${quiz.id}/attempts`)
+        .send({ answers: [{ questionId: 'm1', answer: 9 }] })
+        .set('Authorization', 'Bearer dummy-token')
+        .expect(400);
+    });
+  });
 });
