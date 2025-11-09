@@ -98,35 +98,81 @@ Créer une application permettant aux utilisateurs de générer des fiches de r�
 ### Architecture des pages
 
 #### Page d’accueil
+routing :/
 - 3 cartes principales :  
-  - Créer un cours  
+  - Générer une fiche  
   - Créer un quizz  
-  - Réviser avec l’IA  
-- Liste des cours sous forme de cards avec bouton “Ajouter un cours”  
-- Liste des quizz sous forme de cards avec bouton “Ajouter un quizz”  
+  - Réviser avec Learnix 
+- header" Mes cours"(left) +   avec bouton “Ajouter un cours” (right)  Liste des cours sous forme de cards
+  La carte est composé de l'icone du cours en haut à gauche un kebab menu qui ouvre un popover permetant de supprimer la fiche
+  dans le content le nom du cours et dans le footer la date de création
+- header "Mes quizz" (left) +  bouton “Ajouter un quizz” (right)  Liste des quizz sous forme de cards 
+  La carte est composé d'une icone genereique (illustration)  en haut à gauche un kebab menu qui ouvre un popover permetant de supprimer la fiche
+  dans le content le nom du cours associé en dessous un bar de progression avec la progression sous forme 5/10
+  la bar de progression est rouge si inferieur à 30 % vert si superieur à 70 % jaune sinon
+  Avec un tag corrspondant Non apris, Acquis et A revoir
 
 #### Page liste de cours
-- Search bar  
-- Bouton “Ajouter un cours”  
-- Liste des cours  
+En haut Mes cours + le nombre de cours total dans tag
+En header : 
+  - Search bar  
+  - Bouton “Ajouter un cours”  même design que sur la page d'accueil
+En content:
+- Liste des cours  même design que sur la page d'acceuil
 
 #### Page récap de cours
+routing: /courses/:id
 - Deux sous-onglets :  
-  - **À gauche :** Fiche / Flashcards  
+ - **À gauche :** Fiche / Flashcards 
+routing: /courses/:id/summary
+  
+  routing: /courses/:id/flashcards
   - **À droite :** Entraînement / Résumé des quizz / Liste des quizz  
 
 #### Page liste des quizz
-- Liste des quizz  
-- Bouton “Créer un quizz” → dialogue :  
+En haut Mes quizz + le nombre de cours total dans tag
+- Bouton “Créer un quizz” → dialogue : 
   1. Sélection du cours pour générer le quizz  
   2. Formulaire de création  
   3. Confirmation : “Ton quizz a été généré !”  
-     - 2 CTA : “Générer un autre quizz” / “Voir mon quizz”  
+     - 2 CTA : “Générer un autre quizz” / “Voir mon quizz”   
+- Liste des quizz groupé par cours pour la liste même design que sur la page d'acceuil
+
+
 
 #### Page détail de quizz
+routing /quizzes/:id/result
 - Possibilité de compléter le quizz  
 - Si déjà complété : affichage du récapitulatif  
+  header:
+    Quizz du {dte}
+    nom du cours
+  en desosus :
+  un progression circulaire avec au milieu le score + emoji corepondant au niveau
 
+  2 cta "retour à l'acceuil" "rejouer le quiz"
+
+  Un zone de correction
+  header "Correction"
+
+  avec une carte par question
+  en header une icon check entouré par un rond vert si question validé + le nom de a question
+  en content la liste des propositions avec en vert la bonne reponse en rouge la question repondu si fausse
+  une explication avec une fleche + explanation si reponse est fausse
+Page quizz attempt
+routing /quizzes/:id/attempt
+
+une zonne de progression avec un petit carré gris pour toute les question possible dans le quizz
+en dessous "Question x/y"
+en dessous le nom de la question
+en dessous des caree avec les propositions
+Au click sur une des proposition
+on passe sur un etat de validation
+  en plus des question, 
+  un icon check vert entouré d'un rond vert si bonne reponse suivit du texte "Bonne" ou "mauvaise réponse !" la reponse fausse (si elle existe )est rouge la bonne réponse et verte
+  un cta qui permet de passer à la question suivante: "Question suivante"
+
+  quand toute les reponse sont coché à la place de questoin suivante on a "Voir mon score 🏆" qui redirige vers la page de result
 
 #### Page de chat
 
@@ -136,7 +182,7 @@ Créer une application permettant aux utilisateurs de générer des fiches de r�
 
 #### Page de parametre
 
-Plusieu sous page
+Plusieurs sous page
 
 ##### Compte
 Mon compte
