@@ -96,6 +96,8 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - Unreadable content / unknown format — display an error and provide format guidance.
 - AI service failure (slow response or error) — show a clear message and offer to retry later.
 - Quotas reached (Free account) — refuse creation and explain the limit and the option to upgrade to Premium.
+- Concurrent quiz attempts — the system allows multiple attempts per user per quiz; all attempts are stored separately with timestamps for tracking learning progress.
+- Rate limit exceeded — when a user exceeds 5 AI generation requests per minute, display a clear message explaining the limit and when they can retry (time remaining in current window).
 
 # Requirements *(mandatory)*
 
@@ -110,6 +112,7 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - **FR-006**: The system MUST enforce quotas based on role (Free: up to 3 courses and 3 quizzes; Premium: unlimited).
 - **FR-007**: The system MUST display clear user-facing error messages for invalid text, quota limits, or AI unavailability.
 - **FR-008**: Critical actions (create course/quiz, submit quiz) MUST be persisted and associated with the user.
+- **FR-022**: The system MUST enforce rate limiting of 5 AI generation requests (summary generation, quiz generation, flashcard generation) per minute per user to prevent abuse and protect service availability.
 
 # Flashcards, Summaries, and Course Endpoints (US2)
 - **FR-009**: The system MUST allow deleting a flashcard via DELETE `/courses/:courseId/flashcards/:flashcardId`.
@@ -118,6 +121,11 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - **FR-012**: The system MUST allow fetching all summaries for a course via GET `/courses/:courseId/summaries`.
 - **FR-013**: The system MUST allow updating a summary via PATCH `/summaries/:summaryId` (markdown content).
 - **FR-014**: The system MUST allow updating a course's title or emoji via PATCH `/courses/:courseId`.
+
+# Data Deletion Policy
+- **FR-019**: When a course is deleted, the system MUST permanently remove the course and all associated data (summaries, flashcards, quizzes, quiz attempts) immediately with no retention period.
+- **FR-020**: When a quiz is deleted, the system MUST permanently remove the quiz and all associated quiz attempts immediately.
+- **FR-021**: Deletion operations MUST be irreversible; users SHOULD be warned before confirming deletion of courses or quizzes.
 
 # API Response Format Rule
 - **FR-015**: Any GET endpoint returning a list MUST return an object with an array property (e.g., `{ items: [...] }`), not a root array.
@@ -157,6 +165,7 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
   - Properties: id, quizId, userId, answers (array aligned to questions; MCQ answers are numbers 0-3, OPEN answers are strings), score (0..N), submittedAt
   - Methods: create()
   - Domain Errors: InvalidAttemptAnswersError
+  - Note: Multiple attempts per user per quiz are allowed; all attempts are stored separately with timestamps for learning analytics
 
 #### Domain Ports (Interfaces)
 
@@ -194,6 +203,19 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - **SC-002**: At least 90% of generated quizzes contain the requested number of questions and, for MCQs, the correct number of properly formatted options.
 - **SC-003**: Users completing a quiz report that the quiz is relevant to the content in ≥80% of sessions (simple user feedback).
 - **SC-004**: AI-side errors are presented to users with a clear recommendation 100% of the time (no raw technical messages).
+
+### Observability Requirements
+
+- **OBS-001**: The system MUST log all user authentication events (login, logout, registration) with user ID and timestamp.
+- **OBS-002**: The system MUST log all content creation and generation operations (create course, generate summary, generate quiz, submit quiz attempt) with user ID, resource ID, and timestamp.
+- **OBS-003**: The system MUST log all AI service calls including operation type, request initiation time, completion/failure status, duration, and any error details.
+- **OBS-004**: The system MUST log all application errors with stack traces, user context, and request details to enable debugging.
+
+### Performance Requirements
+
+- **PERF-001**: AI generation operations (summary generation, quiz generation) MUST have a 45-second timeout.
+- **PERF-002**: During AI generation operations, the system MUST display a progress indicator to inform users that processing is ongoing.
+- **PERF-003**: If an AI generation operation exceeds the timeout, the system MUST display a clear error message and offer the user the option to retry.
 
 ## Assumptions
 
@@ -260,6 +282,13 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - Q: Should validation and scoring be static or instance methods? → A: Instance methods on QuizAttempt entity. The `create` factory method receives the quiz and answers, instantiates the attempt, validates answers, computes score, and returns a fully initialized entity.
 - Q: How to avoid N+1 queries when listing quizzes with attempt summaries? → A: Use batch queries. Repository provides `findLastAttemptsByQuizIds(quizIds[], userId)` that returns a Map for O(1) lookups when building enriched responses.
 - Q: Should GET endpoints return Quiz or enriched types? → A: Use-cases return `QuizWithAttempt` type containing `{ quiz: Quiz, lastAttemptSummary: LastAttemptSummary | null }`. Controllers destructure and map to response DTOs.
+
+### Session 2025-11-09
+- Q: What specific events/actions should be logged for monitoring and debugging? → A: Log user actions (auth, create/generate operations), AI service calls (success/failure/duration), and all errors
+- Q: What is the acceptable timeout for AI generation before showing an error? → A: 45 seconds timeout with progress indicator shown to user during wait
+- Q: How should the system handle simultaneous quiz attempts by the same user? → A: Allow multiple attempts - store all attempts separately with timestamps
+- Q: Should deleted courses/quizzes be soft-deleted or permanently removed? → A: Hard delete - permanently remove all data immediately
+- Q: Should there be rate limits on AI generation requests beyond quota enforcement? → A: 5 AI generation requests per minute per user
 
 ## Development Requirements
 
