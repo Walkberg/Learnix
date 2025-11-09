@@ -140,7 +140,9 @@ Independent test criteria: All defined pages load with correct layout and naviga
 - [X] T920 [P] [US5] Implement `frontend/src/features/courses/components/CoursesSection.tsx` & `CourseCard.tsx`
 - [X] T921 [P] [US5] Implement `frontend/src/features/quizzes/components/QuizzesSection.tsx` & `QuizCard.tsx`
 - [X] T922 [P] [US5] Implement shared headers `frontend/src/components/PageHeader.tsx`, `frontend/src/components/SectionHeader.tsx`
+- [X] T922a [US5] Implement HomePage page `frontend/src/features/home/pages/HomePage.tsx` composing PageHeader, QuickActionsSection, CoursesSection, and QuizzesSection components with data from providers
 - [X] T923 [P] [US5] Implement course list toolbar `frontend/src/features/courses/components/CourseListToolbar.tsx`, `frontend/src/components/SearchBar.tsx`, `frontend/src/features/courses/components/AddCourseButton.tsx`, grid `frontend/src/features/courses/components/CourseGrid.tsx`
+- [X] T923a [US5] Implement CoursesListPage page `frontend/src/features/courses/pages/CoursesListPage.tsx` composing PageHeader, CourseListToolbar, and CourseGrid components with data from CoursesProvider
 
 Final Phase: Polish & Cross-cutting concerns
 - [ ] T900 Implement quota enforcement (Free vs Premium) in `backend/src/common/guards/quota.guard.ts` and service `backend/src/features/users/user.quota.ts` (maps to FR-006)
@@ -177,11 +179,11 @@ Implementation strategy
 - Keep database simple (SQLite for local dev, Postgres for prod). Use Prisma migrations and seed scripts.
 
 Validation checklist
-// Updated after adding US5 frontend implementation
-- Total active tasks (excluding deferred): 127 (US5 added: T904–T950)
-- Tasks per story (active): US1:6, US2:17, US3:24, US4:17, US5:47 (T314, T415–T417 remain deferred but are superseded by corresponding US5 tasks)
+// Updated after adding US5 frontend implementation and page composition tasks
+- Total active tasks (excluding deferred): 129 (US5 added: T904–T950 + T922a, T923a)
+- Tasks per story (active): US1:6, US2:17, US3:24, US4:17, US5:49 (includes T922a HomePage, T923a CoursesListPage; T314, T415–T417 remain deferred but are superseded by corresponding US5 tasks)
 - Deferred tasks: 4 (T314, T415, T416, T417)
-- Parallel opportunities (active): Previous plus US5 batches (routing/providers, dashboard, course pages, quiz pages, chat & settings, API/mappers, rendering)
+- Parallel opportunities (active): Previous plus US5 batches (routing/providers, dashboard/home pages, course pages, quiz pages, chat & settings, API/mappers, rendering)
 
 Path to generated file:
 `C:\Users\samue\Documents\Code\Learnix\specs\001-ai-study-generator\tasks.md`

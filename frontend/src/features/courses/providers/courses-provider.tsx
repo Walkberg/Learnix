@@ -1,14 +1,10 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import { HttpCourseApi } from '../api/course-api.http';
+import type { CourseApi } from '../api/course-api.interface';
+import type { Course } from '../types';
 
-// Domain model (adjust as backend DTOs evolve)
-export interface Course {
-  id: string;
-  title: string;
-  emoji?: string;
-  createdAt: string; // ISO string
-}
+// Legacy inline Course interface removed; now imported from ../types
 
-// Public API surface for the courses context
 export interface CoursesContextValue {
   courses: Course[];
   isLoading: boolean;
@@ -18,36 +14,61 @@ export interface CoursesContextValue {
   deleteCourse: (id: string) => Promise<void>;
 }
 
-// Internal stub (temporary – will be replaced by real implementation & state management)
-const stub: CoursesContextValue = {
-  courses: [],
-  isLoading: false,
-  error: null,
-  async refresh() {
-    // TODO: implement fetch from API
-  },
-  async createCourse(input) {
-    // TODO: call POST /courses
-    return {
-      id: 'stub',
-      title: input.title,
-      emoji: input.emoji,
-      createdAt: new Date().toISOString(),
-    };
-  },
-  async deleteCourse(id: string) {
-    // TODO: call DELETE /courses/:id
-    void id;
-  },
-};
-
-// Context with undefined default to enforce provider usage
 const CoursesContext = createContext<CoursesContextValue | undefined>(undefined);
 
 export function CoursesProvider({ children }: { children: React.ReactNode }) {
-  // TODO: replace stub with actual state, e.g. useState + useEffect + API integration (React Query / custom fetch)
-  // For now we expose the stubbed value so components can start wiring.
-  return <CoursesContext.Provider value={stub}>{children}</CoursesContext.Provider>;
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const courseApi: CourseApi = useMemo(() => new HttpCourseApi(), []);
+
+  const refresh = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const list = await courseApi.listMyCourses();
+      setCourses(list);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const createCourse = useCallback(async (input: { title: string; emoji?: string }) => {
+    try {
+      const course = await courseApi.createCourse({
+        title: input.title,
+        sourceText: '',
+        emoji: input.emoji,
+      });
+      setCourses((prev) => [course, ...prev]);
+      return course;
+    } catch (e) {
+      throw e;
+    }
+  }, []);
+
+  const deleteCourse = useCallback(async (id: string) => {
+    try {
+      await courseApi.deleteCourse(id);
+    } catch (e) {
+    } finally {
+      setCourses((prev) => prev.filter((c) => c.id !== id));
+    }
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const value: CoursesContextValue = useMemo(
+    () => ({ courses, isLoading, error, refresh, createCourse, deleteCourse }),
+    [courses, isLoading, error, refresh, createCourse, deleteCourse]
+  );
+
+  return <CoursesContext.Provider value={value}>{children}</CoursesContext.Provider>;
 }
 
 export function useCourses(): CoursesContextValue {
@@ -55,9 +76,3 @@ export function useCourses(): CoursesContextValue {
   if (!ctx) throw new Error('useCourses must be used within CoursesProvider');
   return ctx;
 }
-
-// Future extension notes:
-// - Replace stub with a reducer to handle optimistic updates (create/delete)
-// - Integrate error + retry logic
-// - Consider pagination once course count grows
-// - Memoize context value to avoid unnecessary rerenders

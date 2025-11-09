@@ -27,18 +27,8 @@ const QuizzesSection = ({ quizzes, maxDisplay = 6, onDelete }: QuizzesSectionPro
     console.log('Open quiz creation modal');
   };
 
-  const handleViewAll = () => {
-    navigate('/quizzes');
-  };
-
   return (
     <section className="mb-8">
-      <SectionHeader
-        title="Mes quizz"
-        count={quizzes.length}
-        actionLabel={quizzes.length > maxDisplay ? 'Voir tout' : 'Ajouter'}
-        onAction={quizzes.length > maxDisplay ? handleViewAll : handleAddQuiz}
-      />
       {displayedQuizzes.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           <p className="mb-4">Vous n'avez pas encore de quiz</p>

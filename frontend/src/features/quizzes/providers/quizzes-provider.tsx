@@ -1,20 +1,8 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
-
-// Domain models (align with backend Quiz & Attempt DTOs)
-export interface QuizAttemptSummary {
-  score: number;
-  totalQuestions: number;
-  attemptedAt: string; // ISO date string
-}
-
-export interface Quiz {
-  id: string;
-  courseId: string;
-  courseTitle?: string; // convenience for UI list
-  lastAttemptSummary?: QuizAttemptSummary;
-  createdAt: string;
-}
+import type { Quiz, QuizAttemptSummary } from '../types';
+import { HttpQuizApi } from '../api/quiz-api.http';
+import type { QuizApi } from '../api/quiz-api.interface';
 
 export interface QuizzesContextValue {
   quizzes: Quiz[];
@@ -26,39 +14,63 @@ export interface QuizzesContextValue {
   startAttempt: (quizId: string) => Promise<QuizAttemptSummary>; // Future: returns attempt id
 }
 
-const stub: QuizzesContextValue = {
-  quizzes: [],
-  isLoading: false,
-  error: null,
-  async refresh(courseId?: string) {
-    void courseId;
-  },
-  async generate(courseId, _params) {
-    return {
-      id: 'stub-quiz',
-      courseId,
-      createdAt: new Date().toISOString(),
-      lastAttemptSummary: undefined,
-    };
-  },
-  async deleteQuiz(id: string) {
-    void id;
-  },
-  async startAttempt(quizId: string) {
-    void quizId;
-    return {
-      score: 0,
-      totalQuestions: 0,
-      attemptedAt: new Date().toISOString(),
-    };
-  },
-};
+export function QuizzesProvider({ children }: { children: ReactNode }) {
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const quizApi: QuizApi = useMemo(() => new HttpQuizApi(), []);
+
+  const refresh = useCallback(async (courseId?: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const list = courseId
+        ? await quizApi.listQuizzesByCourse(courseId)
+        : await quizApi.listQuizzes();
+      setQuizzes(list);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const generate = useCallback(async (courseId: string, params: { count: number }) => {
+    const quiz = await quizApi.generate(courseId, { count: params.count, type: 'MCQ' });
+    setQuizzes((prev) => [quiz, ...prev]);
+    return quiz;
+  }, []);
+
+  const deleteQuiz = useCallback(async (id: string) => {
+    try {
+      await quizApi.deleteQuiz(id);
+    } finally {
+      setQuizzes((prev) => prev.filter((q) => q.id !== id));
+    }
+  }, []);
+
+  const startAttempt = useCallback(async (quizId: string) => {
+    const summary = await quizApi.startAttempt(quizId, []);
+    setQuizzes((prev) =>
+      prev.map((q) => (q.id === quizId ? { ...q, lastAttemptSummary: summary } : q))
+    );
+    return summary;
+  }, []);
+
+  useEffect(() => {
+    void refresh();
+  }, [refresh]);
+
+  const value: QuizzesContextValue = useMemo(
+    () => ({ quizzes, isLoading, error, refresh, generate, deleteQuiz, startAttempt }),
+    [quizzes, isLoading, error, refresh, generate, deleteQuiz, startAttempt]
+  );
+
+  return <QuizzesContext.Provider value={value}>{children}</QuizzesContext.Provider>;
+}
 
 const QuizzesContext = createContext<QuizzesContextValue | undefined>(undefined);
-
-export function QuizzesProvider({ children }: { children: ReactNode }) {
-  return <QuizzesContext.Provider value={stub}>{children}</QuizzesContext.Provider>;
-}
 
 export function useQuizzes(): QuizzesContextValue {
   const ctx = useContext(QuizzesContext);

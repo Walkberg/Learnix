@@ -7,13 +7,14 @@ const QuickActionsSection = () => {
   const actions = [
     {
       title: 'Générer une fiche',
-      description: 'Créer une nouvelle fiche de révision',
+      description:
+        'Crée automatiquement des fiches de révision synthétiques à partir de ton cours.',
       icon: '📝',
       onClick: () => navigate('/courses/new'),
     },
     {
       title: 'Créer un quizz',
-      description: "Générer un quizz d'entraînement",
+      description: 'Conçois des quizz interactifs pour tester et renforcer tes connaissances.',
       icon: '❓',
       onClick: () => {
         // TODO: Open quiz creation modal
@@ -22,7 +23,8 @@ const QuickActionsSection = () => {
     },
     {
       title: 'Réviser avec Learnix',
-      description: "Discuter avec l'IA pour réviser",
+      description:
+        'Discute avec ton coach IA pour clarifier tes notions et consolider tes apprentissages.',
       icon: '💬',
       onClick: () => navigate('/chat'),
     },

@@ -4,11 +4,17 @@ import { RouterProvider } from 'react-router-dom';
 import './index.css';
 import { router } from './app/router.tsx';
 import { AuthProvider } from './features/auth/providers/auth-provider';
+import { CoursesProvider } from './features/courses/providers/courses-provider';
+import { QuizzesProvider } from './features/quizzes/providers/quizzes-provider';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <CoursesProvider>
+        <QuizzesProvider>
+          <RouterProvider router={router} />
+        </QuizzesProvider>
+      </CoursesProvider>
     </AuthProvider>
   </StrictMode>
 );
