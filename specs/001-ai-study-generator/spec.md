@@ -229,6 +229,43 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - AI service for summary generation and question formulation.
 - User authentication system and role/quota management.
 
+## Documentation Currency & Context7 MCP Integration
+
+To guarantee that implementation decisions always reference the most up-to-date, authoritative library guidance, the project adopts a mandatory documentation retrieval workflow using the Context7 MCP (Model Context Protocol) tooling.
+
+### Rationale
+Modern libraries (Tailwind CSS v4+, Shadcn UI, React Router v7, Prisma, NestJS) evolve quickly; relying on stale mental models causes subtle bugs (e.g., Tailwind v4 PostCSS plugin naming changes, Shadcn component registry/CLI alterations). Automating doc lookups prevents drift and encodes reproducible research steps.
+
+### Workflow (MCP-driven)
+1. Resolve library identifier: Call `mcp_context7_resolve-library-id` with the human library name (e.g., "tailwindcss", "shadcn/ui"). Select the highest-trust result.
+2. Fetch focused docs: Call `mcp_context7_get-library-docs` with the resolved ID and (optionally) a `topic` (e.g., `"postcss"`, `"components"`, `"routing"`). Token budget sized to need (default acceptable for narrow topics; increase for migrations).
+3. Extract actionable deltas: Note configuration keys, CLI commands, changed file patterns, deprecations.
+4. Apply changes minimally: Update only the necessary files (e.g., `postcss.config.js` switched to `@tailwindcss/postcss`; install official Shadcn components via CLI rather than hand-rolled copies).
+5. Record provenance: In PR description or commit body include: `Docs-Source: <library-id>@<date>` and list critical doc headings used.
+6. Update spec/quickstart if the change affects global conventions (e.g., Tailwind plugin syntax, aliasing requirements for Shadcn CLI).
+
+### Governance Rules
+- **DEV-DOC-001**: Any upgrade, migration, or new integration MUST perform steps 1–3 before coding.
+- **DEV-DOC-002**: If existing code diverges from fetched official documentation, new work MUST align with the current docs unless a justified exception is documented.
+- **DEV-DOC-003**: All architectural decisions referencing external APIs (auth, AI provider, styling system) MUST cite the retrieved Context7 library ID.
+- **DEV-DOC-004**: CI may add a check (future task) parsing commit messages for `Docs-Source:` to ensure compliance.
+- **DEV-DOC-005**: When a major version is detected (x.(y+1) or new major), run a diff retrieval and schedule a refactor task.
+
+### Applied Examples (Historical)
+- Tailwind CSS v4: PostCSS plugin changed to `@tailwindcss/postcss`; warning resolved by installing and configuring plugin.
+- Shadcn UI: Replaced manual component stubs with CLI-generated registry components; ensured path alias `@/*` existed in both `tsconfig` files for CLI detection.
+- React Router v7: Verified route element patterns and `Navigate` usage against latest docs.
+
+### Developer Procedure (Condensed Checklist)
+- [ ] Run library ID resolution for target.
+- [ ] Fetch topic docs (break into multiple calls if broad).
+- [ ] Summarize key actionable changes in PR.
+- [ ] Implement smallest viable patch.
+- [ ] Add/adjust spec or quickstart sections if global convention shifts.
+- [ ] Include `Docs-Source:` provenance tag in commit.
+
+Failure to follow this process increases maintenance debt and may be flagged during code review.
+
 ## Clarifications
 
 ### Session 2025-11-04
