@@ -121,15 +121,15 @@ Independent test criteria: Submit answers; backend validates payload against sto
 
 User Story US5 (P3) — Frontend Application UI Implementation
 Independent test criteria: All defined pages load with correct layout and navigation (sidebar collapse persists), API data rendered via provider/hooks (no direct Axios calls in UI components), forms validate with react-hook-form + zod (invalid input shows errors), quiz play flow works end-to-end (start → answer → finish → results), markdown summary renders with actions, flashcards list & study mode function, settings pages show and handle basic actions. Each page is reachable by its route and protected pages redirect when unauthenticated.
-- [ ] T904 [P] [US5] Install and wire React Router routes in `frontend/src/app/AppRoutes.tsx` and integrate in `frontend/src/main.tsx`
-- [ ] T905 [P] [US5] Add Axios instance with auth/error interceptors in `frontend/src/app/api.ts` (base URL, token attach, 401 handling)
-- [ ] T906 [P] [US5] Install `react-hook-form` + `zod` and create helpers in `frontend/src/common/utils/form.ts`
-- [ ] T907 [P] [US5] Initialize Shadcn UI primitives under `frontend/src/components/ui/` (button, card, dialog, popover, badge, progress, input, select, tabs, separator)
-- [ ] T908 [P] [US5] Configure Tailwind CSS 4.1 (add `tailwind.config.ts`, PostCSS config, update `frontend/src/index.css`)
-- [ ] T909 [P] [US5] Install Liveblocks Frimouse and implement `frontend/src/common/components/EmojiPicker.tsx`
-- [ ] T910 [P] [US5] Create feature skeletons + `index.ts` exports for auth, courses, summaries, quizzes, flashcards, layout, home, chat, settings in `frontend/src/features/`
-- [ ] T911 [US5] Implement `frontend/src/features/layout/components/AppLayout.tsx` wrapping authenticated routes
-- [ ] T912 [P] [US5] Implement layout/sidebar components in `frontend/src/features/layout/components/` (AppSidebar, SidebarHeader, SidebarNavigation, SidebarNavItem, SidebarFooter, UserProfileButton, UserProfilePopover)
+- [X] T904 [P] [US5] Install and wire React Router routes in `frontend/src/app/AppRoutes.tsx` and integrate in `frontend/src/main.tsx`
+- [X] T905 [P] [US5] Add Axios instance with auth/error interceptors in `frontend/src/app/api.ts` (base URL, token attach, 401 handling)
+- [X] T906 [P] [US5] Install `react-hook-form` + `zod` and create helpers in `frontend/src/common/utils/form.ts`
+- [X] T907 [P] [US5] Initialize Shadcn UI primitives under `frontend/src/components/ui/` (button, card, dialog, popover, badge, progress, input, select, tabs, separator)
+- [X] T908 [P] [US5] Configure Tailwind CSS 4.1 (add `tailwind.config.ts`, PostCSS config, update `frontend/src/index.css`)
+- [X] T909 [P] [US5] Install Liveblocks Frimouse and implement `frontend/src/common/components/EmojiPicker.tsx`
+- [X] T910 [P] [US5] Create feature skeletons + `index.ts` exports for auth, courses, summaries, quizzes, flashcards, layout, home, chat, settings in `frontend/src/features/`
+- [X] T911 [US5] Implement `frontend/src/features/layout/components/AppLayout.tsx` wrapping authenticated routes
+- [X] T912 [P] [US5] Implement layout/sidebar components in `frontend/src/features/layout/components/` (AppSidebar, SidebarHeader, SidebarNavigation, SidebarNavItem, SidebarFooter, UserProfileButton, UserProfilePopover)
 - [ ] T913 [P] [US5] Implement auth pages `frontend/src/features/auth/pages/LoginPage.tsx`, `RegisterPage.tsx` with `schema.ts`
 - [ ] T914 [US5] Create AuthProvider + hook in `frontend/src/features/auth/providers/auth-provider.tsx` (login/logout, user state)
 - [ ] T915 [P] [US5] Create CoursesProvider + hook in `frontend/src/features/courses/providers/courses-provider.tsx` (CRUD + summaries trigger)

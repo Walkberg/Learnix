@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginFormData, loginSchema } from './schema';
+import type { LoginFormData } from './schema';
+import { loginSchema } from './schema';
 import axios from 'axios';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -28,7 +29,7 @@ export function Login() {
       // Store token
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
-    } catch (err) {
+    } catch {
       setError('Invalid email or password');
     }
   };
