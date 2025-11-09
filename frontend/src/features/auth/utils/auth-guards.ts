@@ -1,3 +1,4 @@
+import { getAuthToken } from '@/app/api';
 import { redirect } from 'react-router-dom';
 
 /**
@@ -7,7 +8,7 @@ import { redirect } from 'react-router-dom';
 export function isAuthenticated(): boolean {
   // Check for token in localStorage
 
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
 
   // TODO: Add token validation, expiry check, etc.
   return !!token;
@@ -46,7 +47,7 @@ export function requireGuest() {
  * This is a simple implementation - replace with your actual user fetch logic
  */
 export function getCurrentUser() {
-  const token = localStorage.getItem('token');
+  const token = getAuthToken();
   if (!token) return null;
 
   // TODO: Decode token or fetch user from API
