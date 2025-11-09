@@ -1,49 +1,39 @@
-import { cn } from '@/lib/utils';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter as ShadcnSidebarFooter,
+  SidebarHeader as ShadcnSidebarHeader,
+  SidebarTrigger,
+  useSidebar,
+} from '@/components/ui/sidebar';
 import { SidebarNavigation } from './SidebarNavigation';
 import { SidebarFooter } from './SidebarFooter';
 
-interface AppSidebarProps {
-  collapsed: boolean;
-  onToggle: () => void;
-}
-
-/**
- * Main sidebar component containing header, navigation, and footer
- */
-export function AppSidebar({ collapsed, onToggle }: AppSidebarProps) {
+export function AppSidebar() {
   return (
-    <aside
-      className={cn(
-        'border-r bg-card transition-all duration-300 flex flex-col h-full',
-        collapsed ? 'w-16' : 'w-64'
-      )}
-    >
-      <SidebarHeader collapsed={collapsed} onToggle={onToggle} />
-      <SidebarNavigation collapsed={collapsed} />
-      <SidebarFooter collapsed={collapsed} />
-    </aside>
+    <Sidebar collapsible="icon">
+      <SidebarHeader />
+      <SidebarContent>
+        <SidebarNavigation />
+      </SidebarContent>
+      <ShadcnSidebarFooter>
+        <SidebarFooter />
+      </ShadcnSidebarFooter>
+    </Sidebar>
   );
 }
 
 /**
  * Sidebar header with logo and collapse toggle
  */
-interface SidebarHeaderProps {
-  collapsed: boolean;
-  onToggle: () => void;
-}
+export function SidebarHeader() {
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
-export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
   return (
-    <div className="flex items-center justify-between border-b p-4">
-      {!collapsed && <h1 className="text-xl font-bold text-primary">Learnix</h1>}
-      <button
-        onClick={onToggle}
-        className="rounded-md p-2 hover:bg-accent transition-colors"
-        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-      >
-        {collapsed ? '→' : '←'}
-      </button>
-    </div>
+    <ShadcnSidebarHeader className="flex flex-row items-center justify-between border-b p-4">
+      {!isCollapsed && <h1 className="text-xl font-bold text-primary">Learnix</h1>}
+      <SidebarTrigger />
+    </ShadcnSidebarHeader>
   );
 }
