@@ -641,9 +641,12 @@ These constraints are intended to improve testability (allow mocking adapters), 
    - Custom components MUST follow Shadcn design patterns and accessibility standards
 
 2. **Forms Management**
-   - MUST use react-hook-form for all form handling
-   - MUST use Shadcn field components with react-hook-form integration
-   - Form validation MUST use Zod schemas integrated with react-hook-form
+  - MUST use react-hook-form for all form handling
+  - MUST use Shadcn Field components (`Field`, `FieldLabel`, `FieldError`, `FieldDescription`, `FieldGroup`) for all form fields 
+  - Each form field MUST display its label using `FieldLabel`, error messages using `FieldError` (integrated with react-hook-form validation), and helper/description text using `FieldDescription` where appropriate
+  - Form fields MUST be grouped using `FieldGroup` for layout consistency
+  - Form validation MUST use Zod schemas integrated with react-hook-form
+  - All error and helper text MUST be rendered via Shadcn Field components for accessibility and design consistency
 
 3. **Emoji Management**
    - MUST use Liveblocks Frimouse library for emoji selection and display
@@ -798,21 +801,21 @@ These constraints are intended to improve testability (allow mocking adapters), 
 For each frontend feature implementation, verify:
 
 1. **Component Architecture**
-   - [ ] Compound pattern followed: UI components are pure presentation, connector components consume context
-   - [ ] Business logic in providers, not in UI components
-   - [ ] UI components receive all data via props and contain no business logic
-   - [ ] Connector components handle context integration and compose UI components
+  - [ ] Compound pattern followed: UI components are pure presentation, connector components consume context
+  - [ ] Business logic in providers, not in UI components
+  - [ ] UI components receive all data via props and contain no business logic
+  - [ ] Connector components handle context integration and compose UI components
 
 2. **UI Components**
-   - [ ] Shadcn UI components used where applicable
-   - [ ] Custom components follow Shadcn patterns
-   - [ ] Accessibility standards met (ARIA labels, keyboard navigation)
+  - [ ] Shadcn UI components used where applicable
+  - [ ] Custom components follow Shadcn patterns
+  - [ ] Accessibility standards met (ARIA labels, keyboard navigation)
 
 3. **Forms**
-   - [ ] react-hook-form used for form state management
-   - [ ] Shadcn field components integrated
-   - [ ] Zod schemas used for validation
-   - [ ] Form errors displayed clearly to users
+  - [ ] react-hook-form used for form state management
+  - [ ] Shadcn Field components (`Field`, `FieldLabel`, `FieldError`, `FieldDescription`, `FieldGroup`) used for all form fields
+  - [ ] Zod schemas used for validation
+  - [ ] Form errors and helper text displayed via Shadcn Field components
 
 4. **State Management**
    - [ ] Logic implemented in providers

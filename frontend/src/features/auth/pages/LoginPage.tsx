@@ -5,6 +5,7 @@ import { loginSchema, type LoginFormData } from '../schema';
 import { useAuth } from '../providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Field, FieldLabel, FieldError, FieldDescription, FieldGroup } from '@/components/ui/field';
 import {
   Card,
   CardHeader,
@@ -44,37 +45,37 @@ const LoginPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nom@exemple.com"
-                {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
-              />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Mot de passe
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register('password')}
-                className={errors.password ? 'border-red-500' : ''}
-              />
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Connexion...' : 'Se connecter'}
-            </Button>
+            <FieldGroup>
+              <Field data-invalid={!!errors.email}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nom@exemple.com"
+                  {...register('email')}
+                  aria-invalid={!!errors.email}
+                  className={errors.email ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Entrez votre adresse email.</FieldDescription>
+                <FieldError errors={errors.email} />
+              </Field>
+              <Field data-invalid={!!errors.password}>
+                <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('password')}
+                  aria-invalid={!!errors.password}
+                  className={errors.password ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Votre mot de passe sécurisé.</FieldDescription>
+                <FieldError errors={errors.password} />
+              </Field>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Connexion...' : 'Se connecter'}
+              </Button>
+            </FieldGroup>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">

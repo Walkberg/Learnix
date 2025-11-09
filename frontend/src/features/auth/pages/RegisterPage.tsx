@@ -5,6 +5,7 @@ import { registerSchema, type RegisterFormData } from '../schema';
 import { useAuth } from '../providers/auth-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Field, FieldLabel, FieldError, FieldDescription, FieldGroup } from '@/components/ui/field';
 import {
   Card,
   CardHeader,
@@ -44,69 +45,63 @@ const RegisterPage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="displayName" className="text-sm font-medium">
-                Nom d'affichage
-              </label>
-              <Input
-                id="displayName"
-                type="text"
-                placeholder="John Doe"
-                {...register('displayName')}
-                className={errors.displayName ? 'border-red-500' : ''}
-              />
-              {errors.displayName && (
-                <p className="text-sm text-red-500">{errors.displayName.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
-                Email
-              </label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nom@exemple.com"
-                {...register('email')}
-                className={errors.email ? 'border-red-500' : ''}
-              />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
-                Mot de passe
-              </label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register('password')}
-                className={errors.password ? 'border-red-500' : ''}
-              />
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="text-sm font-medium">
-                Confirmer le mot de passe
-              </label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                {...register('confirmPassword')}
-                className={errors.confirmPassword ? 'border-red-500' : ''}
-              />
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-              )}
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? 'Inscription...' : "S'inscrire"}
-            </Button>
+            <FieldGroup>
+              <Field data-invalid={!!errors.displayName}>
+                <FieldLabel htmlFor="displayName">Nom d'affichage</FieldLabel>
+                <Input
+                  id="displayName"
+                  type="text"
+                  placeholder="John Doe"
+                  {...register('displayName')}
+                  aria-invalid={!!errors.displayName}
+                  className={errors.displayName ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Votre nom public affiché sur Learnix.</FieldDescription>
+                <FieldError errors={errors.displayName} />
+              </Field>
+              <Field data-invalid={!!errors.email}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="nom@exemple.com"
+                  {...register('email')}
+                  aria-invalid={!!errors.email}
+                  className={errors.email ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Entrez votre adresse email.</FieldDescription>
+                <FieldError errors={errors.email} />
+              </Field>
+              <Field data-invalid={!!errors.password}>
+                <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('password')}
+                  aria-invalid={!!errors.password}
+                  className={errors.password ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Choisissez un mot de passe sécurisé.</FieldDescription>
+                <FieldError errors={errors.password} />
+              </Field>
+              <Field data-invalid={!!errors.confirmPassword}>
+                <FieldLabel htmlFor="confirmPassword">Confirmer le mot de passe</FieldLabel>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="••••••••"
+                  {...register('confirmPassword')}
+                  aria-invalid={!!errors.confirmPassword}
+                  className={errors.confirmPassword ? 'border-red-500' : ''}
+                />
+                <FieldDescription>Répétez votre mot de passe.</FieldDescription>
+                <FieldError errors={errors.confirmPassword} />
+              </Field>
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? 'Inscription...' : "S'inscrire"}
+              </Button>
+            </FieldGroup>
           </form>
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
