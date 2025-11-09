@@ -14,6 +14,7 @@ import { AiModule } from '../ai/ai.module';
 import { PrismaQuizAttemptRepository } from './infrastructure/repositories/prisma-quiz-attempt.repository';
 import { SubmitQuizAttemptUseCase } from './application/use-cases/submit-quiz-attempt.usecase';
 import { GetLastAttemptForUserUseCase } from './application/use-cases/get-last-attempt-for-user.usecase';
+import { ListQuizzesByUserUseCase } from './application/use-cases/list-quizzes-by-user.usecase';
 
 @Module({
   imports: [CoursesModule, AiModule],
@@ -27,6 +28,7 @@ import { GetLastAttemptForUserUseCase } from './application/use-cases/get-last-a
     ListQuizzesByCourseUseCase,
     SubmitQuizAttemptUseCase,
     GetLastAttemptForUserUseCase,
+    ListQuizzesByUserUseCase,
   ],
   exports: [
     GenerateQuizUseCase,
@@ -36,6 +38,7 @@ import { GetLastAttemptForUserUseCase } from './application/use-cases/get-last-a
     QUIZ_ATTEMPT_REPOSITORY,
     SubmitQuizAttemptUseCase,
     GetLastAttemptForUserUseCase,
+    ListQuizzesByUserUseCase,
   ],
 })
 export class QuizzesModule {}

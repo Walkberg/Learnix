@@ -12,6 +12,7 @@ import { CurrentUser } from '../auth/auth.decorator';
 import { GenerateQuizUseCase } from './application/use-cases/generate-quiz.usecase';
 import { GetQuizByIdUseCase } from './application/use-cases/get-quiz-by-id.usecase';
 import { ListQuizzesByCourseUseCase } from './application/use-cases/list-quizzes-by-course.usecase';
+import { ListQuizzesByUserUseCase } from './application/use-cases/list-quizzes-by-user.usecase';
 import { SubmitQuizAttemptUseCase } from './application/use-cases/submit-quiz-attempt.usecase';
 import { DomainExceptionFilter } from '../../common/filters/domain-exception.filter';
 import type { CreateQuizRequestDto } from './dto/requests/create-quiz.dto';
@@ -28,6 +29,7 @@ export class QuizzesController {
     private readonly generateQuizUseCase: GenerateQuizUseCase,
     private readonly getQuizByIdUseCase: GetQuizByIdUseCase,
     private readonly listQuizzesByCourseUseCase: ListQuizzesByCourseUseCase,
+    private readonly listQuizzesByUserUseCase: ListQuizzesByUserUseCase,
     private readonly submitQuizAttemptUseCase: SubmitQuizAttemptUseCase,
   ) {}
 
@@ -69,6 +71,42 @@ export class QuizzesController {
         }
       }),
       createdAt: quiz.createdAt,
+    };
+  }
+
+  @Get('quizzes')
+  async listForUser(
+    @CurrentUser() userId: string,
+  ): Promise<QuizListResponseDto> {
+    const result = await this.listQuizzesByUserUseCase.execute({ userId });
+    return {
+      items: result.map(({ quiz, lastAttemptSummary }) => ({
+        id: quiz.id,
+        courseId: quiz.courseId,
+        params: quiz.params,
+        questions: quiz.questions.map((q) => {
+          if (q.type === 'MCQ') {
+            return {
+              id: q.id,
+              type: q.type,
+              question: q.question,
+              options: q.options,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+            } as const;
+          } else {
+            return {
+              id: q.id,
+              type: q.type,
+              question: q.question,
+              correctAnswer: q.correctAnswer,
+              explanation: q.explanation,
+            } as const;
+          }
+        }),
+        createdAt: quiz.createdAt,
+        lastAttemptSummary,
+      })),
     };
   }
 

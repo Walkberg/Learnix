@@ -6,4 +6,9 @@ export interface IQuizRepository {
   findById(id: string): Promise<Quiz | null>;
 
   findByCourseId(courseId: string): Promise<Quiz[]>;
+
+  /**
+   * Find all quizzes for courses owned by the given user
+   */
+  findByUserId(userId: string): Promise<Quiz[]>;
 }

@@ -58,4 +58,20 @@ export class PrismaQuizRepository implements IQuizRepository {
       }),
     );
   }
+
+  async findByUserId(userId: string): Promise<Quiz[]> {
+    const quizzes = await this.prisma.quiz.findMany({
+      where: { course: { authorId: userId } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return quizzes.map((quiz) =>
+      Quiz.create({
+        id: quiz.id,
+        courseId: quiz.courseId,
+        params: quiz.params as unknown as QuizParams,
+        questions: quiz.questions as unknown as QuizQuestion[],
+      }),
+    );
+  }
 }
