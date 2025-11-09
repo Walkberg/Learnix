@@ -1,6 +1,5 @@
 import * as React from 'react';
-import EmojiPicker from 'emoji-picker-react';
-import type { EmojiClickData } from 'emoji-picker-react';
+import { EmojiPicker } from 'frimousse';
 import { Popover, PopoverContent, PopoverTrigger } from '../../components/ui/popover';
 import { Button } from '../../components/ui/button';
 
@@ -11,8 +10,7 @@ export interface EmojiPickerProps {
 }
 
 /**
- * EmojiPicker component using emoji-picker-react
- * Displays a button that opens an emoji picker popover
+ * EmojiPicker component using Frimousse by Liveblocks inside Shadcn UI Popover
  *
  * @example
  * <EmojiPicker
@@ -23,9 +21,12 @@ export interface EmojiPickerProps {
 export function EmojiPickerComponent({ value, onChange, trigger }: EmojiPickerProps) {
   const [open, setOpen] = React.useState(false);
 
-  const handleEmojiClick = (emojiData: EmojiClickData) => {
-    onChange(emojiData.emoji);
-    setOpen(false);
+  // Frimousse uses onEmojiSelect prop
+  const handleEmojiSelect = (emoji: any) => {
+    if (emoji && emoji.emoji) {
+      onChange(emoji.emoji);
+      setOpen(false);
+    }
   };
 
   return (
@@ -37,14 +38,15 @@ export function EmojiPickerComponent({ value, onChange, trigger }: EmojiPickerPr
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <EmojiPicker
-          onEmojiClick={handleEmojiClick}
-          width={350}
-          height={400}
-          searchDisabled={false}
-          previewConfig={{ showPreview: false }}
-        />
+      <PopoverContent className="w-[350px] p-4" align="start">
+        <EmojiPicker.Root onEmojiSelect={handleEmojiSelect}>
+          <EmojiPicker.Search className="mb-2" />
+          <EmojiPicker.Viewport>
+            <EmojiPicker.Loading>Loading…</EmojiPicker.Loading>
+            <EmojiPicker.Empty>No emoji found.</EmojiPicker.Empty>
+            <EmojiPicker.List />
+          </EmojiPicker.Viewport>
+        </EmojiPicker.Root>
       </PopoverContent>
     </Popover>
   );
