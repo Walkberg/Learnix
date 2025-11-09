@@ -90,10 +90,10 @@ Enhancement 2025-11-08 — Quiz explanations + discriminated types
 - [X] T318 [US3] Update DTOs and controller mappings to expose `explanation` on all quiz endpoints
 - [X] T319 [US3] Update acceptance tests to assert presence of `explanation` in responses and persisted data
 - [X] T320 [US3] Update specs and contracts (`spec.md`, `data-model.md`, `contracts/openapi.yaml`) to reflect new question shapes
-- [ ] T321 [US3] Create ListQuizzesByUserUseCase: `backend/src/features/quizzes/application/use-cases/list-quizzes-by-user.usecase.ts` (get all quizzes for authenticated user across all courses, inject QUIZ_REPOSITORY and QUIZ_ATTEMPT_REPOSITORY, return QuizWithAttempt[])
-- [ ] T322 [US3] Add findByUserId method to IQuizRepository interface in `backend/src/features/quizzes/domain/ports/i-quiz-repository.ts`
-- [ ] T323 [US3] Implement findByUserId in PrismaQuizRepository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz.repository.ts`
-- [ ] T324 [US3] Implement GET `/quizzes` endpoint in `backend/src/features/quizzes/quizzes.controller.ts` mapping to ListQuizzesByUserUseCase (returns QuizListResponseDto with lastAttemptSummary per item)
+ - [X] T321 [US3] Create ListQuizzesByUserUseCase: `backend/src/features/quizzes/application/use-cases/list-quizzes-by-user.usecase.ts` (get all quizzes for authenticated user across all courses, inject QUIZ_REPOSITORY and QUIZ_ATTEMPT_REPOSITORY, return QuizWithAttempt[])
+ - [X] T322 [US3] Add findByUserId method to IQuizRepository interface in `backend/src/features/quizzes/domain/ports/i-quiz-repository.ts`
+ - [X] T323 [US3] Implement findByUserId in PrismaQuizRepository: `backend/src/features/quizzes/infrastructure/repositories/prisma-quiz.repository.ts`
+ - [X] T324 [US3] Implement GET `/quizzes` endpoint in `backend/src/features/quizzes/quizzes.controller.ts` mapping to ListQuizzesByUserUseCase (returns QuizListResponseDto with lastAttemptSummary per item)
 
 User Story US4 (P2) — Complete a quiz and view results (FR-005, FR-016, FR-017)
 Independent test criteria: Submit answers; backend validates payload against stored quiz questions (no client-side scoring trust), computes score, persists attempt. Fetch single quiz and list quizzes: each includes requesting user's `lastAttemptSummary`.
