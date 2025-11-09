@@ -119,6 +119,56 @@ Independent test criteria: Submit answers; backend validates payload against sto
 - [ ] T418 [US4] Update OpenAPI spec to add attempt submission endpoint and lastAttemptSummary schema: `specs/001-ai-study-generator/contracts/openapi.yaml`
 - [ ] T419 [US4] Update documentation in `specs/001-ai-study-generator/spec.md` already applied (verify) and regenerate quickstart if needed
 
+User Story US5 (P3) — Frontend Application UI Implementation
+Independent test criteria: All defined pages load with correct layout and navigation (sidebar collapse persists), API data rendered via provider/hooks (no direct Axios calls in UI components), forms validate with react-hook-form + zod (invalid input shows errors), quiz play flow works end-to-end (start → answer → finish → results), markdown summary renders with actions, flashcards list & study mode function, settings pages show and handle basic actions. Each page is reachable by its route and protected pages redirect when unauthenticated.
+- [ ] T904 [P] [US5] Install and wire React Router routes in `frontend/src/app/AppRoutes.tsx` and integrate in `frontend/src/main.tsx`
+- [ ] T905 [P] [US5] Add Axios instance with auth/error interceptors in `frontend/src/app/api.ts` (base URL, token attach, 401 handling)
+- [ ] T906 [P] [US5] Install `react-hook-form` + `zod` and create helpers in `frontend/src/common/utils/form.ts`
+- [ ] T907 [P] [US5] Initialize Shadcn UI primitives under `frontend/src/components/ui/` (button, card, dialog, popover, badge, progress, input, select, tabs, separator)
+- [ ] T908 [P] [US5] Configure Tailwind CSS 4.1 (add `tailwind.config.ts`, PostCSS config, update `frontend/src/index.css`)
+- [ ] T909 [P] [US5] Install Liveblocks Frimouse and implement `frontend/src/common/components/EmojiPicker.tsx`
+- [ ] T910 [P] [US5] Create feature skeletons + `index.ts` exports for auth, courses, summaries, quizzes, flashcards, layout, home, chat, settings in `frontend/src/features/`
+- [ ] T911 [US5] Implement `frontend/src/features/layout/components/AppLayout.tsx` wrapping authenticated routes
+- [ ] T912 [P] [US5] Implement layout/sidebar components in `frontend/src/features/layout/components/` (AppSidebar, SidebarHeader, SidebarNavigation, SidebarNavItem, SidebarFooter, UserProfileButton, UserProfilePopover)
+- [ ] T913 [P] [US5] Implement auth pages `frontend/src/features/auth/pages/LoginPage.tsx`, `RegisterPage.tsx` with `schema.ts`
+- [ ] T914 [US5] Create AuthProvider + hook in `frontend/src/features/auth/providers/auth-provider.tsx` (login/logout, user state)
+- [ ] T915 [P] [US5] Create CoursesProvider + hook in `frontend/src/features/courses/providers/courses-provider.tsx` (CRUD + summaries trigger)
+- [ ] T916 [P] [US5] Create QuizzesProvider + hook in `frontend/src/features/quizzes/providers/quizzes-provider.tsx` (list, create, attempts)
+- [ ] T917 [P] [US5] Create SummariesProvider + hook in `frontend/src/features/summaries/providers/summaries-provider.tsx`
+- [ ] T918 [P] [US5] Create FlashcardsProvider + hook in `frontend/src/features/flashcards/providers/flashcards-provider.tsx`
+- [ ] T919 [P] [US5] Implement home components `frontend/src/features/home/components/QuickActionsSection.tsx`, `QuickActionCard.tsx`
+- [ ] T920 [P] [US5] Implement `frontend/src/features/courses/components/CoursesSection.tsx` & `CourseCard.tsx`
+- [ ] T921 [P] [US5] Implement `frontend/src/features/quizzes/components/QuizzesSection.tsx` & `QuizCard.tsx`
+- [ ] T922 [P] [US5] Implement shared headers `frontend/src/components/PageHeader.tsx`, `frontend/src/components/SectionHeader.tsx`
+- [ ] T923 [P] [US5] Implement course list toolbar `frontend/src/features/courses/components/CourseListToolbar.tsx`, `frontend/src/components/SearchBar.tsx`, `frontend/src/features/courses/components/AddCourseButton.tsx`, grid `frontend/src/features/courses/components/CourseGrid.tsx`
+- [ ] T924 [P] [US5] Implement course detail header `frontend/src/features/courses/components/CourseDetailHeader.tsx`
+- [ ] T925 [P] [US5] Implement tab navigation `frontend/src/features/courses/components/CourseTabNavigation.tsx`
+- [ ] T926 [P] [US5] Implement summary tab `frontend/src/features/summaries/components/SummaryContent.tsx` + actions `RegenerateButton.tsx`, `EditSummaryButton.tsx`
+- [ ] T927 [P] [US5] Implement flashcards toolbar `frontend/src/features/flashcards/components/FlashcardsToolbar.tsx`
+- [ ] T928 [P] [US5] Implement flashcards list `frontend/src/features/flashcards/components/FlashcardsList.tsx` & item `FlashcardItem.tsx`
+- [ ] T929 [P] [US5] Implement study mode `frontend/src/features/flashcards/components/FlashcardsStudyMode.tsx` & `FlashcardStudyCard.tsx`
+- [ ] T930 [P] [US5] Implement quiz creation modal `frontend/src/features/quizzes/components/QuizCreateModal.tsx` (supersedes deferred T314)
+- [ ] T931 [P] [US5] Implement quiz summary content `frontend/src/features/quizzes/components/QuizSummaryContent.tsx` + `StatisticsGrid.tsx`, `StatCard.tsx`, `StartTrainingButton.tsx`, `RecentAttemptsList.tsx`
+- [ ] T932 [P] [US5] Implement quiz results overview `frontend/src/features/quizzes/components/QuizResultsOverview.tsx` + `OverallPerformanceCard.tsx`, `QuizPerformanceList.tsx`, `QuizPerformanceItem.tsx`
+- [ ] T933 [P] [US5] Implement quiz list tab `frontend/src/features/quizzes/components/QuizListToolbar.tsx`, `QuizListGrid.tsx`
+- [ ] T934 [P] [US5] Implement all quizzes page `frontend/src/features/quizzes/components/QuizzesGroupedByCourse.tsx`, `CourseQuizGroup.tsx`
+- [ ] T935 [P] [US5] Implement quiz player page `frontend/src/features/quizzes/QuizPlayer.tsx` (supersedes deferred T415) using `QuizProgressBar.tsx`, `QuestionCounter.tsx`
+- [ ] T936 [P] [US5] Implement question components `frontend/src/features/quizzes/components/QuestionDisplay.tsx`, `MCQAnswerOptions.tsx`, `OpenAnswerInput.tsx`, `QuestionFeedback.tsx`, `QuizAttemptActions.tsx`
+- [ ] T937 [P] [US5] Implement quiz results page `frontend/src/features/quizzes/QuizResults.tsx` (supersedes deferred T416) with `QuizResultHeader.tsx`, `ScoreCircle.tsx`, `CorrectionSection.tsx`, `QuestionCorrectionCard.tsx`
+- [ ] T938 [P] [US5] Implement quiz hooks `frontend/src/features/quizzes/hooks/useQuiz.ts`, `useQuizAttempt.ts` exposing lastAttemptSummary (supersedes deferred T417)
+- [ ] T939 [P] [US5] Implement chat components `frontend/src/features/chat/components/ChatHeader.tsx`, `CoursePicker.tsx`, `ChatMessagesContainer.tsx`, `MessageBubble.tsx`, `ChatInputArea.tsx`
+- [ ] T940 [P] [US5] Implement settings navigation & pages `frontend/src/features/settings/components/SettingsSidebar.tsx`, `AccountSettingsContent.tsx`, `SubscriptionSettingsContent.tsx`, `OtherSettingsContent.tsx`
+- [ ] T941 [P] [US5] Implement account settings components `frontend/src/features/settings/components/AccountInfoCard.tsx`, `ChangePasswordForm.tsx`
+- [ ] T942 [P] [US5] Implement subscription settings components `frontend/src/features/settings/components/CurrentPlanCard.tsx`, `UpgradeToPremiumButton.tsx`, `ReferralCard.tsx`
+- [ ] T943 [P] [US5] Implement other settings actions `frontend/src/features/settings/components/SettingsActionButton.tsx` incl. logout & delete account
+- [ ] T944 [P] [US5] Implement API interfaces & implementations per feature (`frontend/src/features/*/api/*.interface.ts` + `*.impl.ts`) mapping backend DTOs to frontend models
+- [ ] T945 [P] [US5] Implement DTO→model mappers in `frontend/src/common/mappers/` (course, quiz, summary, flashcard, user)
+- [ ] T946 [P] [US5] Implement global error banner `frontend/src/common/components/ErrorBanner.tsx` and integrate into `AppLayout.tsx`
+- [ ] T947 [P] [US5] Persist sidebar collapse state via localStorage in `frontend/src/features/layout/components/AppLayout.tsx`
+- [ ] T948 [P] [US5] Implement markdown renderer `frontend/src/components/MarkdownRenderer.tsx`
+- [ ] T949 [P] [US5] Implement score circle `frontend/src/features/quizzes/components/ScoreCircle.tsx`
+- [ ] T950 [P] [US5] Implement correction components `frontend/src/features/quizzes/components/CorrectionSection.tsx`, `QuestionCorrectionCard.tsx`
+
 Final Phase: Polish & Cross-cutting concerns
 - [ ] T900 Implement quota enforcement (Free vs Premium) in `backend/src/common/guards/quota.guard.ts` and service `backend/src/features/users/user.quota.ts` (maps to FR-006)
 - [ ] T901 Implement graceful AI error handling and user-facing messages in `backend/src/features/ai/*` and frontend global error UI `frontend/src/ui/ErrorBanner.tsx` (maps to FR-007)
@@ -138,6 +188,7 @@ Dependencies (story completion order)
 4. US2 (Study sheet) (T200..T205) depends on Auth and Foundational.
 5. US3 (Quizzes generation) (T300..T304) depends on US2.
 6. US4 (Quiz completion) (T400..T404) depends on US3.
+7. US5 (Frontend UI) (T904..T950) depends on backend contracts from US1–US4; initial routing/layout/provider scaffolding can start earlier with mock data.
 
 Parallel execution examples
 - Frontend scaffold (T001) and backend scaffold (T002) are parallelizable.
@@ -145,6 +196,7 @@ Parallel execution examples
 - Frontend UI for courses (T207) and backend course endpoints (T202) can be worked on in parallel once the contracts are agreed.
 - Quiz domain setup (T300-T306: entity, errors, ports, DTOs) can be parallelized across multiple developers.
 - Frontend quiz UI (T314) can be developed in parallel with backend use cases (T307-T309) once DTOs are defined.
+- US5 component batches can run in parallel by squads: routing/providers (T904–T918), dashboard/home (T919–T922), course pages (T923–T929), quiz pages (T930–T937), chat & settings (T938–T943), API/mappers/error handling (T944–T946), rendering & persistence (T947–T950).
 
 Implementation strategy
 - MVP-first: deliver US1 and US2 (Authentication + Study sheet generation) as first release. US3 and US4 follow in next sprint.
@@ -152,11 +204,11 @@ Implementation strategy
 - Keep database simple (SQLite for local dev, Postgres for prod). Use Prisma migrations and seed scripts.
 
 Validation checklist
-// Updated after completing US4 backend tasks and adding US3 list-by-user tasks
-- Total active tasks (excluding deferred): 80 (4 new US3 tasks added: T321-T324)
-- Tasks per story (active): US1:6, US2:17, US3:24 (T314 deferred, T321-T324 added), US4:17 (T415–T417 deferred) — all active US4 tasks done
+// Updated after adding US5 frontend implementation
+- Total active tasks (excluding deferred): 127 (US5 added: T904–T950)
+- Tasks per story (active): US1:6, US2:17, US3:24, US4:17, US5:47 (T314, T415–T417 remain deferred but are superseded by corresponding US5 tasks)
 - Deferred tasks: 4 (T314, T415, T416, T417)
-- Parallel opportunities (active): T001/T002, T012/T013, T203/T204, T300-T306, T321-T323, T404–T409, T410–T412 (completed) 
+- Parallel opportunities (active): Previous plus US5 batches (routing/providers, dashboard, course pages, quiz pages, chat & settings, API/mappers, rendering)
 
 Path to generated file:
 `C:\Users\samue\Documents\Code\Learnix\specs\001-ai-study-generator\tasks.md`
