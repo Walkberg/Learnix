@@ -212,6 +212,19 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 ### Session 2025-11-04
 - Q: What testing strategy should be used for implementing features? → A: Test-Driven Development (TDD)
 
+### Session 2025-11-09
+...existing code...
+- Q: Should frontend API interfaces return DTOs or frontend models? → A: API interfaces return frontend models; conversion from DTOs to frontend models is handled inside API implementation.
+- Q: What component architecture pattern should be used? → A: Compound pattern: UI components (pure presentation) + connector components (consume context for data/logic)
+- Q: Which UI component library should be used for frontend? → A: Shadcn UI
+- Q: How should forms be handled in the frontend? → A: react-hook-form + Shadcn fields
+- Q: Which library should be used for emoji management? → A: Liveblocks Frimouse
+- Q: How should component logic be managed? → A: Via providers with hooks
+- Q: What should be the frontend feature structure? → A: components/, providers/, pages/, hooks/, types/, with index.ts exports
+- Q: Where should reusable components be placed? → A: common/ directory at frontend root
+- Q: How should API calls be abstracted? → A: Interface-based API abstraction (e.g., CourseApi interface)
+- Q: What CSS framework/styling approach should be used? → A: Tailwind CSS 4.1
+
 ### Session 2025-11-06
 - Q: What should be the base URL structure for API endpoints? → A: Direct resource paths without /api prefix
 - Q: How should event-driven features be handled? → A: Domain events emitted by entities, caught by feature-specific handlers
@@ -551,6 +564,219 @@ Notes / follow-up actions:
 - Add a refactor task to the implementation plan to update current use-cases (auth, summaries, quizzes) to accept repository interfaces and remove direct external I/O.
 
 These constraints are intended to improve testability (allow mocking adapters), support TDD (small, focused use-cases), and prevent leakage of infrastructure concerns into core business logic.
+
+### Frontend Architecture Principles
+
+1. **UI Component Library**
+   - MUST use Shadcn UI as the primary component library
+   - All new components MUST leverage Shadcn primitives when available
+   - Custom components MUST follow Shadcn design patterns and accessibility standards
+
+2. **Forms Management**
+   - MUST use react-hook-form for all form handling
+   - MUST use Shadcn field components with react-hook-form integration
+   - Form validation MUST use Zod schemas integrated with react-hook-form
+
+3. **Emoji Management**
+   - MUST use Liveblocks Frimouse library for emoji selection and display
+   - Emoji pickers MUST provide accessible keyboard navigation
+
+4. **Component Architecture Pattern**
+   - MUST follow Compound pattern with two component types:
+     - **UI components** (pure presentation): Stateless components that receive all data via props, contain no business logic, and only render UI. Located in `features/*/components/`
+     - **Connector components**: Components that consume Context (via hooks) to access data and functions, then pass them as props to UI components. These orchestrate the connection between state/logic and presentation. Located in `features/*/pages/` or feature root
+   - UI components MUST be maximally reusable and testable by being completely decoupled from business logic
+   - Connector components MUST handle the integration with providers/context and compose UI components
+   - Example structure:
+     ```typescript
+     // UI component (pure presentation)
+     // features/courses/components/CourseCard.tsx
+     interface CourseCardProps {
+       title: string;
+       emoji: string;
+       onEdit: () => void;
+       onDelete: () => void;
+     }
+     
+     export function CourseCard({ title, emoji, onEdit, onDelete }: CourseCardProps) {
+       return (
+         <div>
+           <span>{emoji}</span>
+           <h3>{title}</h3>
+           <button onClick={onEdit}>Edit</button>
+           <button onClick={onDelete}>Delete</button>
+         </div>
+       );
+     }
+     
+     // Connector component (context consumer)
+     // features/courses/pages/CourseListPage.tsx
+     export function CourseListPage() {
+       const { courses, editCourse, deleteCourse } = useCourses();
+       
+       return (
+         <div>
+           {courses.map(course => (
+             <CourseCard
+               key={course.id}
+               title={course.title}
+               emoji={course.emoji}
+               onEdit={() => editCourse(course.id)}
+               onDelete={() => deleteCourse(course.id)}
+             />
+           ))}
+         </div>
+       );
+     }
+     ```
+
+5. **State Management & Logic**
+   - Business logic MUST be implemented in providers (React Context)
+   - Providers MUST expose hooks for component consumption
+   - Hooks MUST be exported directly from the provider file
+   - Example structure:
+     ```typescript
+     // features/courses/providers/course-provider.tsx
+     const CourseContext = createContext<CourseContextType>(...);
+     
+     export function CourseProvider({ children }) { ... }
+     
+     export function useCourses() {
+       const context = useContext(CourseContext);
+       if (!context) throw new Error('useCourses must be used within CourseProvider');
+       return context;
+     }
+     ```
+
+6. **Feature Structure** (`frontend/src/features/[feature-name]/`)
+   - MUST follow this structure:
+     ```
+     features/
+       └── [feature-name]/
+           ├── components/       # Dumb/presentational components
+           ├── providers/        # Context providers with hooks
+           ├── pages/           # Smart/container components (route components)
+           ├── hooks/           # Additional custom hooks (if needed)
+           ├── types.ts         # TypeScript types/interfaces
+           └── index.ts         # Public API - exports components, hooks, providers
+     ```
+   - Each feature MUST have an `index.ts` that exports its public API
+   - Internal implementation details MUST NOT be exported from `index.ts`
+
+7. **Common/Shared Code** (`frontend/src/common/`)
+   - Reusable components MUST be placed in `src/common/components/`
+   - Reusable hooks MUST be placed in `src/common/hooks/`
+   - Shared types MUST be placed in `src/common/types/`
+   - Common utilities MUST be placed in `src/common/utils/`
+   - Structure:
+     ```
+     common/
+       ├── components/
+       ├── hooks/
+       ├── types/
+       ├── utils/
+       └── index.ts
+     ```
+
+8. **API Abstraction Layer**
+   - MUST use interface-based API abstraction
+   - API interfaces MUST be defined separately from implementations
+   - API interfaces MUST return frontend model types, not backend DTOs. The conversion from backend DTOs to frontend models MUST be performed inside the API implementation, not exposed to consumers.
+   - Example pattern:
+     ```typescript
+     // features/courses/api/course-api.interface.ts
+     export interface CourseApi {
+       getUserCourses(): Promise<Course[]>;
+       getCourseById(id: string): Promise<Course>;
+       createCourse(data: CreateCourseDto): Promise<Course>;
+       updateCourse(id: string, data: UpdateCourseDto): Promise<Course>;
+       deleteCourse(id: string): Promise<void>;
+     }
+     
+     // features/courses/api/course-api.impl.ts
+     export class HttpCourseApi implements CourseApi {
+       constructor(private http: AxiosInstance) {}
+       
+       async getUserCourses(): Promise<Course[]> {
+         const response = await this.http.get<{ items: CourseDto[] }>('/courses');
+         return response.data.items.map(dtoToCourseModel);
+       }
+       // ... other methods
+     }
+     // Conversion function
+     function dtoToCourseModel(dto: CourseDto): Course {
+       // ...convert fields...
+     }
+     ```
+   - API implementations MUST handle HTTP concerns (headers, error handling, response mapping, DTO-to-model conversion)
+   - Providers MUST depend on API interfaces, not concrete implementations
+
+9. **UX Design Integration**
+   - Frontend implementation MUST reference `ux-design.md` for component structure and layout
+   - When implementing a page/component, developers MUST:
+     1. Review the corresponding section in `ux-design.md`
+     2. Follow the specified component hierarchy and props
+     3. Update `ux-design.md` if implementation requires structural changes
+   - Component names and file paths SHOULD match those specified in `ux-design.md` unless a better alternative is justified
+
+10. **Type Safety**
+    - All components MUST have explicit TypeScript types for props
+    - API response types MUST match backend response DTOs
+    - No use of `any` type except for truly dynamic/unknown data with justification
+    - Shared types between features MUST be extracted to `common/types/`
+
+### Frontend Technical Validation Checklist
+
+For each frontend feature implementation, verify:
+
+1. **Component Architecture**
+   - [ ] Compound pattern followed: UI components are pure presentation, connector components consume context
+   - [ ] Business logic in providers, not in UI components
+   - [ ] UI components receive all data via props and contain no business logic
+   - [ ] Connector components handle context integration and compose UI components
+
+2. **UI Components**
+   - [ ] Shadcn UI components used where applicable
+   - [ ] Custom components follow Shadcn patterns
+   - [ ] Accessibility standards met (ARIA labels, keyboard navigation)
+
+3. **Forms**
+   - [ ] react-hook-form used for form state management
+   - [ ] Shadcn field components integrated
+   - [ ] Zod schemas used for validation
+   - [ ] Form errors displayed clearly to users
+
+4. **State Management**
+   - [ ] Logic implemented in providers
+   - [ ] Hooks exported from provider files
+   - [ ] Context properly typed
+   - [ ] Error boundaries implemented where needed
+
+5. **Feature Structure**
+   - [ ] Correct directory structure followed
+   - [ ] index.ts exports only public API
+   - [ ] Types defined in separate types.ts file
+   - [ ] No circular dependencies
+
+6. **API Integration**
+   - [ ] API interface defined
+   - [ ] Implementation separated from interface
+   - [ ] Error handling implemented
+   - [ ] Response types match backend DTOs
+
+7. **UX Design Compliance**
+   - [ ] Component structure matches ux-design.md
+   - [ ] Props match specified interfaces
+   - [ ] Layout follows design specifications
+   - [ ] ux-design.md updated if changes made
+
+8. **Code Quality**
+   - [ ] All props explicitly typed
+   - [ ] No `any` types without justification
+   - [ ] Reusable code extracted to common/
+   - [ ] Components have clear, single responsibility
+
+This checklist MUST be reviewed before any frontend feature is considered complete.
 
 ## Notes
 

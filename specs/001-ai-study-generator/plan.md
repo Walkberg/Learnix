@@ -10,7 +10,10 @@ Deliver a web single-page application and a companion NestJS API enabling users 
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x for frontend and backend (Node 18+ for server)  
-**Primary Dependencies**: React 18 + Vite, React Router, react-hook-form, zod, Shadcn UI, Tailwind CSS 4.1, Axios; NestJS, Prisma, class-validator (where useful), Jest.  
+**Primary Dependencies**: 
+- **Backend**: NestJS, Prisma, class-validator, Jest
+- **Frontend**: React 18 + Vite, React Router, react-hook-form, zod, Shadcn UI, Tailwind CSS 4.1, Axios, Liveblocks Frimouse (emoji management)
+
 **Storage**: Prisma ORM targeting PostgreSQL in production; SQLite for local development and CI.  
 **Testing**: Jest for backend/unit tests, Vitest for frontend unit tests; integration tests for API using a test database.  
 **Target Platform**: Web SPA (modern browsers) + Node.js server for API.  
@@ -72,15 +75,28 @@ frontend/
 ├── src/
 │   ├── features/
 │   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   ├── providers/
+│   │   │   ├── pages/
+│   │   │   ├── api/
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
 │   │   ├── courses/
 │   │   ├── quizzes/
 │   │   ├── flashcards/
 │   │   ├── review/
+│   │   ├── chat/
 │   │   └── settings/
+│   ├── common/              # Reusable components, hooks, types
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   └── index.ts
 │   ├── app/
 │   │   ├── AppRoutes.tsx
-│   │   └── api.ts       # axios instance
-│   └── ui/              # shadcn + primitives
+│   │   └── api.ts           # Axios instance
+│   └── ui/                  # Shadcn + primitives
 └── vitest.config.ts
 
 docs/
