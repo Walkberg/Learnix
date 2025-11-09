@@ -283,6 +283,8 @@ Failure to follow this process increases maintenance debt and may be flagged dur
 - Q: Where should reusable components be placed? → A: common/ directory at frontend root
 - Q: How should API calls be abstracted? → A: Interface-based API abstraction (e.g., CourseApi interface)
 - Q: What CSS framework/styling approach should be used? → A: Tailwind CSS 4.1
+- Q: Should React Router actions be used for mutations? → A: No. Use React Router v7 Data Router Mode with loaders for data fetching only. All mutations (create, update, delete) should be handled via traditional event handlers and API calls in components, not through React Router actions. This keeps mutation logic co-located with components and avoids the complexity of action-based form handling.
+- Q: Should React Router loaders and useLoaderData be used for data fetching? → A: No. Use traditional React patterns (useState, useEffect) for all data fetching. This keeps data fetching logic within components, avoids the complexity of loader-based data fetching, and maintains a consistent pattern throughout the application. React Router is used only for routing (createBrowserRouter, loader-based auth guards, error boundaries, nested routes) - not for data management.
 
 ### Session 2025-11-06
 - Q: What should be the base URL structure for API endpoints? → A: Direct resource paths without /api prefix
