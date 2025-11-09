@@ -63,6 +63,7 @@ As a user I want to generate a quiz based on a course summary to test my knowled
 1. **Given** a study sheet, **When** the user requests "Generate quiz (10 questions)", **Then** the system creates a quiz of 10 questions with multiple-choice or open questions according to configuration, each containing an `explanation`.
 2. **Given** the user selects "MCQ - 4 choices", **When** the quiz is generated, **Then** each question has exactly 4 options with one correct answer and an `explanation` clarifying why the answer is correct.
 3. **Given** the user selects "OPEN", **When** the quiz is generated, **Then** each question has a textual correct answer and an `explanation` providing reasoning/context.
+4. **Given** a user with multiple quizzes across different courses, **When** the user requests GET `/quizzes`, **Then** the system returns all quizzes for that user with an array wrapper format (`{ items: [...] }`), each including `lastAttemptSummary` if available.
 
 ---
 
@@ -122,6 +123,7 @@ As a user I want to take the quiz, receive a score and see a breakdown of correc
 - **FR-015**: Any GET endpoint returning a list MUST return an object with an array property (e.g., `{ items: [...] }`), not a root array.
  - **FR-016**: The system MUST validate and score quiz attempts on the server using the stored quiz questions; client-supplied correctness MUST be ignored.
  - **FR-017**: The system MUST include the requesting user's last attempt summary in `GET /quizzes/:id` and `GET /courses/:courseId/quizzes` responses when available.
+ - **FR-018**: The system MUST allow fetching all quizzes for a user via GET `/quizzes` (across all courses owned by the user).
 
 ### Key Entities *(include if feature involves data)*
 
