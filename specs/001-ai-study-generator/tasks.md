@@ -130,17 +130,17 @@ Independent test criteria: All defined pages load with correct layout and naviga
 - [X] T910 [P] [US5] Create feature skeletons + `index.ts` exports for auth, courses, summaries, quizzes, flashcards, layout, home, chat, settings in `frontend/src/features/`
 - [X] T911 [US5] Implement `frontend/src/features/layout/components/AppLayout.tsx` wrapping authenticated routes
 - [X] T912 [P] [US5] Implement layout/sidebar components in `frontend/src/features/layout/components/` (AppSidebar, SidebarHeader, SidebarNavigation, SidebarNavItem, SidebarFooter, UserProfileButton, UserProfilePopover)
-- [ ] T913 [P] [US5] Implement auth pages `frontend/src/features/auth/pages/LoginPage.tsx`, `RegisterPage.tsx` with `schema.ts`
-- [ ] T914 [US5] Create AuthProvider + hook in `frontend/src/features/auth/providers/auth-provider.tsx` (login/logout, user state)
-- [ ] T915 [P] [US5] Create CoursesProvider + hook in `frontend/src/features/courses/providers/courses-provider.tsx` (CRUD + summaries trigger)
-- [ ] T916 [P] [US5] Create QuizzesProvider + hook in `frontend/src/features/quizzes/providers/quizzes-provider.tsx` (list, create, attempts)
-- [ ] T917 [P] [US5] Create SummariesProvider + hook in `frontend/src/features/summaries/providers/summaries-provider.tsx`
-- [ ] T918 [P] [US5] Create FlashcardsProvider + hook in `frontend/src/features/flashcards/providers/flashcards-provider.tsx`
-- [ ] T919 [P] [US5] Implement home components `frontend/src/features/home/components/QuickActionsSection.tsx`, `QuickActionCard.tsx`
-- [ ] T920 [P] [US5] Implement `frontend/src/features/courses/components/CoursesSection.tsx` & `CourseCard.tsx`
-- [ ] T921 [P] [US5] Implement `frontend/src/features/quizzes/components/QuizzesSection.tsx` & `QuizCard.tsx`
-- [ ] T922 [P] [US5] Implement shared headers `frontend/src/components/PageHeader.tsx`, `frontend/src/components/SectionHeader.tsx`
-- [ ] T923 [P] [US5] Implement course list toolbar `frontend/src/features/courses/components/CourseListToolbar.tsx`, `frontend/src/components/SearchBar.tsx`, `frontend/src/features/courses/components/AddCourseButton.tsx`, grid `frontend/src/features/courses/components/CourseGrid.tsx`
+- [X] T913 [P] [US5] Implement auth pages `frontend/src/features/auth/pages/LoginPage.tsx`, `RegisterPage.tsx` with `schema.ts`
+- [X] T914 [US5] Create AuthProvider + hook in `frontend/src/features/auth/providers/auth-provider.tsx` (login/logout, user state)
+- [X] T915 [P] [US5] Create CoursesProvider + hook in `frontend/src/features/courses/providers/courses-provider.tsx` (CRUD + summaries trigger)
+- [X] T916 [P] [US5] Create QuizzesProvider + hook in `frontend/src/features/quizzes/providers/quizzes-provider.tsx` (list, create, attempts)
+- [X] T917 [P] [US5] Create SummariesProvider + hook in `frontend/src/features/summaries/providers/summaries-provider.tsx`
+- [X] T918 [P] [US5] Create FlashcardsProvider + hook in `frontend/src/features/flashcards/providers/flashcards-provider.tsx`
+- [X] T919 [P] [US5] Implement home components `frontend/src/features/home/components/QuickActionsSection.tsx`, `QuickActionCard.tsx`
+- [X] T920 [P] [US5] Implement `frontend/src/features/courses/components/CoursesSection.tsx` & `CourseCard.tsx`
+- [X] T921 [P] [US5] Implement `frontend/src/features/quizzes/components/QuizzesSection.tsx` & `QuizCard.tsx`
+- [X] T922 [P] [US5] Implement shared headers `frontend/src/components/PageHeader.tsx`, `frontend/src/components/SectionHeader.tsx`
+- [X] T923 [P] [US5] Implement course list toolbar `frontend/src/features/courses/components/CourseListToolbar.tsx`, `frontend/src/components/SearchBar.tsx`, `frontend/src/features/courses/components/AddCourseButton.tsx`, grid `frontend/src/features/courses/components/CourseGrid.tsx`
 - [ ] T924 [P] [US5] Implement course detail header `frontend/src/features/courses/components/CourseDetailHeader.tsx`
 - [ ] T925 [P] [US5] Implement tab navigation `frontend/src/features/courses/components/CourseTabNavigation.tsx`
 - [ ] T926 [P] [US5] Implement summary tab `frontend/src/features/summaries/components/SummaryContent.tsx` + actions `RegenerateButton.tsx`, `EditSummaryButton.tsx`

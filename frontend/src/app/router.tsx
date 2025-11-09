@@ -1,11 +1,9 @@
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { AppLayout } from '../features/layout/components/AppLayout';
 import { requireAuth, requireGuest } from '../features/auth/utils/auth-guards';
+import LoginPage from '@/features/auth/pages/LoginPage';
+import RegisterPage from '@/features/auth/pages/RegisterPage';
 
-// Placeholder components - will be replaced with actual page components
-// Note: Data fetching happens inside these components using useState/useEffect
-const LoginPage = () => <div>Login Page</div>;
-const RegisterPage = () => <div>Register Page</div>;
 const HomePage = () => <div>Home Page</div>;
 const CoursesPage = () => <div>Courses Page</div>;
 const CourseDetailPage = () => <div>Course Detail Page</div>;

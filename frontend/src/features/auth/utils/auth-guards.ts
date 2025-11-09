@@ -6,7 +6,7 @@ import { redirect } from 'react-router-dom';
  */
 export function isAuthenticated(): boolean {
   // Check for token in localStorage
-  localStorage.setItem('token', 'mock-token');
+
   const token = localStorage.getItem('token');
 
   // TODO: Add token validation, expiry check, etc.

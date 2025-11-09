@@ -1,38 +1,91 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import type { LoginFormData, RegisterFormData } from '../schema';
+import { authApi } from '../api/auth.api';
+import { getAuthToken } from '@/app/api';
 
 interface User {
   id: string;
   email: string;
-  displayName?: string;
+  displayName: string;
 }
 
-interface AuthContextValue {
+interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  isLoading: boolean;
+  login: (credentials: LoginFormData) => Promise<void>;
+  register: (data: RegisterFormData) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const login = useCallback(async (email: string, password: string) => {
-    void password; // placeholder until real API integration
-    setUser({ id: 'demo', email });
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = getAuthToken();
+      if (token) {
+        try {
+          const currentUser = await authApi.getCurrentUser();
+          setUser(currentUser);
+        } catch (error) {
+          console.error('Failed to restore session:', error);
+          await authApi.logout();
+        }
+      }
+      setIsLoading(false);
+    };
+
+    initAuth();
   }, []);
 
-  const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem('token');
-  }, []);
+  const login = async (credentials: LoginFormData) => {
+    try {
+      const response = await authApi.login(credentials);
+      setUser(response.user);
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
+  };
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
-}
+  const register = async (data: RegisterFormData) => {
+    try {
+      const response = await authApi.register(data);
+      setUser(response.user);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      throw error;
+    }
+  };
 
-export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
-  return ctx;
-}
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } finally {
+      setUser(null);
+    }
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
