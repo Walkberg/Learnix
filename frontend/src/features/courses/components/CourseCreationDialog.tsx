@@ -60,7 +60,6 @@ export const CourseCreationDialog = () => {
                 />
               </Field>
             )}
-
             <LanguagePicker
               value={watch('language')}
               onChange={(lang) => setValue('language', lang)}
@@ -74,7 +73,7 @@ export const CourseCreationDialog = () => {
               </div>
             )}
             <DialogFooter>
-              <Button disabled={errors != null} type="submit">
+              <Button disabled={errors.sourceText != null} type="submit">
                 Générer la fiche
               </Button>
             </DialogFooter>

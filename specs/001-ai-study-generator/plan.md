@@ -82,7 +82,27 @@ frontend/
 │   │   │   ├── types.ts
 │   │   │   └── index.ts
 │   │   ├── courses/
+│   │   │   ├── components/
+│   │   │   ├── providers/
+│   │   │   │   ├── course-api-provider.tsx    # API instance provider
+│   │   │   │   ├── courses-provider.tsx       # Data/state provider
+│   │   │   │   └── course-create-provider.tsx # Creation dialog provider
+│   │   │   ├── api/
+│   │   │   │   ├── course-api.interface.ts
+│   │   │   │   └── course-api.http.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
 │   │   ├── quizzes/
+│   │   │   ├── components/
+│   │   │   ├── providers/
+│   │   │   │   ├── quiz-api-provider.tsx      # API instance provider
+│   │   │   │   ├── quizzes-provider.tsx       # Data/state provider
+│   │   │   │   └── quiz-create-provider.tsx   # Creation dialog provider
+│   │   │   ├── api/
+│   │   │   │   ├── quiz-api.interface.ts
+│   │   │   │   └── quiz-api.http.ts
+│   │   │   ├── types.ts
+│   │   │   └── index.ts
 │   │   ├── flashcards/
 │   │   ├── review/
 │   │   ├── chat/

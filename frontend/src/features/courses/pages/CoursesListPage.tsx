@@ -10,7 +10,6 @@ export function CoursesListPage() {
   const { openDialog } = useCourseCreate();
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter courses based on search query
   const filteredCourses = searchQuery
     ? courses.filter((course) => course.title.toLowerCase().includes(searchQuery.toLowerCase()))
     : courses;

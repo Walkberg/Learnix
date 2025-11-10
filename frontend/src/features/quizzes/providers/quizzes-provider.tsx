@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import type { Quiz, QuizAttemptSummary } from '../types';
-import { HttpQuizApi } from '../api/quiz-api.http';
-import type { QuizApi } from '../api/quiz-api.interface';
+import { useQuizApi } from './quiz-api-provider';
 
 export interface QuizzesContextValue {
   quizzes: Quiz[];
@@ -19,44 +18,56 @@ export function QuizzesProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const quizApi: QuizApi = useMemo(() => new HttpQuizApi(), []);
+  const quizApi = useQuizApi();
 
-  const refresh = useCallback(async (courseId?: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const list = courseId
-        ? await quizApi.listQuizzesByCourse(courseId)
-        : await quizApi.listQuizzes();
-      setQuizzes(list);
-    } catch (e) {
-      setError(e as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const refresh = useCallback(
+    async (courseId?: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const list = courseId
+          ? await quizApi.listQuizzesByCourse(courseId)
+          : await quizApi.listQuizzes();
+        setQuizzes(list);
+      } catch (e) {
+        setError(e as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [quizApi]
+  );
 
-  const generate = useCallback(async (courseId: string, params: { count: number }) => {
-    const quiz = await quizApi.generate(courseId, { count: params.count, type: 'MCQ' });
-    setQuizzes((prev) => [quiz, ...prev]);
-    return quiz;
-  }, []);
+  const generate = useCallback(
+    async (courseId: string, params: { count: number }) => {
+      const quiz = await quizApi.generate(courseId, { count: params.count, type: 'MCQ' });
+      setQuizzes((prev) => [quiz, ...prev]);
+      return quiz;
+    },
+    [quizApi]
+  );
 
-  const deleteQuiz = useCallback(async (id: string) => {
-    try {
-      await quizApi.deleteQuiz(id);
-    } finally {
-      setQuizzes((prev) => prev.filter((q) => q.id !== id));
-    }
-  }, []);
+  const deleteQuiz = useCallback(
+    async (id: string) => {
+      try {
+        await quizApi.deleteQuiz(id);
+      } finally {
+        setQuizzes((prev) => prev.filter((q) => q.id !== id));
+      }
+    },
+    [quizApi]
+  );
 
-  const startAttempt = useCallback(async (quizId: string) => {
-    const summary = await quizApi.startAttempt(quizId, []);
-    setQuizzes((prev) =>
-      prev.map((q) => (q.id === quizId ? { ...q, lastAttemptSummary: summary } : q))
-    );
-    return summary;
-  }, []);
+  const startAttempt = useCallback(
+    async (quizId: string) => {
+      const summary = await quizApi.startAttempt(quizId, []);
+      setQuizzes((prev) =>
+        prev.map((q) => (q.id === quizId ? { ...q, lastAttemptSummary: summary } : q))
+      );
+      return summary;
+    },
+    [quizApi]
+  );
 
   useEffect(() => {
     void refresh();

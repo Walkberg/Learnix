@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
-import { HttpCourseApi } from '../api/course-api.http';
-import type { CourseApi } from '../api/course-api.interface';
 import type { Course } from '../types';
+import { useCourseApi } from './course-api-provider';
 
 // Legacy inline Course interface removed; now imported from ../types
 
@@ -21,7 +20,7 @@ export function CoursesProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const courseApi: CourseApi = useMemo(() => new HttpCourseApi(), []);
+  const courseApi = useCourseApi();
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -34,30 +33,36 @@ export function CoursesProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [courseApi]);
 
-  const createCourse = useCallback(async (input: { title: string; emoji?: string }) => {
-    try {
-      const course = await courseApi.createCourse({
-        title: input.title,
-        sourceText: '',
-        emoji: input.emoji,
-      });
-      setCourses((prev) => [course, ...prev]);
-      return course;
-    } catch (e) {
-      throw e;
-    }
-  }, []);
+  const createCourse = useCallback(
+    async (input: { title: string; emoji?: string }) => {
+      try {
+        const course = await courseApi.createCourse({
+          title: input.title,
+          sourceText: '',
+          emoji: input.emoji,
+        });
+        setCourses((prev) => [course, ...prev]);
+        return course;
+      } catch (e) {
+        throw e;
+      }
+    },
+    [courseApi]
+  );
 
-  const deleteCourse = useCallback(async (id: string) => {
-    try {
-      await courseApi.deleteCourse(id);
-    } catch (e) {
-    } finally {
-      setCourses((prev) => prev.filter((c) => c.id !== id));
-    }
-  }, []);
+  const deleteCourse = useCallback(
+    async (id: string) => {
+      try {
+        await courseApi.deleteCourse(id);
+      } catch (e) {
+      } finally {
+        setCourses((prev) => prev.filter((c) => c.id !== id));
+      }
+    },
+    [courseApi]
+  );
 
   useEffect(() => {
     void refresh();

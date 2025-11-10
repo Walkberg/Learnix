@@ -1,8 +1,7 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { QuizCreateFormData } from '../types';
 import { quizCreateSchema } from '../schemas/quiz-create.schema';
-import type { QuizApi } from '../api/quiz-api.interface';
-import { HttpQuizApi } from '../api/quiz-api.http';
+import { useQuizApi } from './quiz-api-provider';
 
 const defaultFormData: QuizCreateFormData = {};
 
@@ -57,7 +56,7 @@ export const QuizzCreateProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState<FormStep>('course');
   const [formData, setFormData] = useState<QuizCreateFormData>(defaultFormData);
 
-  const quizApi: QuizApi = useMemo(() => new HttpQuizApi(), []);
+  const quizApi = useQuizApi();
 
   const openDialog = (courseId?: string) => {
     setIsOpen(true);

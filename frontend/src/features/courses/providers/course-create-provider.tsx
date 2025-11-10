@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { CourseCreateFormData, LanguageOption } from '../types';
 import { courseCreateSchema } from '../schemas/course-create.schema';
+import { useCourseApi } from './course-api-provider';
 
 interface CourseCreateContextValue {
   isOpen: boolean;
@@ -40,13 +41,19 @@ export const CourseCreateProvider = ({ children }: { children: ReactNode }) => {
   const updateFormData = (data: Partial<CourseCreateFormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
+  const courseApi = useCourseApi();
+
   const submitCourse = async () => {
     const result = courseCreateSchema.safeParse(formData);
 
     if (!result.success) {
       throw new Error('Validation failed');
     }
-    // TODO: Call CourseApi.createCourse here
+    await courseApi.createCourse({
+      title: formData.sourceText.slice(0, 40) || 'Nouveau cours',
+      sourceText: formData.sourceText,
+      emoji: undefined,
+    });
     closeDialog();
   };
 

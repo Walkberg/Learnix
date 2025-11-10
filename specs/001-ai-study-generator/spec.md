@@ -279,7 +279,8 @@ Failure to follow this process increases maintenance debt and may be flagged dur
 - Q: How should forms be handled in the frontend? → A: react-hook-form + Shadcn fields
 - Q: Which library should be used for emoji management? → A: Liveblocks Frimouse
 - Q: How should component logic be managed? → A: Via providers with hooks
-- Q: What should be the frontend feature structure? → A: components/, providers/, pages/, hooks/, types/, with index.ts exports
+- Q: What should be the frontend feature structure? → A: components/, providers/, pages/, hooks/, types/, with index.ts exports. Within providers/, separate API instance providers (e.g., course-api-provider.tsx, quiz-api-provider.tsx) from data/state providers (e.g., courses-provider.tsx, quizzes-provider.tsx) and dialog providers (e.g., course-create-provider.tsx, quiz-create-provider.tsx).
+- Q: How should API instances be managed in the frontend? → A: Create dedicated API provider per feature (e.g., CourseApiProvider, QuizApiProvider) that instantiates and exposes the API interface via context. Data providers and dialog providers consume the API via useXxxApi() hooks instead of instantiating directly.
 - Q: Where should reusable components be placed? → A: common/ directory at frontend root
 - Q: How should API calls be abstracted? → A: Interface-based API abstraction (e.g., CourseApi interface)
 - Q: What CSS framework/styling approach should be used? → A: Tailwind CSS 4.1

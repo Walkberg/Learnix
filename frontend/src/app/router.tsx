@@ -74,12 +74,17 @@ export const router = createBrowserRouter([
             element: <QuizzesPage />,
           },
           {
-            path: ':quizId/play',
-            element: <QuizPlayerPage />,
-          },
-          {
-            path: ':quizId/results',
-            element: <QuizResultsPage />,
+            path: ':quizId',
+            children: [
+              {
+                path: 'play',
+                element: <QuizPlayerPage />,
+              },
+              {
+                path: 'results',
+                element: <QuizResultsPage />,
+              },
+            ],
           },
         ],
       },
