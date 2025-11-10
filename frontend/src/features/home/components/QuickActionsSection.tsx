@@ -1,8 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import QuickActionCard from './QuickActionCard';
+import { useCourseCreate } from '../../courses/providers/course-create-provider';
+import { useQuizCreate } from '../../quizzes/providers/quiz-create-provider';
 
 const QuickActionsSection = () => {
   const navigate = useNavigate();
+  const { openDialog: openCourseDialog } = useCourseCreate();
+  const { openDialog: openQuizDialog } = useQuizCreate();
 
   const actions = [
     {
@@ -10,16 +14,13 @@ const QuickActionsSection = () => {
       description:
         'Crée automatiquement des fiches de révision synthétiques à partir de ton cours.',
       icon: '📝',
-      onClick: () => navigate('/courses/new'),
+      onClick: () => openCourseDialog(),
     },
     {
       title: 'Créer un quizz',
       description: 'Conçois des quizz interactifs pour tester et renforcer tes connaissances.',
       icon: '❓',
-      onClick: () => {
-        // TODO: Open quiz creation modal
-        console.log('Open quiz creation modal');
-      },
+      onClick: () => openQuizDialog(),
     },
     {
       title: 'Réviser avec Learnix',
@@ -32,7 +33,6 @@ const QuickActionsSection = () => {
 
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-semibold mb-4">Actions rapides</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {actions.map((action) => (
           <QuickActionCard key={action.title} {...action} />

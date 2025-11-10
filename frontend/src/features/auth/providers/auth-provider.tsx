@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser(currentUser);
         } catch (error) {
           console.error('Failed to restore session:', error);
-          await authApi.logout();
+          //await authApi.logout();
         }
       }
       setIsLoading(false);

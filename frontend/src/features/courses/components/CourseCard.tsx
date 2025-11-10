@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2 } from 'lucide-react';
+import './CourseCard.css';
 
 interface Course {
   id: string;
@@ -49,10 +50,11 @@ const CourseCard = ({ course, onDelete }: CourseCardProps) => {
 
   return (
     <Card className="cursor-pointer transition-all hover:shadow-lg" onClick={handleCardClick}>
+      <div className="absolute flex items-center gap-2 course-icon">
+        <span className="text-4xl">{course.emoji || '📚'}</span>
+      </div>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{course.emoji || '📚'}</span>
-        </div>
+        <div></div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-8 w-8">

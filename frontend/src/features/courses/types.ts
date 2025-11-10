@@ -1,11 +1,23 @@
-// Frontend model for Course (unified; ensure single interface export)
+export type LanguageId = 'fr' | 'en' | 'es' | 'de' | 'it';
+
+export interface LanguageOption {
+  id: LanguageId; // e.g. 'fr'
+  label: string; // e.g. 'Français'
+}
+
+export interface CourseCreateFormData {
+  sourceType: 'text' | 'photo' | 'document';
+  language: LanguageOption;
+  sourceText: string;
+}
+
 export interface Course {
   id: string;
   title: string;
   emoji?: string;
-  sourceText?: string; // Optional in list contexts
-  authorId?: string; // Optional if not returned by list endpoint
-  createdAt: string; // ISO string (may be synthesized if backend omits temporarily)
+  sourceText?: string;
+  authorId?: string;
+  createdAt: string;
 }
 
 export interface CreateCourseDto {

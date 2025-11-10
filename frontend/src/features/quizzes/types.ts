@@ -1,3 +1,14 @@
+export interface QuizCreateFormData {
+  courseId?: string;
+  exerciseType?: 'MCQ' | 'OPEN' | 'FILL_BLANK';
+  answerCount?: 'duo' | 'trio' | 'square';
+}
+
+export interface QuizCreateState {
+  isOpen: boolean;
+  currentStep: 1 | 2;
+  formData: QuizCreateFormData;
+}
 // Consolidated quiz model types (single declarations only)
 export interface QuizAttemptSummary {
   score: number;
