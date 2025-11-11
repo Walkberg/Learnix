@@ -6,6 +6,8 @@ import type { Quiz, QuizAttemptSummary } from '../types';
 interface QuizDto {
   id: string;
   courseId: string;
+  courseTitle: string;
+  courseEmoji?: string;
   createdAt: string;
   lastAttemptSummary?: QuizAttemptSummary;
 }
@@ -17,6 +19,8 @@ interface QuizListDto {
 function dtoToModel(dto: QuizDto): Quiz {
   return {
     id: dto.id,
+    courseTitle: dto.courseTitle,
+    courseEmoji: dto.courseEmoji,
     courseId: dto.courseId,
     createdAt: dto.createdAt,
     lastAttemptSummary: dto.lastAttemptSummary,

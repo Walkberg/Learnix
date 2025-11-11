@@ -76,6 +76,8 @@ export class GenerateQuizUseCase {
 
     const quiz = Quiz.create({
       courseId: command.courseId,
+      courseTitle: course.title,
+      courseEmoji: course.emoji ?? '',
       params: {
         count: command.count,
         types: [command.type],

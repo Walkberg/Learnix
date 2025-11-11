@@ -16,11 +16,14 @@ export class PrismaQuizRepository implements IQuizRepository {
         questions: quiz.questions as any,
         createdAt: quiz.createdAt,
       },
+      include: { course: { select: { title: true, emoji: true } } },
     });
 
     return Quiz.create({
       id: created.id,
       courseId: created.courseId,
+      courseTitle: created.course.title,
+      courseEmoji: created.course.emoji || undefined,
       params: created.params as unknown as QuizParams,
       questions: created.questions as unknown as QuizQuestion[],
     });
@@ -29,6 +32,7 @@ export class PrismaQuizRepository implements IQuizRepository {
   async findById(id: string): Promise<Quiz | null> {
     const quiz = await this.prisma.quiz.findUnique({
       where: { id },
+      include: { course: { select: { title: true, emoji: true } } },
     });
 
     if (!quiz) {
@@ -38,6 +42,8 @@ export class PrismaQuizRepository implements IQuizRepository {
     return Quiz.create({
       id: quiz.id,
       courseId: quiz.courseId,
+      courseTitle: quiz.course.title,
+      courseEmoji: quiz.course.emoji || undefined,
       params: quiz.params as unknown as QuizParams,
       questions: quiz.questions as unknown as QuizQuestion[],
     });
@@ -47,12 +53,15 @@ export class PrismaQuizRepository implements IQuizRepository {
     const quizzes = await this.prisma.quiz.findMany({
       where: { courseId },
       orderBy: { createdAt: 'desc' },
+      include: { course: { select: { title: true, emoji: true } } },
     });
 
     return quizzes.map((quiz) =>
       Quiz.create({
         id: quiz.id,
         courseId: quiz.courseId,
+        courseTitle: quiz.course.title,
+        courseEmoji: quiz.course.emoji || undefined,
         params: quiz.params as unknown as QuizParams,
         questions: quiz.questions as unknown as QuizQuestion[],
       }),
@@ -63,12 +72,15 @@ export class PrismaQuizRepository implements IQuizRepository {
     const quizzes = await this.prisma.quiz.findMany({
       where: { course: { authorId: userId } },
       orderBy: { createdAt: 'desc' },
+      include: { course: { select: { title: true, emoji: true } } },
     });
 
     return quizzes.map((quiz) =>
       Quiz.create({
         id: quiz.id,
         courseId: quiz.courseId,
+        courseTitle: quiz.course.title,
+        courseEmoji: quiz.course.emoji || undefined,
         params: quiz.params as unknown as QuizParams,
         questions: quiz.questions as unknown as QuizQuestion[],
       }),

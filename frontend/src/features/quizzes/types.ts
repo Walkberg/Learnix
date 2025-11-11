@@ -43,6 +43,8 @@ export interface QuizParams {
 export interface Quiz {
   id: string;
   courseId: string;
+  courseTitle: string;
+  courseEmoji?: string;
   createdAt: string;
   params?: QuizParams; // optional if list endpoint omits
   questions?: QuizQuestion[]; // optional unless detailed fetch

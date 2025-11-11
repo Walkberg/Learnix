@@ -49,6 +49,8 @@ export class QuizzesController {
     return {
       id: quiz.id,
       courseId: quiz.courseId,
+      courseTitle: quiz.courseTitle,
+      courseEmoji: quiz.courseEmoji,
       params: quiz.params,
       questions: quiz.questions.map((q) => {
         if (q.type === 'MCQ') {
@@ -83,6 +85,8 @@ export class QuizzesController {
       items: result.map(({ quiz, lastAttemptSummary }) => ({
         id: quiz.id,
         courseId: quiz.courseId,
+        courseTitle: quiz.courseTitle,
+        courseEmoji: quiz.courseEmoji,
         params: quiz.params,
         questions: quiz.questions.map((q) => {
           if (q.type === 'MCQ') {
@@ -124,6 +128,8 @@ export class QuizzesController {
       items: result.map(({ quiz, lastAttemptSummary }) => ({
         id: quiz.id,
         courseId: quiz.courseId,
+        courseTitle: quiz.courseTitle,
+        courseEmoji: quiz.courseEmoji,
         params: quiz.params,
         questions: quiz.questions.map((q) => {
           if (q.type === 'MCQ') {
@@ -164,6 +170,8 @@ export class QuizzesController {
     return {
       id: quiz.id,
       courseId: quiz.courseId,
+      courseTitle: quiz.courseTitle,
+      courseEmoji: quiz.courseEmoji,
       params: quiz.params,
       questions: quiz.questions.map((q) => {
         if (q.type === 'MCQ') {

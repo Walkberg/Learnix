@@ -59,25 +59,27 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
     return date.toLocaleDateString('fr-FR');
   };
 
-  const getQuizTitle = () => {
-    if (quiz.params) {
-      const type = quiz.params.types?.[0] === 'OPEN' ? 'Ouvert' : 'QCM';
-      return `Quiz ${type} (${quiz.params.count} questions)`;
-    }
-    return `Quiz - ${quiz.id.substring(0, 8)}`;
-  };
-
   const getQuizIcon = () => {
     if (quiz.params?.types?.[0] === 'OPEN') return '✍️';
-    return '📝';
+    return '✍️';
+  };
+
+  const getQuizSubtitle = () => {
+    if (quiz.params) {
+      const type = quiz.params.types?.[0] === 'OPEN' ? 'Ouvert' : 'QCM';
+      return `Quiz ${type} • ${quiz.params.count} questions`;
+    }
+    return 'Quiz';
   };
 
   const status = getStatusBadge();
 
+  console.log(quiz);
+
   return (
     <Card className="cursor-pointer transition-all hover:shadow-lg" onClick={handleCardClick}>
-      <div className="absolute flex items-center gap-2 course-icon">
-        <span className="text-4xl">{getQuizIcon()}</span>
+      <div className="absolute flex flex-col items-center gap-2 ">
+        <span className="text-4xl course-icon">{getQuizIcon()}</span>
       </div>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
         <div></div>
@@ -99,7 +101,10 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
         </DropdownMenu>
       </CardHeader>
       <CardContent className="space-y-3">
-        <h3 className="font-semibold text-lg line-clamp-2">{getQuizTitle()}</h3>
+        <div className="flex flex-row items-center gap-1 text-sm">
+          <span>{quiz.courseEmoji || '📚'}</span>
+          <span className="font-medium text-foreground/80">{quiz.courseTitle}</span>
+        </div>
         {quiz.lastAttemptSummary && (
           <>
             <div className="space-y-1">

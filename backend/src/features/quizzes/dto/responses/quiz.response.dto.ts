@@ -20,6 +20,8 @@ export type QuizQuestionDto = MCQQuestionDto | OpenQuestionDto;
 export interface QuizResponseDto {
   id: string;
   courseId: string;
+  courseTitle: string;
+  courseEmoji?: string;
   params: {
     count: number;
     types: string[];
