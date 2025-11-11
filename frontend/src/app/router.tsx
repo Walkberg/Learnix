@@ -5,9 +5,9 @@ import LoginPage from '@/features/auth/pages/LoginPage';
 import RegisterPage from '@/features/auth/pages/RegisterPage';
 import { HomePage } from '@/features/home/pages/HomePage';
 import { CoursesListPage } from '@/features/courses/pages/CoursesListPage';
+import { QuizzesPage } from '@/features/quizzes/pages/QuizzesPage';
 
 const CourseDetailPage = () => <div>Course Detail Page</div>;
-const QuizzesPage = () => <div>All Quizzes Page</div>;
 const QuizPlayerPage = () => <div>Quiz Player Page</div>;
 const QuizResultsPage = () => <div>Quiz Results Page</div>;
 const ChatPage = () => <div>Chat Page</div>;

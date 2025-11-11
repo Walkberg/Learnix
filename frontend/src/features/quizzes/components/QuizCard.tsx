@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -10,16 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2 } from 'lucide-react';
-
-interface Quiz {
-  id: string;
-  courseTitle: string;
-  lastAttemptSummary?: {
-    score: number;
-    totalQuestions: number;
-    attemptedAt: string;
-  };
-}
+import type { Quiz } from '../types';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -56,14 +47,40 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
     return { label: 'Acquis', variant: 'default' as const };
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) return "Aujourd'hui";
+    if (diffInDays === 1) return 'Hier';
+    if (diffInDays < 7) return `Il y a ${diffInDays} jours`;
+    if (diffInDays < 30) return `Il y a ${Math.floor(diffInDays / 7)} semaines`;
+    return date.toLocaleDateString('fr-FR');
+  };
+
+  const getQuizTitle = () => {
+    if (quiz.params) {
+      const type = quiz.params.types?.[0] === 'OPEN' ? 'Ouvert' : 'QCM';
+      return `Quiz ${type} (${quiz.params.count} questions)`;
+    }
+    return `Quiz - ${quiz.id.substring(0, 8)}`;
+  };
+
+  const getQuizIcon = () => {
+    if (quiz.params?.types?.[0] === 'OPEN') return '✍️';
+    return '📝';
+  };
+
   const status = getStatusBadge();
 
   return (
     <Card className="cursor-pointer transition-all hover:shadow-lg" onClick={handleCardClick}>
+      <div className="absolute flex items-center gap-2 course-icon">
+        <span className="text-4xl">{getQuizIcon()}</span>
+      </div>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">📝</span>
-        </div>
+        <div></div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -82,7 +99,7 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
         </DropdownMenu>
       </CardHeader>
       <CardContent className="space-y-3">
-        <h3 className="font-semibold text-lg line-clamp-2">{quiz.courseTitle}</h3>
+        <h3 className="font-semibold text-lg line-clamp-2">{getQuizTitle()}</h3>
         {quiz.lastAttemptSummary && (
           <>
             <div className="space-y-1">
@@ -99,6 +116,9 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
         )}
         {!quiz.lastAttemptSummary && <Badge variant="secondary">Pas encore essayé</Badge>}
       </CardContent>
+      <CardFooter className="text-sm text-muted-foreground">
+        Créé {formatDate(quiz.createdAt)}
+      </CardFooter>
     </Card>
   );
 };
