@@ -44,12 +44,12 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 1
 
-- [ ] T005 [P] [US1] Create `CourseDetailPage` component in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T006 [P] [US1] Create `CourseDetailHeader` component in `frontend/src/features/courses/components/CourseDetailHeader.tsx` (displays emoji + title + kebab menu)
-- [ ] T007 [P] [US1] Create `CourseTabNavigation` component in `frontend/src/features/courses/components/CourseTabNavigation.tsx` (tabs: Fiche | Flashcards)
-- [ ] T008 [US1] Add route `/courses/:id` → `CourseDetailPage` in `frontend/src/app/router.tsx`
-- [ ] T009 [US1] Add nested routes `/courses/:id/summary` and `/courses/:id/flashcards` in `frontend/src/app/router.tsx`
-- [ ] T010 [US1] Implement `useCourseDetail(id: string)` hook in `frontend/src/features/courses/providers/courses-provider.tsx`
+- [x] T005 [P] [US1] Create `CourseDetailPage` component in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [x] T006 [P] [US1] Create `CourseDetailHeader` component in `frontend/src/features/courses/components/CourseDetailHeader.tsx` (displays emoji + title + kebab menu)
+- [x] T007 [P] [US1] Create `CourseTabNavigation` component in `frontend/src/features/courses/components/CourseTabNavigation.tsx` (tabs: Fiche | Flashcards)
+- [x] T008 [US1] Add route `/courses/:id` → `CourseDetailPage` in `frontend/src/app/router.tsx`
+- [x] T009 [US1] Add nested routes `/courses/:id/summary` and `/courses/:id/flashcards` in `frontend/src/app/router.tsx`
+- [x] T010 [US1] Implement `useCourseDetail(id: string)` hook in `frontend/src/features/courses/providers/courses-provider.tsx`
 
 **Checkpoint**: At this point, course detail page layout should display with proper navigation
 

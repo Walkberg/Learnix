@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
-import type { Course } from '../types';
+import type { Course, CourseDetail } from '../types';
 import { useCourseApi } from './course-api-provider';
 
 // Legacy inline Course interface removed; now imported from ../types
@@ -80,4 +80,46 @@ export function useCourses(): CoursesContextValue {
   const ctx = useContext(CoursesContext);
   if (!ctx) throw new Error('useCourses must be used within CoursesProvider');
   return ctx;
+}
+
+// Hook for fetching individual course detail
+export function useCourseDetail(courseId: string) {
+  const [courseDetail, setCourseDetail] = useState<CourseDetail | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const courseApi = useCourseApi();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchCourseDetail() {
+      if (!courseId) return;
+
+      setIsLoading(true);
+      setError(null);
+      try {
+        const detail = await courseApi.getCourseDetail(courseId);
+        if (isMounted) {
+          setCourseDetail(detail);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setError(e as Error);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void fetchCourseDetail();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [courseId, courseApi]);
+
+  return { courseDetail, isLoading, error };
 }

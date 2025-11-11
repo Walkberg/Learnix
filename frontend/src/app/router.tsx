@@ -1,13 +1,15 @@
-import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Outlet, Navigate } from 'react-router-dom';
 import { AppLayout } from '../features/layout/components/AppLayout';
 import { requireAuth, requireGuest } from '../features/auth/utils/auth-guards';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import RegisterPage from '@/features/auth/pages/RegisterPage';
 import { HomePage } from '@/features/home/pages/HomePage';
 import { CoursesListPage } from '@/features/courses/pages/CoursesListPage';
+import { CourseDetailPage } from '@/features/courses/pages/CourseDetailPage';
 import { QuizzesPage } from '@/features/quizzes/pages/QuizzesPage';
 
-const CourseDetailPage = () => <div>Course Detail Page</div>;
+const SummaryTabContent = () => <div>Summary Tab Content</div>;
+const FlashcardsTabContent = () => <div>Flashcards Tab Content</div>;
 const QuizPlayerPage = () => <div>Quiz Player Page</div>;
 const QuizResultsPage = () => <div>Quiz Results Page</div>;
 const ChatPage = () => <div>Chat Page</div>;
@@ -63,6 +65,20 @@ export const router = createBrowserRouter([
           {
             path: ':courseId',
             element: <CourseDetailPage />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to="summary" replace />,
+              },
+              {
+                path: 'summary',
+                element: <SummaryTabContent />,
+              },
+              {
+                path: 'flashcards',
+                element: <FlashcardsTabContent />,
+              },
+            ],
           },
         ],
       },
