@@ -6,3 +6,13 @@ export interface Flashcard {
   answer: string;
   createdAt: string;
 }
+
+export interface CreateFlashcardInput {
+  question: string;
+  answer: string;
+}
+
+export interface UpdateFlashcardInput {
+  question?: string;
+  answer?: string;
+}

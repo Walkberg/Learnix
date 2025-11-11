@@ -57,34 +57,38 @@ The implementation follows the existing frontend architecture with API providers
 
 ## Phase 3: User Story 2 - Summary Tab Display (Priority: P1) 🎯 MVP
 
-**Goal**: Display AI-generated course summary as markdown in left panel of Fiche tab
+**Goal**: Display AI-generated course summary as markdown in left panel of Fiche tab using dedicated summary API endpoint
 
-**Independent Test**: Navigate to `/courses/:id/summary`, verify markdown summary displays with proper formatting
+**Independent Test**: Navigate to `/courses/:id/summary`, verify markdown summary displays with proper formatting, verify API call to `/courses/:courseId/summaries` endpoint
 
 ### Frontend Implementation for User Story 2
 
-- [ ] T011 [P] [US2] Create `SummaryTabContent` component in `frontend/src/features/summaries/components/SummaryTabContent.tsx`
-- [ ] T012 [P] [US2] Ensure `MarkdownRenderer` component exists in `frontend/src/components/MarkdownRenderer.tsx` (may already exist)
-- [ ] T013 [US2] Add route handler for `/courses/:id/summary` rendering `SummaryTabContent` in `frontend/src/app/router.tsx`
-- [ ] T014 [US2] Update `CourseDetail` type to include `summaryMarkdown?: string` in `frontend/src/features/courses/types.ts`
+- [x] T011 [P] [US2] Create `SummariesProvider` in `frontend/src/features/summaries/providers/summaries-provider.tsx` (fetches from `/courses/:courseId/summaries` endpoint)
+- [x] T012 [P] [US2] Create `SummaryTabContent` component in `frontend/src/features/summaries/components/SummaryTabContent.tsx` (consumes `useSummaries` hook)
+- [x] T013 [P] [US2] Create `SummaryTabWrapper` component in `frontend/src/features/summaries/components/SummaryTabWrapper.tsx` (provides courseId to SummariesProvider)
+- [x] T014 [P] [US2] Ensure `MarkdownRenderer` component exists in `frontend/src/components/MarkdownRenderer.tsx` (may already exist)
+- [x] T015 [US2] Add `getCourseSummaries(courseId: string): Promise<CourseSummary[]>` method to `CourseApi` interface in `frontend/src/features/courses/api/course-api.interface.ts`
+- [x] T016 [US2] Implement `getCourseSummaries` in `HttpCourseApi` in `frontend/src/features/courses/api/course-api.http.ts` (calls GET `/courses/:courseId/summaries`)
+- [x] T017 [US2] Add `CourseSummary` type to `frontend/src/features/courses/types.ts` with `id` and `content` fields
+- [x] T018 [US2] Update route handler for `/courses/:id/summary` to use `SummaryTabWrapper` in `frontend/src/app/router.tsx`
 
-**Checkpoint**: Summary tab should display formatted markdown content
+**Checkpoint**: Summary tab should display formatted markdown content from dedicated summaries endpoint
 
 ---
 
 ## Phase 4: User Story 3 - Flashcard Management Provider (Priority: P2)
 
-**Goal**: Create provider for flashcard CRUD operations (create, update, delete, list) for a course
+**Goal**: Create provider for flashcard CRUD operations (create, update, delete, list) for a course using dedicated flashcard API endpoints
 
-**Independent Test**: Provider should expose hooks for flashcard operations, all CRUD operations should call correct API endpoints
+**Independent Test**: Provider should expose hooks for flashcard operations, all CRUD operations should call correct API endpoints (`/courses/:courseId/flashcards`)
 
 ### Frontend API Provider for User Story 3
 
-- [ ] T015 [P] [US3] Create `FlashcardApi` interface in `frontend/src/features/flashcards/api/flashcard-api.interface.ts` with methods: `getFlashcardsByCourse`, `createFlashcard`, `updateFlashcard`, `deleteFlashcard`
-- [ ] T016 [P] [US3] Create `HttpFlashcardApi` implementation in `frontend/src/features/flashcards/api/flashcard-api.http.ts`
-- [ ] T017 [US3] Create `FlashcardApiProvider` in `frontend/src/features/flashcards/providers/flashcard-api-provider.tsx` exposing `useFlashcardApi()` hook
-- [ ] T018 [US3] Create `FlashcardsProvider` in `frontend/src/features/flashcards/providers/flashcards-provider.tsx` exposing `useFlashcards(courseId: string)` hook
-- [ ] T019 [US3] Add `FlashcardApiProvider` and `FlashcardsProvider` to provider hierarchy in `frontend/src/main.tsx`
+- [x] T019 [P] [US3] Create `FlashcardApi` interface in `frontend/src/features/flashcards/api/flashcard-api.interface.ts` with methods: `getFlashcardsByCourse`, `createFlashcard`, `updateFlashcard`, `deleteFlashcard`
+- [x] T020 [P] [US3] Create `HttpFlashcardApi` implementation in `frontend/src/features/flashcards/api/flashcard-api.http.ts` (calls `/courses/:courseId/flashcards` and `/flashcards/:id` endpoints)
+- [x] T021 [US3] Create `FlashcardApiProvider` in `frontend/src/features/flashcards/providers/flashcard-api-provider.tsx` exposing `useFlashcardApi()` hook
+- [x] T022 [US3] Create `FlashcardsProvider` in `frontend/src/features/flashcards/providers/flashcards-provider.tsx` exposing `useFlashcards(courseId: string)` hook
+- [x] T023 [US3] Add `FlashcardApiProvider` and `FlashcardsProvider` to provider hierarchy in `frontend/src/main.tsx`
 
 **Checkpoint**: Flashcard provider ready for UI integration
 
@@ -98,13 +102,13 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Create `FlashcardTabContent` component in `frontend/src/features/flashcards/components/FlashcardTabContent.tsx` (main container)
-- [ ] T021 [P] [US4] Create `FlashcardStack` component in `frontend/src/features/flashcards/components/FlashcardStack.tsx` (manages stack state and navigation)
-- [ ] T022 [P] [US4] Create `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx` (displays single card with flip animation)
-- [ ] T023 [P] [US4] Create `FlashcardCardHeader` component in `frontend/src/features/flashcards/components/FlashcardCardHeader.tsx` (shows "1/X" counter, edit/delete icons)
-- [ ] T024 [P] [US4] Create `FlashcardNavigation` component in `frontend/src/features/flashcards/components/FlashcardNavigation.tsx` (prev/next arrows + add button)
-- [ ] T025 [US4] Add route handler for `/courses/:id/flashcards` rendering `FlashcardTabContent` in `frontend/src/app/router.tsx`
-- [ ] T026 [US4] Integrate `useFlashcards(courseId)` hook in `FlashcardTabContent`
+- [ ] T024 [P] [US4] Create `FlashcardTabContent` component in `frontend/src/features/flashcards/components/FlashcardTabContent.tsx` (main container)
+- [ ] T025 [P] [US4] Create `FlashcardStack` component in `frontend/src/features/flashcards/components/FlashcardStack.tsx` (manages stack state and navigation)
+- [ ] T026 [P] [US4] Create `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx` (displays single card with flip animation)
+- [ ] T027 [P] [US4] Create `FlashcardCardHeader` component in `frontend/src/features/flashcards/components/FlashcardCardHeader.tsx` (shows "1/X" counter, edit/delete icons)
+- [ ] T028 [P] [US4] Create `FlashcardNavigation` component in `frontend/src/features/flashcards/components/FlashcardNavigation.tsx` (prev/next arrows + add button)
+- [ ] T029 [US4] Add route handler for `/courses/:id/flashcards` rendering `FlashcardTabContent` in `frontend/src/app/router.tsx`
+- [ ] T030 [US4] Integrate `useFlashcards(courseId)` hook in `FlashcardTabContent`
 
 **Checkpoint**: Flashcard stack interface should be fully functional with navigation
 
@@ -118,10 +122,10 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 5
 
-- [ ] T027 [P] [US5] Create `EditFlashcardDialog` component in `frontend/src/features/flashcards/components/EditFlashcardDialog.tsx` with form (question + answer fields)
-- [ ] T028 [P] [US5] Create `DeleteFlashcardDialog` component in `frontend/src/features/flashcards/components/DeleteFlashcardDialog.tsx` (confirmation dialog)
-- [ ] T029 [US5] Integrate edit/delete handlers in `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx`
-- [ ] T030 [US5] Connect dialogs to provider methods (`updateFlashcard`, `deleteFlashcard`) in `FlashcardTabContent`
+- [ ] T031 [P] [US5] Create `EditFlashcardDialog` component in `frontend/src/features/flashcards/components/EditFlashcardDialog.tsx` with form (question + answer fields)
+- [ ] T032 [P] [US5] Create `DeleteFlashcardDialog` component in `frontend/src/features/flashcards/components/DeleteFlashcardDialog.tsx` (confirmation dialog)
+- [ ] T033 [US5] Integrate edit/delete handlers in `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx`
+- [ ] T034 [US5] Connect dialogs to provider methods (`updateFlashcard`, `deleteFlashcard`) in `FlashcardTabContent`
 
 **Checkpoint**: Flashcard editing and deletion should work end-to-end
 
@@ -135,11 +139,11 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Frontend Implementation for User Story 6
 
-- [ ] T031 [P] [US6] Create `QuizStatisticsPanel` component in `frontend/src/features/quizzes/components/QuizStatisticsPanel.tsx`
-- [ ] T032 [P] [US6] Create `StatCard` component in `frontend/src/components/StatCard.tsx` (displays title + value + icon)
-- [ ] T033 [US6] Add `getQuizStatsByCourse(courseId: string)` method to `QuizApi` interface in `frontend/src/features/quizzes/api/quiz-api.interface.ts`
-- [ ] T034 [US6] Implement `getQuizStatsByCourse` in `HttpQuizApi` in `frontend/src/features/quizzes/api/quiz-api.http.ts`
-- [ ] T035 [US6] Integrate `QuizStatisticsPanel` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [ ] T035 [P] [US6] Create `QuizStatisticsPanel` component in `frontend/src/features/quizzes/components/QuizStatisticsPanel.tsx`
+- [ ] T036 [P] [US6] Create `StatCard` component in `frontend/src/components/StatCard.tsx` (displays title + value + icon)
+- [ ] T037 [US6] Add `getQuizStatsByCourse(courseId: string)` method to `QuizApi` interface in `frontend/src/features/quizzes/api/quiz-api.interface.ts`
+- [ ] T038 [US6] Implement `getQuizStatsByCourse` in `HttpQuizApi` in `frontend/src/features/quizzes/api/quiz-api.http.ts`
+- [ ] T039 [US6] Integrate `QuizStatisticsPanel` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
 
 **Checkpoint**: Quiz statistics should display in right panel
 
@@ -153,9 +157,9 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 7
 
-- [ ] T036 [US7] Create `CourseQuizzesProvider` in `frontend/src/features/quizzes/providers/course-quizzes-provider.tsx` exposing `useCourseQuizzes(courseId: string)` hook
-- [ ] T037 [US7] Add `CourseQuizzesProvider` to provider hierarchy in `frontend/src/main.tsx`
-- [ ] T038 [US7] Implement state management for course-specific quiz list in `CourseQuizzesProvider`
+- [ ] T040 [US7] Create `CourseQuizzesProvider` in `frontend/src/features/quizzes/providers/course-quizzes-provider.tsx` exposing `useCourseQuizzes(courseId: string)` hook
+- [ ] T041 [US7] Add `CourseQuizzesProvider` to provider hierarchy in `frontend/src/main.tsx`
+- [ ] T042 [US7] Implement state management for course-specific quiz list in `CourseQuizzesProvider`
 
 **Checkpoint**: Course quiz provider ready for UI integration
 
@@ -169,12 +173,12 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 8
 
-- [ ] T039 [P] [US8] Create `CourseQuizList` component in `frontend/src/features/quizzes/components/CourseQuizList.tsx`
-- [ ] T040 [P] [US8] Create `CourseQuizItem` component in `frontend/src/features/quizzes/components/CourseQuizItem.tsx` (shows quiz with status badge + circular progress + score)
-- [ ] T041 [P] [US8] Create `CircularProgress` component in `frontend/src/components/CircularProgress.tsx` (for score visualization)
-- [ ] T042 [P] [US8] Create `QuizStatusBadge` component in `frontend/src/features/quizzes/components/QuizStatusBadge.tsx` (variants: "À revoir", "Acquis", "Non acquis")
-- [ ] T043 [US8] Integrate `CourseQuizList` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T044 [US8] Connect to `useCourseQuizzes(courseId)` hook in `CourseQuizList`
+- [ ] T043 [P] [US8] Create `CourseQuizList` component in `frontend/src/features/quizzes/components/CourseQuizList.tsx`
+- [ ] T044 [P] [US8] Create `CourseQuizItem` component in `frontend/src/features/quizzes/components/CourseQuizItem.tsx` (shows quiz with status badge + circular progress + score)
+- [ ] T045 [P] [US8] Create `CircularProgress` component in `frontend/src/components/CircularProgress.tsx` (for score visualization)
+- [ ] T046 [P] [US8] Create `QuizStatusBadge` component in `frontend/src/features/quizzes/components/QuizStatusBadge.tsx` (variants: "À revoir", "Acquis", "Non acquis")
+- [ ] T047 [US8] Integrate `CourseQuizList` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [ ] T048 [US8] Connect to `useCourseQuizzes(courseId)` hook in `CourseQuizList`
 
 **Checkpoint**: Quiz list should display with proper status indicators
 
@@ -188,10 +192,10 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 9
 
-- [ ] T045 [P] [US9] Create `CreateCourseQuizButton` component in `frontend/src/features/quizzes/components/CreateCourseQuizButton.tsx`
-- [ ] T046 [US9] Update `QuizCreateProvider` to accept pre-filled `courseId` in `frontend/src/features/quizzes/providers/quiz-create-provider.tsx`
-- [ ] T047 [US9] Integrate `CreateCourseQuizButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T048 [US9] Wire button to open quiz creation dialog with course context
+- [ ] T049 [P] [US9] Create `CreateCourseQuizButton` component in `frontend/src/features/quizzes/components/CreateCourseQuizButton.tsx`
+- [ ] T050 [US9] Update `QuizCreateProvider` to accept pre-filled `courseId` in `frontend/src/features/quizzes/providers/quiz-create-provider.tsx`
+- [ ] T051 [US9] Integrate `CreateCourseQuizButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [ ] T052 [US9] Wire button to open quiz creation dialog with course context
 
 **Checkpoint**: Quiz creation from course detail page should work
 
@@ -205,9 +209,9 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 10
 
-- [ ] T049 [P] [US10] Create `StudyWithAIButton` component in `frontend/src/features/courses/components/StudyWithAIButton.tsx`
-- [ ] T050 [US10] Integrate `StudyWithAIButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T051 [US10] Implement navigation to `/chat` with course context (via URL params or state)
+- [ ] T053 [P] [US10] Create `StudyWithAIButton` component in `frontend/src/features/courses/components/StudyWithAIButton.tsx`
+- [ ] T054 [US10] Integrate `StudyWithAIButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [ ] T055 [US10] Implement navigation to `/chat` with course context (via URL params or state)
 
 **Checkpoint**: Study with AI button should navigate correctly with context
 
@@ -217,14 +221,14 @@ The implementation follows the existing frontend architecture with API providers
 
 **Purpose**: Improvements that affect multiple course detail features
 
-- [ ] T052 [P] Add loading states to all course detail data fetching in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T053 [P] Add error states and error boundaries for course detail page
-- [ ] T054 [P] Add empty states for no flashcards and no quizzes
-- [ ] T055 [P] Implement responsive layout for mobile (stack left/right panels vertically)
-- [ ] T056 Code review and refactoring for consistency
-- [ ] T057 Update `ux-design.md` with actual component structure if changed
-- [ ] T058 Add keyboard shortcuts for flashcard navigation (arrow keys)
-- [ ] T059 Add accessibility labels (ARIA) to all interactive elements
+- [ ] T056 [P] Add loading states to all course detail data fetching in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [ ] T057 [P] Add error states and error boundaries for course detail page
+- [ ] T058 [P] Add empty states for no flashcards and no quizzes
+- [ ] T059 [P] Implement responsive layout for mobile (stack left/right panels vertically)
+- [ ] T060 Code review and refactoring for consistency
+- [ ] T061 Update `ux-design.md` with actual component structure if changed
+- [ ] T062 Add keyboard shortcuts for flashcard navigation (arrow keys)
+- [ ] T063 Add accessibility labels (ARIA) to all interactive elements
 
 ---
 
@@ -283,6 +287,8 @@ With 3 developers after US1 complete:
 - [P] tasks can run in parallel within same phase
 - [Story] label maps task to specific user story (US1-US10)
 - Each user story delivers independent value
+- **Summaries**: Use dedicated `/courses/:courseId/summaries` endpoint via `SummariesProvider` with `useCourseSummaries` hook
+- **Flashcards**: Use dedicated `/courses/:courseId/flashcards` endpoint via `FlashcardsProvider` with `useFlashcards` hook
 - Flashcard stack UI uses card flip animation (consider react-spring or framer-motion)
 - Circular progress component reusable across app (quizzes, courses)
 - Quiz status badges match color scheme: Red (non acquis), Yellow (à revoir), Green (acquis)
