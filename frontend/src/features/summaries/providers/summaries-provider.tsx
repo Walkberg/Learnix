@@ -1,5 +1,7 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import type { ReactNode } from 'react';
+import type { CourseSummary } from '@/features/courses/types';
+import { useCourseApi } from '@/features/courses/providers/course-api-provider';
 
 export interface Summary {
   id: string;
@@ -11,47 +13,76 @@ export interface Summary {
 }
 
 export interface SummariesContextValue {
-  summaries: Summary[];
+  summaries: CourseSummary[];
   isLoading: boolean;
   error: Error | null;
   refresh: (courseId: string) => Promise<void>;
-  regenerate: (summaryId: string) => Promise<Summary>;
-  edit: (summaryId: string, markdown: string) => Promise<Summary>;
 }
-
-const stub: SummariesContextValue = {
-  summaries: [],
-  isLoading: false,
-  error: null,
-  async refresh(courseId: string) {
-    void courseId;
-  },
-  async regenerate(summaryId: string) {
-    return {
-      id: summaryId,
-      courseId: 'stub-course',
-      status: 'GENERATED',
-      markdown: '# Résumé (stub)\nContenu généré...',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  },
-  async edit(summaryId: string, markdown: string) {
-    return {
-      id: summaryId,
-      courseId: 'stub-course',
-      status: 'GENERATED',
-      markdown,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-  },
-};
 
 const SummariesContext = createContext<SummariesContextValue | undefined>(undefined);
 
-export function SummariesProvider({ children }: { children: ReactNode }) {
-  return <SummariesContext.Provider value={stub}>{children}</SummariesContext.Provider>;
+interface SummariesProviderProps {
+  courseId: string;
+  children: ReactNode;
+}
+
+export function SummariesProvider({ courseId, children }: SummariesProviderProps) {
+  const [summaries, setSummaries] = useState<CourseSummary[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  const courseApi = useCourseApi();
+
+  const refresh = async (refreshCourseId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await courseApi.getCourseSummaries(refreshCourseId);
+      setSummaries(data);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function fetchSummaries() {
+      if (!courseId) return;
+
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await courseApi.getCourseSummaries(courseId);
+        if (isMounted) {
+          setSummaries(data);
+        }
+      } catch (e) {
+        if (isMounted) {
+          setError(e as Error);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void fetchSummaries();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [courseId, courseApi]);
+
+  const value: SummariesContextValue = useMemo(
+    () => ({ summaries, isLoading, error, refresh }),
+    [summaries, isLoading, error]
+  );
+
+  return <SummariesContext.Provider value={value}>{children}</SummariesContext.Provider>;
 }
 
 export function useSummaries(): SummariesContextValue {

@@ -39,7 +39,11 @@ export interface QuizStats {
 }
 
 export interface CourseDetail extends Course {
-  summaryMarkdown?: string;
   flashcardStats?: FlashcardStats;
   quizStats?: QuizStats;
+}
+
+export interface CourseSummary {
+  id: string;
+  content: string;
 }

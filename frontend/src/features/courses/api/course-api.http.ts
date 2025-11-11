@@ -1,6 +1,6 @@
 import api from '@/app/api';
 import type { AxiosInstance } from 'axios';
-import type { Course, CourseDetail } from '../types';
+import type { Course, CourseDetail, CourseSummary } from '../types';
 import type { CourseApi, CreateCourseInput } from './course-api.interface';
 
 // Backend DTOs (local to API impl)
@@ -17,7 +17,6 @@ interface CourseListDto {
 }
 
 interface CourseDetailDto extends CourseDto {
-  summaryMarkdown?: string;
   flashcardStats?: {
     total: number;
     mastered: number;
@@ -28,6 +27,15 @@ interface CourseDetailDto extends CourseDto {
     completedQuizzes: number;
     averageScore: number;
   };
+}
+
+interface SummaryDto {
+  id: string;
+  content: string;
+}
+
+interface SummaryListDto {
+  items: SummaryDto[];
 }
 
 function dtoToModel(dto: CourseDto): Course {
@@ -46,9 +54,15 @@ function dtoToDetailModel(dto: CourseDetailDto): CourseDetail {
     title: dto.title,
     emoji: dto.emoji,
     createdAt: new Date().toISOString(),
-    summaryMarkdown: dto.summaryMarkdown,
     flashcardStats: dto.flashcardStats,
     quizStats: dto.quizStats,
+  };
+}
+
+function summaryDtoToModel(dto: SummaryDto): CourseSummary {
+  return {
+    id: dto.id,
+    content: dto.content,
   };
 }
 
@@ -66,6 +80,11 @@ export class HttpCourseApi implements CourseApi {
   async getCourseDetail(id: string): Promise<CourseDetail> {
     const res = await this.http.get<CourseDetailDto>(`/courses/${id}`);
     return dtoToDetailModel(res.data);
+  }
+
+  async getCourseSummaries(courseId: string): Promise<CourseSummary[]> {
+    const res = await this.http.get<SummaryListDto>(`/courses/${courseId}/summaries`);
+    return res.data.items.map(summaryDtoToModel);
   }
 
   async createCourse(input: CreateCourseInput): Promise<Course> {
