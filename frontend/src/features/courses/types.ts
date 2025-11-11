@@ -25,3 +25,21 @@ export interface CreateCourseDto {
   emoji?: string;
   sourceText: string;
 }
+
+export interface FlashcardStats {
+  total: number;
+  mastered: number;
+  learning: number;
+}
+
+export interface QuizStats {
+  totalQuizzes: number;
+  completedQuizzes: number;
+  averageScore: number;
+}
+
+export interface CourseDetail extends Course {
+  summaryMarkdown?: string;
+  flashcardStats?: FlashcardStats;
+  quizStats?: QuizStats;
+}

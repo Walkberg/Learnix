@@ -1,6 +1,6 @@
 import api from '@/app/api';
 import type { AxiosInstance } from 'axios';
-import type { Course } from '../types';
+import type { Course, CourseDetail } from '../types';
 import type { CourseApi, CreateCourseInput } from './course-api.interface';
 
 // Backend DTOs (local to API impl)
@@ -16,6 +16,20 @@ interface CourseListDto {
   items: CourseDto[];
 }
 
+interface CourseDetailDto extends CourseDto {
+  summaryMarkdown?: string;
+  flashcardStats?: {
+    total: number;
+    mastered: number;
+    learning: number;
+  };
+  quizStats?: {
+    totalQuizzes: number;
+    completedQuizzes: number;
+    averageScore: number;
+  };
+}
+
 function dtoToModel(dto: CourseDto): Course {
   return {
     id: dto.id,
@@ -23,6 +37,18 @@ function dtoToModel(dto: CourseDto): Course {
     emoji: dto.emoji,
     // Backend DTO currently doesn't expose createdAt in controller responses; synthesize for now
     createdAt: new Date().toISOString(),
+  };
+}
+
+function dtoToDetailModel(dto: CourseDetailDto): CourseDetail {
+  return {
+    id: dto.id,
+    title: dto.title,
+    emoji: dto.emoji,
+    createdAt: new Date().toISOString(),
+    summaryMarkdown: dto.summaryMarkdown,
+    flashcardStats: dto.flashcardStats,
+    quizStats: dto.quizStats,
   };
 }
 
@@ -35,6 +61,11 @@ export class HttpCourseApi implements CourseApi {
   async listMyCourses(): Promise<Course[]> {
     const res = await this.http.get<CourseListDto>('/courses');
     return res.data.items.map(dtoToModel);
+  }
+
+  async getCourseDetail(id: string): Promise<CourseDetail> {
+    const res = await this.http.get<CourseDetailDto>(`/courses/${id}`);
+    return dtoToDetailModel(res.data);
   }
 
   async createCourse(input: CreateCourseInput): Promise<Course> {
