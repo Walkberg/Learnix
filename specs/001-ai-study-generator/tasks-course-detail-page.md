@@ -102,13 +102,13 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 4
 
-- [ ] T024 [P] [US4] Create `FlashcardTabContent` component in `frontend/src/features/flashcards/components/FlashcardTabContent.tsx` (main container)
-- [ ] T025 [P] [US4] Create `FlashcardStack` component in `frontend/src/features/flashcards/components/FlashcardStack.tsx` (manages stack state and navigation)
-- [ ] T026 [P] [US4] Create `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx` (displays single card with flip animation)
-- [ ] T027 [P] [US4] Create `FlashcardCardHeader` component in `frontend/src/features/flashcards/components/FlashcardCardHeader.tsx` (shows "1/X" counter, edit/delete icons)
-- [ ] T028 [P] [US4] Create `FlashcardNavigation` component in `frontend/src/features/flashcards/components/FlashcardNavigation.tsx` (prev/next arrows + add button)
-- [ ] T029 [US4] Add route handler for `/courses/:id/flashcards` rendering `FlashcardTabContent` in `frontend/src/app/router.tsx`
-- [ ] T030 [US4] Integrate `useFlashcards(courseId)` hook in `FlashcardTabContent`
+- [x] T024 [P] [US4] Create `FlashcardTabContent` component in `frontend/src/features/flashcards/components/FlashcardTabContent.tsx` (main container)
+- [x] T025 [P] [US4] Create `FlashcardStack` component in `frontend/src/features/flashcards/components/FlashcardStack.tsx` (manages stack state and navigation)
+- [x] T026 [P] [US4] Create `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx` (displays single card with flip animation)
+- [x] T027 [P] [US4] Create `FlashcardCardHeader` component in `frontend/src/features/flashcards/components/FlashcardCardHeader.tsx` (shows "1/X" counter, edit/delete icons)
+- [x] T028 [P] [US4] Create `FlashcardNavigation` component in `frontend/src/features/flashcards/components/FlashcardNavigation.tsx` (prev/next arrows + add button)
+- [x] T029 [US4] Add route handler for `/courses/:id/flashcards` rendering `FlashcardTabContent` in `frontend/src/app/router.tsx`
+- [x] T030 [US4] Integrate `useFlashcards(courseId)` hook in `FlashcardTabContent`
 
 **Checkpoint**: Flashcard stack interface should be fully functional with navigation
 

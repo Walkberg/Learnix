@@ -7,9 +7,9 @@ import { HomePage } from '@/features/home/pages/HomePage';
 import { CoursesListPage } from '@/features/courses/pages/CoursesListPage';
 import { CourseDetailPage } from '@/features/courses/pages/CourseDetailPage';
 import { SummaryTabWrapper } from '@/features/summaries/components/SummaryTabWrapper';
+import { FlashcardTabContent } from '@/features/flashcards/components/FlashcardTabContent';
 import { QuizzesPage } from '@/features/quizzes/pages/QuizzesPage';
 
-const FlashcardsTabContent = () => <div>Flashcards Tab Content</div>;
 const QuizPlayerPage = () => <div>Quiz Player Page</div>;
 const QuizResultsPage = () => <div>Quiz Results Page</div>;
 const ChatPage = () => <div>Chat Page</div>;
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'flashcards',
-                element: <FlashcardsTabContent />,
+                element: <FlashcardTabContent />,
               },
             ],
           },
