@@ -78,4 +78,20 @@ export class HttpQuizApi implements QuizApi {
       attemptedAt: res.data.submittedAt,
     };
   }
+
+  async getQuizStatsByCourse(
+    courseId: string
+  ): Promise<{ averageScore: number; quizzesCompleted: number; totalQuizzes: number }> {
+    try {
+      const res = await this.http.get<{
+        averageScore: number;
+        quizzesCompleted: number;
+        totalQuizzes: number;
+      }>(`/courses/${courseId}/quiz-stats`);
+      return res.data;
+    } catch (e) {
+      // Fallback to zeros if backend doesn't provide stats endpoint
+      return { averageScore: 0, quizzesCompleted: 0, totalQuizzes: 0 };
+    }
+  }
 }

@@ -122,10 +122,10 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 5
 
-- [ ] T031 [P] [US5] Create `EditFlashcardDialog` component in `frontend/src/features/flashcards/components/EditFlashcardDialog.tsx` with form (question + answer fields)
-- [ ] T032 [P] [US5] Create `DeleteFlashcardDialog` component in `frontend/src/features/flashcards/components/DeleteFlashcardDialog.tsx` (confirmation dialog)
-- [ ] T033 [US5] Integrate edit/delete handlers in `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx`
-- [ ] T034 [US5] Connect dialogs to provider methods (`updateFlashcard`, `deleteFlashcard`) in `FlashcardTabContent`
+  - [x] T031 [P] [US5] Create `EditFlashcardDialog` component in `frontend/src/features/flashcards/components/EditFlashcardDialog.tsx` with form (question + answer fields)
+  - [x] T032 [P] [US5] Create `DeleteFlashcardDialog` component in `frontend/src/features/flashcards/components/DeleteFlashcardDialog.tsx` (confirmation dialog)
+  - [x] T033 [US5] Integrate edit/delete handlers in `FlashcardCard` component in `frontend/src/features/flashcards/components/FlashcardCard.tsx`
+  - [x] T034 [US5] Connect dialogs to provider methods (`updateFlashcard`, `deleteFlashcard`) in `FlashcardTabContent`
 
 **Checkpoint**: Flashcard editing and deletion should work end-to-end
 

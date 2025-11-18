@@ -9,4 +9,5 @@ export interface QuizApi {
     quizId: string,
     answers?: { questionId: string; answer: number | string }[]
   ): Promise<QuizAttemptSummary>;
+  getQuizStatsByCourse?(courseId: string): Promise<{ averageScore: number; quizzesCompleted: number; totalQuizzes: number }>;
 }
