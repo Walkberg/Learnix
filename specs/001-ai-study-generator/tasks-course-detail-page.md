@@ -174,12 +174,12 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 8
 
-- [ ] T043 [P] [US8] Create `CourseQuizList` component in `frontend/src/features/quizzes/components/CourseQuizList.tsx`
-- [ ] T044 [P] [US8] Create `CourseQuizItem` component in `frontend/src/features/quizzes/components/CourseQuizItem.tsx` (shows quiz with status badge + circular progress + score)
-- [ ] T045 [P] [US8] Create `CircularProgress` component in `frontend/src/components/CircularProgress.tsx` (for score visualization)
-- [ ] T046 [P] [US8] Create `QuizStatusBadge` component in `frontend/src/features/quizzes/components/QuizStatusBadge.tsx` (variants: "À revoir", "Acquis", "Non acquis")
-- [ ] T047 [US8] Integrate `CourseQuizList` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T048 [US8] Connect to `useCourseQuizzes(courseId)` hook in `CourseQuizList`
+- [x] T043 [P] [US8] Create `CourseQuizList` component in `frontend/src/features/quizzes/components/CourseQuizList.tsx`
+- [x] T044 [P] [US8] Create `CourseQuizItem` component in `frontend/src/features/quizzes/components/CourseQuizItem.tsx` (shows quiz with status badge + circular progress + score)
+- [x] T045 [P] [US8] Create `CircularProgress` component in `frontend/src/components/CircularProgress.tsx` (for score visualization)
+- [x] T046 [P] [US8] Create `QuizStatusBadge` component in `frontend/src/features/quizzes/components/QuizStatusBadge.tsx` (variants: "À revoir", "Acquis", "Non acquis")
+- [x] T047 [US8] Integrate `CourseQuizList` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [x] T048 [US8] Connect to `useCourseQuizzes(courseId)` hook in `CourseQuizList`
 
 **Checkpoint**: Quiz list should display with proper status indicators
 

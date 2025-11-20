@@ -4,6 +4,7 @@ import { CourseTabNavigation } from '../components/CourseTabNavigation';
 import { useCourseDetail } from '../providers/courses-provider';
 import QuizStatisticsPanel from '../../quizzes/components/QuizStatisticsPanel';
 import { CourseQuizzesProvider } from '../../quizzes/providers/course-quizzes-provider';
+import CourseQuizList from '../../quizzes/components/CourseQuizList';
 
 export function CourseDetailPage() {
   const { courseId } = useParams<{ courseId: string }>();
@@ -47,6 +48,7 @@ export function CourseDetailPage() {
           <div className="lg:col-span-1">
             <div className="space-y-4">
               <QuizStatisticsPanel />
+              <CourseQuizList />
             </div>
           </div>
         </div>
