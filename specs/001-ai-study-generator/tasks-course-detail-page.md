@@ -139,12 +139,13 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Frontend Implementation for User Story 6
 
-- [ ] T035 [P] [US6] Create `QuizStatisticsPanel` component in `frontend/src/features/quizzes/components/QuizStatisticsPanel.tsx`
-- [ ] T036 [P] [US6] Create `StatCard` component in `frontend/src/components/StatCard.tsx` (displays title + value + icon)
-- [ ] T037 [US6] Add `getQuizStatsByCourse(courseId: string)` method to `QuizApi` interface in `frontend/src/features/quizzes/api/quiz-api.interface.ts`
-- [ ] T038 [US6] Implement `getQuizStatsByCourse` in `HttpQuizApi` in `frontend/src/features/quizzes/api/quiz-api.http.ts`
-- [ ] T039 [US6] Integrate `QuizStatisticsPanel` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+### Frontend Implementation for User Story 6
 
+- [x] T035 [P] [US6] Create `QuizStatisticsPanel` component in `frontend/src/features/quizzes/components/QuizStatisticsPanel.tsx`
+- [x] T036 [P] [US6] Create `StatCard` component in `frontend/src/components/StatCard.tsx` (displays title + value + icon)
+- [x] T037 [P] [US6] Add `getQuizStatsByCourse(courseId: string)` method to `QuizApi` interface in `frontend/src/features/quizzes/api/quiz-api.interface.ts`
+- [x] T038 [P] [US6] Implement `getQuizStatsByCourse` in `HttpQuizApi` in `frontend/src/features/quizzes/api/quiz-api.http.ts`
+- [x] T039 [P] [US6] Integrate `QuizStatisticsPanel` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
 **Checkpoint**: Quiz statistics should display in right panel
 
 ---
@@ -157,9 +158,9 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 7
 
-- [ ] T040 [US7] Create `CourseQuizzesProvider` in `frontend/src/features/quizzes/providers/course-quizzes-provider.tsx` exposing `useCourseQuizzes(courseId: string)` hook
-- [ ] T041 [US7] Add `CourseQuizzesProvider` to provider hierarchy in `frontend/src/main.tsx`
-- [ ] T042 [US7] Implement state management for course-specific quiz list in `CourseQuizzesProvider`
+- [x] T040 [US7] Create `CourseQuizzesProvider` in `frontend/src/features/quizzes/providers/course-quizzes-provider.tsx` exposing `useCourseQuizzes(courseId: string)` hook
+- [x] T041 [US7] Add `CourseQuizzesProvider` to `CourseDetailPage` in `frontend/src/features/courses/pages/CourseDetailPage.tsx` (page-scoped provider)
+- [x] T042 [US7] Implement state management for course-specific quiz list in `CourseQuizzesProvider`
 
 **Checkpoint**: Course quiz provider ready for UI integration
 
