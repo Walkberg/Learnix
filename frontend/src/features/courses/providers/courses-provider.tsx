@@ -90,36 +90,31 @@ export function useCourseDetail(courseId: string) {
 
   const courseApi = useCourseApi();
 
-  useEffect(() => {
-    let isMounted = true;
+  const fetchCourseDetail = useCallback(async () => {
+    if (!courseId) return;
 
-    async function fetchCourseDetail() {
-      if (!courseId) return;
-
-      setIsLoading(true);
-      setError(null);
-      try {
-        const detail = await courseApi.getCourseDetail(courseId);
-        if (isMounted) {
-          setCourseDetail(detail);
-        }
-      } catch (e) {
-        if (isMounted) {
-          setError(e as Error);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
+    setIsLoading(true);
+    setError(null);
+    try {
+      const detail = await courseApi.getCourseDetail(courseId);
+      setCourseDetail(detail);
+    } catch (e) {
+      setError(e as Error);
+    } finally {
+      setIsLoading(false);
     }
+  }, [courseApi, courseId]);
 
-    void fetchCourseDetail();
-
+  useEffect(() => {
+    let mounted = true;
+    void (async () => {
+      if (!mounted) return;
+      await fetchCourseDetail();
+    })();
     return () => {
-      isMounted = false;
+      mounted = false;
     };
-  }, [courseId, courseApi]);
+  }, [fetchCourseDetail]);
 
-  return { courseDetail, isLoading, error };
+  return { courseDetail, isLoading, error, refresh: fetchCourseDetail };
 }

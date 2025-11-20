@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useFlashcards } from '../providers/flashcards-provider';
 import { FlashcardCard } from './FlashcardCard';
 import { StackedCard } from './StackedCard';
@@ -7,11 +7,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 // Nouveau composant pour la pile
 function StackedCardsList({ cards }: { cards: Array<{ flashcard: any; stackOffset: number }> }) {
   return (
-    <>
+    <div className="mb-10">
       {cards.map(({ flashcard, stackOffset }) => (
         <StackedCard key={flashcard.id} flashcard={flashcard} stackOffset={stackOffset} />
       ))}
-    </>
+    </div>
   );
 }
 
@@ -21,23 +21,13 @@ interface FlashcardStackProps {
 }
 
 export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
-  const { flashcards, isLoading, error } = useFlashcards();
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => Math.min(flashcards.length - 1, prev + 1));
-  };
+  const { flashcards, isLoading, error, currentIndex, next, previous } = useFlashcards();
 
   const handleAdd = () => {
-    // TODO: Open add flashcard dialog (will be implemented in US5)
     console.log('Add flashcard clicked');
   };
 
-  // Les handlers sont passés en props
+  // Keyboard navigation: left/right arrows navigate between cards
 
   if (isLoading) {
     return (
@@ -73,8 +63,8 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
           </p>
         </div>
         <FlashcardNavigation
-          onPrevious={handlePrevious}
-          onNext={handleNext}
+          onPrevious={previous}
+          onNext={next}
           onAdd={handleAdd}
           canGoPrevious={false}
           canGoNext={false}
@@ -99,12 +89,11 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
       style={{ minHeight: 420 }}
     >
       <div className="relative w-full max-w-2xl h-[380px] mx-auto" style={{ minHeight: 380 }}>
-        {/* Stack cards above */}
         <div className="relative top-30">
           <StackedCardsList cards={stackCardsData} />
         </div>
-        {/* Top card */}
         <FlashcardCard
+          key={flashcards[currentIndex].id}
           flashcard={flashcards[currentIndex]}
           currentIndex={currentIndex}
           totalCards={flashcards.length}
@@ -115,8 +104,8 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
         />
       </div>
       <FlashcardNavigation
-        onPrevious={handlePrevious}
-        onNext={handleNext}
+        onPrevious={previous}
+        onNext={next}
         onAdd={handleAdd}
         canGoPrevious={currentIndex > 0}
         canGoNext={currentIndex < flashcards.length - 1}

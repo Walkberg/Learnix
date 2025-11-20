@@ -197,6 +197,10 @@ The implementation follows the existing frontend architecture with API providers
 - [ ] T050 [US9] Update `QuizCreateProvider` to accept pre-filled `courseId` in `frontend/src/features/quizzes/providers/quiz-create-provider.tsx`
 - [ ] T051 [US9] Integrate `CreateCourseQuizButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
 - [ ] T052 [US9] Wire button to open quiz creation dialog with course context
+- [x] T049 [P] [US9] Create `CreateCourseQuizButton` component in `frontend/src/features/quizzes/components/CreateCourseQuizButton.tsx`
+- [x] T050 [US9] Update `QuizCreateProvider` to accept pre-filled `courseId` in `frontend/src/features/quizzes/providers/quiz-create-provider.tsx`
+- [x] T051 [US9] Integrate `CreateCourseQuizButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [x] T052 [US9] Wire button to open quiz creation dialog with course context
 
 **Checkpoint**: Quiz creation from course detail page should work
 
@@ -210,9 +214,9 @@ The implementation follows the existing frontend architecture with API providers
 
 ### Implementation for User Story 10
 
-- [ ] T053 [P] [US10] Create `StudyWithAIButton` component in `frontend/src/features/courses/components/StudyWithAIButton.tsx`
-- [ ] T054 [US10] Integrate `StudyWithAIButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T055 [US10] Implement navigation to `/chat` with course context (via URL params or state)
+- [x] T053 [P] [US10] Create `StudyWithAIButton` component in `frontend/src/features/courses/components/StudyWithAIButton.tsx`
+- [x] T054 [US10] Integrate `StudyWithAIButton` in `CourseDetailPage` right panel in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [x] T055 [US10] Implement navigation to `/chat` with course context (via URL params or state)
 
 **Checkpoint**: Study with AI button should navigate correctly with context
 
@@ -222,14 +226,14 @@ The implementation follows the existing frontend architecture with API providers
 
 **Purpose**: Improvements that affect multiple course detail features
 
-- [ ] T056 [P] Add loading states to all course detail data fetching in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
-- [ ] T057 [P] Add error states and error boundaries for course detail page
-- [ ] T058 [P] Add empty states for no flashcards and no quizzes
-- [ ] T059 [P] Implement responsive layout for mobile (stack left/right panels vertically)
-- [ ] T060 Code review and refactoring for consistency
-- [ ] T061 Update `ux-design.md` with actual component structure if changed
-- [ ] T062 Add keyboard shortcuts for flashcard navigation (arrow keys)
-- [ ] T063 Add accessibility labels (ARIA) to all interactive elements
+- [x] T056 [P] Add loading states to all course detail data fetching in `frontend/src/features/courses/pages/CourseDetailPage.tsx`
+- [x] T057 [P] Add error states and error boundaries for course detail page
+- [x] T058 [P] Add empty states for no flashcards and no quizzes
+- [x] T059 [P] Implement responsive layout for mobile (stack left/right panels vertically)
+- [x] T060 Code review and refactoring for consistency
+- [x] T061 Update `ux-design.md` with actual component structure if changed
+- [x] T062 Add keyboard shortcuts for flashcard navigation (arrow keys)
+- [x] T063 Add accessibility labels (ARIA) to all interactive elements
 
 ---
 

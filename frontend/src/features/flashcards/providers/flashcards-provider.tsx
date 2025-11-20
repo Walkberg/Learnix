@@ -11,6 +11,12 @@ export interface FlashcardsContextValue {
   createFlashcard: (input: CreateFlashcardInput) => Promise<Flashcard>;
   updateFlashcard: (flashcardId: string, input: UpdateFlashcardInput) => Promise<Flashcard>;
   deleteFlashcard: (flashcardId: string) => Promise<void>;
+  // Stack navigation state
+  currentIndex: number;
+  setCurrentIndex: (i: number) => void;
+  next: () => void;
+  previous: () => void;
+  goto: (i: number) => void;
 }
 
 const FlashcardsContext = createContext<FlashcardsContextValue | undefined>(undefined);
@@ -24,6 +30,7 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const flashcardApi = useFlashcardApi();
 
@@ -41,6 +48,38 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
       setIsLoading(false);
     }
   }, [courseId, flashcardApi]);
+
+  const next = useCallback(() => {
+    setCurrentIndex((prev) => Math.min(prev + 1, Math.max(0, flashcards.length - 1)));
+  }, [flashcards.length]);
+
+  const previous = useCallback(() => {
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') {
+        previous();
+      } else if (e.key === 'ArrowRight') {
+        next();
+      }
+    }
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [previous, next]);
+
+  const goto = useCallback(
+    (i: number) => {
+      setCurrentIndex(() => {
+        if (i < 0) return 0;
+        if (i >= flashcards.length) return Math.max(0, flashcards.length - 1);
+        return i;
+      });
+    },
+    [flashcards.length]
+  );
 
   const createFlashcard = useCallback(
     async (input: CreateFlashcardInput) => {
@@ -92,6 +131,8 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
         const data = await flashcardApi.getFlashcardsByCourse(courseId);
         if (isMounted) {
           setFlashcards(data);
+          // Ensure currentIndex is valid when list changes
+          setCurrentIndex((prev) => (data.length === 0 ? 0 : Math.min(prev, data.length - 1)));
         }
       } catch (e) {
         if (isMounted) {
@@ -120,8 +161,25 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
       createFlashcard,
       updateFlashcard,
       deleteFlashcard,
+      currentIndex,
+      setCurrentIndex,
+      next,
+      previous,
+      goto,
     }),
-    [flashcards, isLoading, error, refresh, createFlashcard, updateFlashcard, deleteFlashcard]
+    [
+      flashcards,
+      isLoading,
+      error,
+      refresh,
+      createFlashcard,
+      updateFlashcard,
+      deleteFlashcard,
+      currentIndex,
+      next,
+      previous,
+      goto,
+    ]
   );
 
   return <FlashcardsContext.Provider value={value}>{children}</FlashcardsContext.Provider>;

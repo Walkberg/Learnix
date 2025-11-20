@@ -21,7 +21,7 @@ export function QuizStatisticsPanel() {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-row space-y-3 items-center justify-between">
       <StatCard
         title="Score moyen au quizz"
         value={`${Math.round(stats.averageScore)}%`}
