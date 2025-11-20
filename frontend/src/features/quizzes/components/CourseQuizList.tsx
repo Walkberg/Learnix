@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useCourseQuizzes } from '../providers/course-quizzes-provider';
 import { Skeleton } from '@/components/ui/skeleton';
 import CourseQuizItem from './CourseQuizItem';
+import { PageHeader } from '@/components/PageHeader';
 
 export function CourseQuizList() {
-  const { quizzes, isLoading, error, deleteQuiz } = useCourseQuizzes();
+  const { quizzes, isLoading, error } = useCourseQuizzes();
   const navigate = useNavigate();
 
   if (isLoading && quizzes.length === 0) {
@@ -27,6 +28,7 @@ export function CourseQuizList() {
 
   return (
     <div className="space-y-3">
+      <PageHeader title="Mes cours" count={quizzes.length} />
       {quizzes.map((q) => (
         <CourseQuizItem
           key={q.id}

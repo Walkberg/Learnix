@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useFlashcards } from '../providers/flashcards-provider';
 import { FlashcardCard } from './FlashcardCard';
 import { StackedCard } from './StackedCard';
@@ -21,13 +20,12 @@ interface FlashcardStackProps {
 }
 
 export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
-  const { flashcards, isLoading, error, currentIndex, next, previous } = useFlashcards();
+  const { flashcards, isLoading, error, currentIndex, animatedNext, animatedPrev, anim } =
+    useFlashcards();
 
   const handleAdd = () => {
     console.log('Add flashcard clicked');
   };
-
-  // Keyboard navigation: left/right arrows navigate between cards
 
   if (isLoading) {
     return (
@@ -63,8 +61,8 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
           </p>
         </div>
         <FlashcardNavigation
-          onPrevious={previous}
-          onNext={next}
+          onPrevious={animatedPrev}
+          onNext={animatedNext}
           onAdd={handleAdd}
           canGoPrevious={false}
           canGoNext={false}
@@ -82,6 +80,8 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
     }
     return null;
   }).filter((item): item is { flashcard: any; stackOffset: number } => item !== null);
+
+  // Animated navigation handled by provider: use `animatedNext` / `animatedPrev`
 
   return (
     <div
@@ -101,11 +101,12 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
           onDelete={onDelete}
           stackOffset={0}
           isStackCard={false}
+          anim={anim}
         />
       </div>
       <FlashcardNavigation
-        onPrevious={previous}
-        onNext={next}
+        onPrevious={animatedPrev}
+        onNext={animatedNext}
         onAdd={handleAdd}
         canGoPrevious={currentIndex > 0}
         canGoNext={currentIndex < flashcards.length - 1}

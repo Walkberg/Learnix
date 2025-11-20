@@ -1,4 +1,12 @@
-import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 import type { ReactNode } from 'react';
 import type { Flashcard, CreateFlashcardInput, UpdateFlashcardInput } from '../types';
 import { useFlashcardApi } from './flashcard-api-provider';
@@ -17,6 +25,12 @@ export interface FlashcardsContextValue {
   next: () => void;
   previous: () => void;
   goto: (i: number) => void;
+  // Keyboard handler registration: components can register to receive next/previous requests
+  registerKeyboardHandlers: (handlers: { onNext?: () => void; onPrev?: () => void } | null) => void;
+  // Animated navigation state (managed by provider)
+  anim: 'idle' | 'exit-right' | 'enter-right';
+  animatedNext: () => void;
+  animatedPrev: () => void;
 }
 
 const FlashcardsContext = createContext<FlashcardsContextValue | undefined>(undefined);
@@ -31,6 +45,8 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const keyboardHandlersRef = useRef<{ onNext?: () => void; onPrev?: () => void } | null>(null);
+  const [anim, setAnim] = useState<'idle' | 'exit-right' | 'enter-right'>('idle');
 
   const flashcardApi = useFlashcardApi();
 
@@ -56,19 +72,6 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
   const previous = useCallback(() => {
     setCurrentIndex((prev) => Math.max(0, prev - 1));
   }, []);
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'ArrowLeft') {
-        previous();
-      } else if (e.key === 'ArrowRight') {
-        next();
-      }
-    }
-
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [previous, next]);
 
   const goto = useCallback(
     (i: number) => {
@@ -152,6 +155,40 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
     };
   }, [courseId, flashcardApi]);
 
+  const ANIM_MS = 420;
+
+  const animatedNext = useCallback(() => {
+    if (currentIndex >= flashcards.length - 1) return;
+    setAnim('exit-right');
+    setTimeout(() => {
+      setCurrentIndex((prev) => Math.min(prev + 1, Math.max(0, flashcards.length - 1)));
+      setAnim('idle');
+    }, ANIM_MS);
+  }, [currentIndex, flashcards.length]);
+
+  const animatedPrev = useCallback(() => {
+    if (currentIndex <= 0) return;
+    setCurrentIndex((prev) => Math.max(0, prev - 1));
+    requestAnimationFrame(() => setAnim('enter-right'));
+    setTimeout(() => setAnim('idle'), ANIM_MS);
+  }, [currentIndex]);
+
+  // Global keyboard listener lives in the provider and delegates to registered handlers
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'ArrowLeft') {
+        if (keyboardHandlersRef.current?.onPrev) keyboardHandlersRef.current.onPrev();
+        else animatedPrev();
+      } else if (e.key === 'ArrowRight') {
+        if (keyboardHandlersRef.current?.onNext) keyboardHandlersRef.current.onNext();
+        else animatedNext();
+      }
+    }
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [animatedNext, animatedPrev]);
+
   const value: FlashcardsContextValue = useMemo(
     () => ({
       flashcards,
@@ -166,6 +203,12 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
       next,
       previous,
       goto,
+      registerKeyboardHandlers: (handlers: { onNext?: () => void; onPrev?: () => void } | null) => {
+        keyboardHandlersRef.current = handlers;
+      },
+      anim,
+      animatedNext,
+      animatedPrev,
     }),
     [
       flashcards,
@@ -179,6 +222,9 @@ export function FlashcardsProvider({ courseId, children }: FlashcardsProviderPro
       next,
       previous,
       goto,
+      anim,
+      animatedNext,
+      animatedPrev,
     ]
   );
 
