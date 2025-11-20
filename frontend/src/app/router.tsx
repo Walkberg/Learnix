@@ -9,9 +9,10 @@ import { CourseDetailPage } from '@/features/courses/pages/CourseDetailPage';
 import { SummaryTabWrapper } from '@/features/summaries/components/SummaryTabWrapper';
 import { FlashcardTabContent } from '@/features/flashcards/components/FlashcardTabContent';
 import { QuizzesPage } from '@/features/quizzes/pages/QuizzesPage';
+import { QuizPlayerPage } from '@/features/quizzes/pages/QuizPlayerPage';
+import { QuizResultsPage } from '@/features/quizzes/pages/QuizResultsPage';
+import { QuizDetailWrapperRoute } from '@/features/quizzes/components/QuizDetailWrapper';
 
-const QuizPlayerPage = () => <div>Quiz Player Page</div>;
-const QuizResultsPage = () => <div>Quiz Results Page</div>;
 const ChatPage = () => <div>Chat Page</div>;
 const SettingsPage = () => <div>Settings Page</div>;
 
@@ -91,6 +92,7 @@ export const router = createBrowserRouter([
           },
           {
             path: ':quizId',
+            element: <QuizDetailWrapperRoute />,
             children: [
               {
                 path: 'play',
