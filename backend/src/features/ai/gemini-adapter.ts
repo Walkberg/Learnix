@@ -156,9 +156,9 @@ export class GeminiAdapter implements AIAdapter {
     this.model = genAI.getGenerativeModel({ model: modelName });
   }
 
-  async generateSummary(content: string, maxPoints = 5): Promise<AiSummary> {
+  async generateSummary(content: string): Promise<AiSummary> {
     try {
-      const prompt = prompts.summaryPrompt(content, maxPoints);
+      const prompt = prompts.summaryPrompt(content);
 
       const result = await this.model.generateContent({
         contents: [{ role: 'user', parts: [{ text: prompt }] }],

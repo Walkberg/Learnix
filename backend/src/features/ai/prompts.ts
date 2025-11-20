@@ -1,17 +1,25 @@
 export const summaryPrompt = (
   content: string,
-  pointCount = 5,
 ) => `You are a study helper assistant.
+
 Given the following content, produce a JSON object with the following keys:
 - "title": a short title (max 6 words) summarizing the topic
 - "emoji": a single emoji that represents the topic
-- "summary": a string containing exactly ${pointCount} key points separated by "\\n". Each point must start with "* ".
-All the text MUST be in the french language.
+- "summary":
+  A detailed study-friendly summary in Markdown format, organized into thematic categories.
+  * Provide a category title (Markdown level 2: "##").
+  * Add a short introductory sentence if relevant.
+  * Then create a list of key terms with their definitions, in the format:
+        * **Term** : concise definition
+  * You must reformulate and not copy the original content verbatim.
+  * The summary must remain factual, concise, and study-friendly.
+  * Do not add explanations about your process. Output only the final Markdown text.
+  * The summary must be a clean, human-readable Markdown document (NO JSON).
+
 Requirements:
 - Return ONLY valid JSON (no explanations, no extra text).
-- Keep values concise. The "summary" field should be human-readable bullet points.
+- Keep values concise.
 - All the text MUST be in the french language.
-- Create several sections, each with an important keyword and by theme.
 
 Content:
 ${content}`;
