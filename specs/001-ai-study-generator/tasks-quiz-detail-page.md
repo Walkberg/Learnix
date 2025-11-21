@@ -4,42 +4,42 @@
 This document lists concrete implementation tasks to add a quiz detail flow: visiting `/quizzes/:quizId` should fetch the quiz, then redirect to the quiz player (`/quizzes/:quizId/play`) if no last attempt exists, or to results (`/quizzes/:quizId/results`) if a last attempt exists. It also covers the pages and provider required for the flow.
 
 **Phase 1: Setup**
-- [ ] T001 Run repository prerequisites script to confirm feature docs and paths `.specify/scripts/powershell/check-prerequisites.ps1`
+- [X] T001 Run repository prerequisites script to confirm feature docs and paths `.specify/scripts/powershell/check-prerequisites.ps1`
 
 **Phase 2: Foundational**
-- [ ] T002 Ensure quiz API client exists and exports the required methods (e.g. `getQuizById`, `getLastAttemptForQuiz`) in `frontend/src/features/quizzes/api/quiz-api.ts`
+- [X] T002 Ensure quiz API client exists and exports the required methods (e.g. `getQuizById`, `getLastAttemptForQuiz`) in `frontend/src/features/quizzes/api/quiz-api.ts`
 
 **Phase 3: User Story Implementation (US8)**
-- [ ] T003 [US8] Create `QuizDetailProvider` in `frontend/src/features/quizzes/providers/quiz-detail-provider.tsx` that:
+- [X] T003 [US8] Create `QuizDetailProvider` in `frontend/src/features/quizzes/providers/quiz-detail-provider.tsx` that:
   - fetches quiz by route param `quizId`,
   - exposes `{ quiz, lastAttempt, isLoading, error, refresh, anim? }`,
   - handles 404 and network errors.
 
-- [ ] T004 [P] [US8] Implement `QuizDetailWrapper` in `frontend/src/features/quizzes/components/QuizDetailWrapper.tsx` that:
+- [X] T004 [P] [US8] Implement `QuizDetailWrapper` in `frontend/src/features/quizzes/components/QuizDetailWrapper.tsx` that:
   - consumes `QuizDetailProvider`, shows loading/error UI,
   - redirects to `/quizzes/:quizId/results` when `lastAttempt` exists, otherwise to `/quizzes/:quizId/play`.
 
-- [ ] T005 [P] [US8] Add route mounting for quiz detail wrapper in `frontend/src/app/router.tsx`:
+- [X] T005 [P] [US8] Add route mounting for quiz detail wrapper in `frontend/src/app/router.tsx`:
   - mount the wrapper at `path: 'quizzes/:quizId'` (or as child of existing `quizzes` route), preserving the nested `play` and `results` child routes.
 
-- [ ] T006 [US8] Create `QuizPlayerPage` skeleton at `frontend/src/features/quizzes/pages/QuizPlayerPage.tsx` that:
+- [X] T006 [US8] Create `QuizPlayerPage` skeleton at `frontend/src/features/quizzes/pages/QuizPlayerPage.tsx` that:
   - consumes the provider for quiz data,
   - renders quiz title, question view, navigation controls and submit CTA,
   - exposes hooks/placeholders for timer/answer submission.
 
-- [ ] T007 [US8] Create `QuizResultsPage` skeleton at `frontend/src/features/quizzes/pages/QuizResultsPage.tsx` that:
+- [X] T007 [US8] Create `QuizResultsPage` skeleton at `frontend/src/features/quizzes/pages/QuizResultsPage.tsx` that:
   - consumes provider `lastAttempt` & `quiz`,
   - displays score summary, per-question feedback, and retry or review actions.
 
-- [ ] T008 [US8] Ensure `QuizPlayerPage` and `QuizResultsPage` read the same provider instance:
+- [X] T008 [US8] Ensure `QuizPlayerPage` and `QuizResultsPage` read the same provider instance:
   - wrap the nested `play` and `results` routes with `QuizDetailProvider` or have `QuizDetailWrapper` provide context to children.
   - Files: `frontend/src/app/router.tsx`, `frontend/src/features/quizzes/components/QuizDetailWrapper.tsx`.
 
-- [ ] T009 [US8] Add unit tests for `QuizDetailProvider` in `frontend/src/features/quizzes/providers/quiz-detail-provider.spec.tsx`:
+- [X] T009 [US8] Add unit tests for `QuizDetailProvider` in `frontend/src/features/quizzes/providers/quiz-detail-provider.spec.tsx`:
   - mock `quiz-api` responses for quiz present / lastAttempt present / errors,
   - assert provider state and exposed values.
 
-- [ ] T010 [US8] Add an integration/acceptance test asserting `/quizzes/:id` redirects to the correct route depending on `lastAttempt` presence in `test/acceptance/quiz-detail-routing.spec.ts`.
+- [X] T010 [US8] Add an integration/acceptance test asserting `/quizzes/:id` redirects to the correct route depending on `lastAttempt` presence in `test/acceptance/quiz-detail-routing.spec.ts`.
 
 **Final Phase: Polish & UX**
 - [ ] T011 [US8] Implement UX polish per UX doc: timer styling, headers, CTAs, mobile layout updates in:
