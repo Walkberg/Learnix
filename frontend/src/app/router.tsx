@@ -12,8 +12,8 @@ import { QuizzesPage } from '@/features/quizzes/pages/QuizzesPage';
 import { QuizPlayerPage } from '@/features/quizzes/pages/QuizPlayerPage';
 import { QuizResultsPage } from '@/features/quizzes/pages/QuizResultsPage';
 import { QuizDetailWrapperRoute } from '@/features/quizzes/components/QuizDetailWrapper';
+import { ChatPage } from '@/features/chat';
 
-const ChatPage = () => <div>Chat Page</div>;
 const SettingsPage = () => <div>Settings Page</div>;
 
 function ErrorBoundary() {
