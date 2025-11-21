@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuizDetail } from './quiz-detail-provider';
+import { useQuizApi } from './quiz-api-provider';
 import type { QuizQuestion, QuizQuestionMCQ } from '../types';
 
 export type AnswerState = {
@@ -17,6 +18,7 @@ interface QuizAttemptContextValue {
   handleSelectOption: (optIndex: number) => void;
   setOpenAnswer: (text: string) => void;
   goNext: () => void;
+  submitting: boolean;
 }
 
 const QuizAttemptContext = createContext<QuizAttemptContextValue | undefined>(undefined);
@@ -30,6 +32,8 @@ export function QuizAttemptProvider({ children }: { children: ReactNode }) {
 
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<Record<number, AnswerState>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const quizApi = useQuizApi();
 
   const handleSelectOption = (optIndex: number) => {
     const currentQuestion = questions[current];
@@ -47,9 +51,30 @@ export function QuizAttemptProvider({ children }: { children: ReactNode }) {
     setAnswers((s) => ({ ...s, [current]: { selected: null, correct: null, openText: text } }));
   };
 
-  const goNext = () => {
+  const goNext = async () => {
     if (current + 1 >= total) {
-      navigate('results');
+      if (!quiz) return;
+      try {
+        setSubmitting(true);
+        const payload: { questionId: string; answer: number | string }[] = [];
+        for (const [idxStr, st] of Object.entries(answers)) {
+          const idx = Number(idxStr);
+          const currentQuestion = questions[idx];
+          if (!currentQuestion) continue;
+          if (st.selected != null) {
+            payload.push({ questionId: currentQuestion.id, answer: st.selected });
+          } else if (st.openText != null) {
+            payload.push({ questionId: currentQuestion.id, answer: st.openText });
+          }
+        }
+
+        await quizApi.startAttempt(quiz.id, payload);
+        navigate(`/quizzes/${quiz.id}/results`);
+      } catch (e) {
+      } finally {
+        setSubmitting(false);
+      }
+
       return;
     }
     setCurrent((c) => c + 1);
@@ -64,8 +89,9 @@ export function QuizAttemptProvider({ children }: { children: ReactNode }) {
       handleSelectOption,
       setOpenAnswer,
       goNext,
+      submitting,
     }),
-    [current, total, questions, answers]
+    [current, total, questions, answers, submitting]
   );
 
   return <QuizAttemptContext.Provider value={value}>{children}</QuizAttemptContext.Provider>;
