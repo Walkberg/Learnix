@@ -1,5 +1,4 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import type { Quiz } from '../types';
 import { QuizStatusBadge } from './QuizStatusBadge';
 import { CircularProgress } from '@/components/CircularProgress';
@@ -11,6 +10,10 @@ interface Props {
 
 export function CourseQuizItem({ quiz, onClick }: Props) {
   const score = quiz.lastAttemptSummary?.score ?? null;
+  console.log('Rendering CourseQuizItem with score:', quiz);
+  const percentage = quiz.lastAttemptSummary
+    ? Math.round((quiz.lastAttemptSummary.score / quiz.lastAttemptSummary?.answers?.length) * 100)
+    : 0;
   return (
     <Card onClick={() => void onClick(quiz.id)}>
       <div className="flex items-center justify-between gap-4 p-4">
@@ -24,9 +27,9 @@ export function CourseQuizItem({ quiz, onClick }: Props) {
         </div>
 
         <div className="flex items-center gap-3">
-          <QuizStatusBadge score={score} />
+          <QuizStatusBadge score={score} total={quiz.lastAttemptSummary?.answers?.length ?? 0} />
           <div className="min-w-[48px]">
-            <CircularProgress value={score ?? 0} showEmpty={!score && score !== 0} />
+            <CircularProgress value={percentage} showEmpty={!score && score !== 0} />
           </div>
         </div>
       </div>

@@ -65,12 +65,12 @@ If you want, I can implement `T003` (provider) and `T004` (wrapper) now and open
 
 **Phase 4: Attempt Page — Component Implementation (US8)**
 These are the UI components required by the UX document to implement a usable quiz attempt experience. Components are parallelizable between developers.
-- [ ] T012 [P] [US8] Implement `QuizHeader` component in `frontend/src/features/quizzes/components/QuizHeader.tsx` — shows title, subtitle, time remaining and progress.
-- [ ] T013 [P] [US8] Implement `QuestionCard` component in `frontend/src/features/quizzes/components/QuestionCard.tsx` — renders question body and media.
-- [ ] T014 [P] [US8] Implement `AnswerOption` component in `frontend/src/features/quizzes/components/AnswerOption.tsx` — selectable option with selected/disabled states.
-- [ ] T015 [P] [US8] Implement `QuizTimer` component in `frontend/src/features/quizzes/components/QuizTimer.tsx` — visual countdown, pause/resume hooks.
-- [ ] T016 [P] [US8] Implement `QuizProgress` component in `frontend/src/features/quizzes/components/QuizProgress.tsx` — shows current question index / total and progress bar.
-- [ ] T017 [US8] Integrate attempt components into `QuizPlayerPage` at `frontend/src/features/quizzes/pages/QuizPlayerPage.tsx` — wire provider data, navigation (next/prev), submit flow and timer.
+- [X] T012 [P] [US8] Implement `QuizHeader` component in `frontend/src/features/quizzes/components/QuizHeader.tsx` — shows title, subtitle, time remaining and progress.
+- [X] T013 [P] [US8] Implement `QuestionCard` component in `frontend/src/features/quizzes/components/QuestionCard.tsx` — renders question body and media.
+- [X] T014 [P] [US8] Implement `AnswerOption` component in `frontend/src/features/quizzes/components/AnswerOption.tsx` — selectable option with selected/disabled states.
+- [X] T015 [P] [US8] Implement `QuizTimer` component in `frontend/src/features/quizzes/components/QuizTimer.tsx` — visual countdown, pause/resume hooks.
+- [X] T016 [P] [US8] Implement `QuizProgress` component in `frontend/src/features/quizzes/components/QuizProgress.tsx` — shows current question index / total and progress bar.
+- [X] T017 [US8] Integrate attempt components into `QuizPlayerPage` at `frontend/src/features/quizzes/pages/QuizPlayerPage.tsx` — wire provider data, navigation (next/prev), submit flow and timer.
 
 **Phase 5: Results Page — Component Implementation (US8)**
 Components and integration required to present the results and allow review/retry.

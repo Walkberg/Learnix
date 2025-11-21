@@ -26,18 +26,27 @@ export default function Verdict() {
   if (!currentAnswer || currentAnswer.selected == null) return null;
 
   const variantKey = currentAnswer.correct ? 'correct' : 'incorrect';
+
   const variant = VARIANTS[variantKey];
-  const Icon = variant.Icon;
 
   return (
     <div className="pt-2">
       <div className="flex items-center gap-3">
-        <div className={`p-2 rounded-full ${variant.bg}`}>
-          <Icon size={24} className={`${variant.iconColor} w-5 h-5`} />
-        </div>
+        <CorrectionIcon variant={variantKey} />
         <div className="font-medium">{variant.label}</div>
       </div>
       <div className="mt-2 text-sm text-muted-foreground">{currentQuestion?.explanation}</div>
     </div>
   );
 }
+
+export const CorrectionIcon = ({ variant }: { variant: 'correct' | 'incorrect' }) => {
+  const variantStyle = VARIANTS[variant];
+  const Icon = variantStyle.Icon;
+
+  return (
+    <div className={`p-2 rounded-full ${variantStyle.bg}`}>
+      <Icon size={24} className={`${variantStyle.iconColor} w-5 h-5`} />
+    </div>
+  );
+};

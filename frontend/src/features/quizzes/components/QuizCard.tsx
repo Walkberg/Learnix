@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2 } from 'lucide-react';
 import type { Quiz } from '../types';
+import QuizStatusBadge from './QuizStatusBadge';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -33,18 +34,7 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
 
   const getProgressPercentage = () => {
     if (!quiz.lastAttemptSummary) return 0;
-    return (quiz.lastAttemptSummary.score / quiz.lastAttemptSummary.totalQuestions) * 100;
-  };
-
-  const getStatusBadge = () => {
-    const percentage = getProgressPercentage();
-    if (percentage === 0) {
-      return { label: 'Non appris', variant: 'destructive' as const };
-    }
-    if (percentage < 70) {
-      return { label: 'À revoir', variant: 'secondary' as const };
-    }
-    return { label: 'Acquis', variant: 'default' as const };
+    return (quiz.lastAttemptSummary.score / quiz.lastAttemptSummary.answers.length) * 100;
   };
 
   const formatDate = (dateString: string) => {
@@ -63,18 +53,6 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
     if (quiz.params?.types?.[0] === 'OPEN') return '✍️';
     return '✍️';
   };
-
-  const getQuizSubtitle = () => {
-    if (quiz.params) {
-      const type = quiz.params.types?.[0] === 'OPEN' ? 'Ouvert' : 'QCM';
-      return `Quiz ${type} • ${quiz.params.count} questions`;
-    }
-    return 'Quiz';
-  };
-
-  const status = getStatusBadge();
-
-  console.log(quiz);
 
   return (
     <Card className="cursor-pointer transition-all hover:shadow-lg" onClick={handleCardClick}>
@@ -111,12 +89,15 @@ const QuizCard = ({ quiz, onDelete }: QuizCardProps) => {
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Progression</span>
                 <span className="font-medium">
-                  {quiz.lastAttemptSummary.score}/{quiz.lastAttemptSummary.totalQuestions}
+                  {quiz.lastAttemptSummary.score}/{quiz.lastAttemptSummary.answers.length}
                 </span>
               </div>
               <Progress value={getProgressPercentage()} className="h-2" />
             </div>
-            <Badge variant={status.variant}>{status.label}</Badge>
+            <QuizStatusBadge
+              score={quiz.lastAttemptSummary.score}
+              total={quiz.lastAttemptSummary.answers.length}
+            />
           </>
         )}
         {!quiz.lastAttemptSummary && <Badge variant="secondary">Pas encore essayé</Badge>}

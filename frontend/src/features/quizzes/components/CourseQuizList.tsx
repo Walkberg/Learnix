@@ -28,7 +28,7 @@ export function CourseQuizList() {
 
   return (
     <div className="space-y-3">
-      <PageHeader title="Mes cours" count={quizzes.length} />
+      <PageHeader title="Mes quizzes" count={quizzes.length} />
       {quizzes.map((q) => (
         <CourseQuizItem
           key={q.id}

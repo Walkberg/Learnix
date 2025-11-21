@@ -14,6 +14,7 @@ export interface QuizAttemptSummary {
   score: number;
   totalQuestions: number;
   attemptedAt: string; // ISO date
+  answers: { questionId: string; answer: string | number | null }[];
 }
 
 export interface QuizQuestionMCQ {
