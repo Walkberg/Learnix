@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, useMemo } 
 import type { ReactNode } from 'react';
 import api from '@/app/api';
 import type { Quiz, QuizAttemptSummary } from '../types';
+import { set } from 'zod';
 
 export interface QuizDetailContextValue {
   quiz: Quiz | null;
@@ -9,6 +10,7 @@ export interface QuizDetailContextValue {
   isLoading: boolean;
   error: Error | null;
   refresh: () => Promise<void>;
+  setSummary: (summary: QuizAttemptSummary) => void;
 }
 
 const QuizDetailContext = createContext<QuizDetailContextValue | undefined>(undefined);
@@ -53,8 +55,16 @@ export function QuizDetailProvider({ quizId, children }: { quizId: string; child
     await fetchQuiz();
   }, [fetchQuiz]);
 
+  function setSummary(summary: QuizAttemptSummary) {
+    setQuiz((q) => {
+      if (!q) return q;
+      return { ...q, lastAttemptSummary: summary };
+    });
+    setLastAttempt(summary);
+  }
+
   const value = useMemo(
-    () => ({ quiz, lastAttempt, isLoading, error, refresh }),
+    () => ({ quiz, lastAttempt, isLoading, error, refresh, setSummary }),
     [quiz, lastAttempt, isLoading, error, refresh]
   );
 

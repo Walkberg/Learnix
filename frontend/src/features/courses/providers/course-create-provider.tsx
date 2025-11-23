@@ -46,6 +46,8 @@ export const CourseCreateProvider = ({ children }: { children: ReactNode }) => {
   const submitCourse = async () => {
     const result = courseCreateSchema.safeParse(formData);
 
+    console.log('Validation result:', result);
+
     if (!result.success) {
       throw new Error('Validation failed');
     }

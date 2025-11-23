@@ -24,8 +24,7 @@ interface QuizAttemptContextValue {
 const QuizAttemptContext = createContext<QuizAttemptContextValue | undefined>(undefined);
 
 export function QuizAttemptProvider({ children }: { children: ReactNode }) {
-  const { quiz } = useQuizDetail();
-  const navigate = useNavigate();
+  const { quiz, setSummary } = useQuizDetail();
 
   const questions = quiz?.questions ?? [];
   const total = questions.length;
@@ -68,8 +67,9 @@ export function QuizAttemptProvider({ children }: { children: ReactNode }) {
           }
         }
 
-        await quizApi.startAttempt(quiz.id, payload);
-        navigate(`/quizzes/${quiz.id}/results`);
+        const summary = await quizApi.startAttempt(quiz.id, payload);
+        setSummary({ ...summary, answers: payload });
+        //navigate(`/quizzes/${quiz.id}/results`);
       } catch (e) {
       } finally {
         setSubmitting(false);

@@ -5,7 +5,7 @@ import { CoursePicker } from '../../courses/components/CoursePicker';
 import { ExerciseTypeCards } from './ExerciseTypeCards';
 import { AnswerCountCards } from './AnswerCountCards';
 import { Button } from '@/components/ui/button';
-import type { ReactNode } from 'react';
+import { QuizGenerationLoading } from './QuizGenerationLoading';
 
 export const QuizzCreationDialog = () => {
   const { isOpen, closeDialog, currentStep, setStep, formData, updateFormData, submitQuiz } =
@@ -15,7 +15,7 @@ export const QuizzCreationDialog = () => {
     <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogHeader>Créer un quizz</DialogHeader>
       <DialogContent>
-        <StepIndicator currentStep={currentStep === 'course' ? 1 : 2} totalSteps={2} />
+          <StepIndicator currentStep={currentStep === 'course' ? 1 : 2} totalSteps={2} />
         {currentStep === 'course' ? (
           <>
             <DialogTitle>Sur quel cours veux-tu générer un quizz ?</DialogTitle>
@@ -26,7 +26,7 @@ export const QuizzCreationDialog = () => {
               }}
             />
           </>
-        ) : (
+        ) : currentStep === 'questions' ? (
           <>
             <Button variant="ghost" onClick={() => setStep('course')}>
               ← Retour
@@ -44,7 +44,9 @@ export const QuizzCreationDialog = () => {
               Créer le quizz
             </Button>
           </>
-        )}
+        ) : currentStep === 'generate' ? (
+          <QuizGenerationLoading />
+        ) : null}
       </DialogContent>
     </Dialog>
   );

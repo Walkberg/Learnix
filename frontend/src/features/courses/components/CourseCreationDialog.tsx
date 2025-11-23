@@ -38,8 +38,6 @@ export const CourseCreationDialog = () => {
     await submitCourse();
   };
 
-  console.log('Form errors:', errors);
-
   return (
     <Dialog open={isOpen} onOpenChange={closeDialog}>
       <DialogHeader>Ajouter un cours</DialogHeader>

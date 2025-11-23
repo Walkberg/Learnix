@@ -2,6 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from 'react';
 import type { QuizCreateFormData } from '../types';
 import { quizCreateSchema } from '../schemas/quiz-create.schema';
 import { useQuizApi } from './quiz-api-provider';
+import { set } from 'zod';
 
 const defaultFormData: QuizCreateFormData = {};
 
@@ -34,7 +35,7 @@ const answerCountOptions: AnswerCountOption[] = [
   { key: 'square', icon: '4️⃣', label: 'Carré' },
 ];
 
-type FormStep = 'course' | 'questions';
+type FormStep = 'course' | 'questions' | 'generate';
 
 interface QuizCreateContextValue {
   isOpen: boolean;
@@ -55,7 +56,6 @@ export const QuizzCreateProvider = ({ children }: { children: ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<FormStep>('course');
   const [formData, setFormData] = useState<QuizCreateFormData>(defaultFormData);
-
   const quizApi = useQuizApi();
 
   const openDialog = (courseId?: string) => {
@@ -85,11 +85,15 @@ export const QuizzCreateProvider = ({ children }: { children: ReactNode }) => {
       throw new Error('Validation failed');
     }
     try {
-      await quizApi.generate(result.data.courseId!, {
-        answerCount: result.data.answerCount === 'duo' ? 2 : result.data.answerCount === 'trio' ? 3 : 4,
+      setStep('generate');
+      const quizz = await quizApi.generate(result.data.courseId!, {
+        answerCount:
+          result.data.answerCount === 'duo' ? 2 : result.data.answerCount === 'trio' ? 3 : 4,
         count: 10,
         type: result.data.exerciseType === 'OPEN' ? 'OPEN' : 'MCQ',
       });
+
+      setStep('course');
       closeDialog();
     } catch (error) {
       console.error('Failed to generate quiz:', error);
