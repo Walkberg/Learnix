@@ -26,7 +26,8 @@ export interface AIAdapter {
   generateFlashcards(text: string, count: number): Promise<AiFlashCard[]>;
   generateQuizQuestions(
     text: string,
-    count: number,
+    questionCount: number,
+    answerCount: number,
     type?: 'mcq' | 'open',
   ): Promise<AiQuizQuestion[]>;
 }

@@ -17,7 +17,7 @@ export function FlashcardNavigation({
   canGoNext,
 }: FlashcardNavigationProps) {
   return (
-    <div className="flex items-center justify-between mt-6">
+    <div className="flex items-center justify-center gap-6 mt-6">
       <Button
         variant="outline"
         size="icon"

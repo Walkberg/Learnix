@@ -42,7 +42,8 @@ export class QuizzesController {
     const quiz = await this.generateQuizUseCase.execute({
       courseId,
       userId,
-      count: dto.count,
+      questionCount: dto.count,
+      answerCount: dto.answerCount,
       type: dto.type,
     });
 

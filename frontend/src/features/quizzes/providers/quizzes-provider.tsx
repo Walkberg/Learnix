@@ -8,7 +8,7 @@ export interface QuizzesContextValue {
   isLoading: boolean;
   error: Error | null;
   refresh: (courseId?: string) => Promise<void>;
-  generate: (courseId: string, params: { count: number }) => Promise<Quiz>;
+  generate: (courseId: string, params: { count: number; answerCount: number }) => Promise<Quiz>;
   deleteQuiz: (id: string) => Promise<void>;
   startAttempt: (quizId: string) => Promise<QuizAttemptSummary>; // Future: returns attempt id
 }
@@ -39,8 +39,8 @@ export function QuizzesProvider({ children }: { children: ReactNode }) {
   );
 
   const generate = useCallback(
-    async (courseId: string, params: { count: number }) => {
-      const quiz = await quizApi.generate(courseId, { count: params.count, type: 'MCQ' });
+    async (courseId: string, params: { count: number; answerCount: number }) => {
+      const quiz = await quizApi.generate(courseId, { count: params.count, answerCount: params.answerCount, type: 'MCQ' });
       setQuizzes((prev) => [quiz, ...prev]);
       return quiz;
     },

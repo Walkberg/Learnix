@@ -15,7 +15,8 @@ import type { AIAdapter } from '../../../ai/adapter';
 interface GenerateQuizCommand {
   courseId: string;
   userId: string;
-  count: number;
+  questionCount: number;
+  answerCount: number;
   type: string;
 }
 
@@ -32,7 +33,7 @@ export class GenerateQuizUseCase {
   ) {}
 
   async execute(command: GenerateQuizCommand): Promise<Quiz> {
-    if (command.count < 1 || command.count > 50) {
+    if (command.questionCount < 1 || command.questionCount > 50) {
       throw new InvalidQuestionsCountError(
         'Question count must be between 1 and 50',
       );
@@ -49,7 +50,8 @@ export class GenerateQuizUseCase {
     const aiType = command.type === 'MCQ' ? 'mcq' : 'open';
     const aiQuestions = await this.aiAdapter.generateQuizQuestions(
       course.sourceText,
-      command.count,
+      command.questionCount,
+      command.answerCount,
       aiType,
     );
 
@@ -79,7 +81,7 @@ export class GenerateQuizUseCase {
       courseTitle: course.title,
       courseEmoji: course.emoji ?? '',
       params: {
-        count: command.count,
+        count: command.questionCount,
         types: [command.type],
       },
       questions,

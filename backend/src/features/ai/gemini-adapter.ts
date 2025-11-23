@@ -220,11 +220,17 @@ export class GeminiAdapter implements AIAdapter {
 
   async generateQuizQuestions(
     content: string,
-    count: number,
+    questionCount: number,
+    answerCount: number,
     type: 'mcq' | 'open' = 'mcq',
   ): Promise<QuizMCQResponse | QuizOpenResponse> {
     try {
-      const prompt = prompts.quizPrompt(content, count, type);
+      const prompt = prompts.quizPrompt(
+        content,
+        questionCount,
+        answerCount,
+        type,
+      );
 
       const schema = type === 'mcq' ? quizMCQSchema : quizOpenSchema;
       const zodSchema =

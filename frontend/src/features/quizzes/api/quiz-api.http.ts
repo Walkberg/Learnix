@@ -43,9 +43,10 @@ export class HttpQuizApi implements QuizApi {
     return res.data.items.map(dtoToModel);
   }
 
-  async generate(courseId: string, params: { count: number; type: 'MCQ' | 'OPEN' }): Promise<Quiz> {
+  async generate(courseId: string, params: { count: number; answerCount: number; type: 'MCQ' | 'OPEN' }): Promise<Quiz> {
     const res = await this.http.post<QuizDto>(`/courses/${courseId}/quizzes`, {
       count: params.count,
+      answerCount: params.answerCount,  
       type: params.type,
     });
     return dtoToModel(res.data);

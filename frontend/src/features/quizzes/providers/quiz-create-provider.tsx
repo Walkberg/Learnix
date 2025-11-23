@@ -86,7 +86,8 @@ export const QuizzCreateProvider = ({ children }: { children: ReactNode }) => {
     }
     try {
       await quizApi.generate(result.data.courseId!, {
-        count: result.data.answerCount === 'duo' ? 2 : result.data.answerCount === 'trio' ? 3 : 4,
+        answerCount: result.data.answerCount === 'duo' ? 2 : result.data.answerCount === 'trio' ? 3 : 4,
+        count: 10,
         type: result.data.exerciseType === 'OPEN' ? 'OPEN' : 'MCQ',
       });
       closeDialog();
