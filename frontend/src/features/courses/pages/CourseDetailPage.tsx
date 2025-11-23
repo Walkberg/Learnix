@@ -69,7 +69,7 @@ export function CourseDetailPage() {
           </div>
           {/* Right panel - Quiz stats and list */}
           <div className="lg:col-span-1">
-            <div className="space-y-4 max-h-[60vh] overflow-auto">
+            <div className="space-y-4">
               <QuizStatisticsPanel />
               <section className="mb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,7 +77,6 @@ export function CourseDetailPage() {
                   <ChatQuickAction />
                 </div>
               </section>
-
               <CourseQuizList />
             </div>
           </div>

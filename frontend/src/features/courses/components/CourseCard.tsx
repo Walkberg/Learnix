@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Trash2 } from 'lucide-react';
 import './CourseCard.css';
+import { CourseIcon } from './CourseIcon';
 
 interface Course {
   id: string;
@@ -50,9 +51,7 @@ const CourseCard = ({ course, onDelete }: CourseCardProps) => {
 
   return (
     <Card className="cursor-pointer transition-all hover:shadow-lg" onClick={handleCardClick}>
-      <div className="absolute flex items-center gap-2 course-icon">
-        <span className="text-4xl">{course.emoji || '📚'}</span>
-      </div>
+      <CourseIcon className="absolute" emoji={course.emoji} />
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
         <div></div>
         <DropdownMenu>

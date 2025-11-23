@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { CourseDetail } from '../types';
+import { CourseIcon } from './CourseIcon';
 
 interface CourseDetailHeaderProps {
   course: CourseDetail;
@@ -18,7 +19,7 @@ export function CourseDetailHeader({ course, onEdit, onDelete }: CourseDetailHea
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        {course.emoji && <span className="text-5xl">{course.emoji}</span>}
+        <CourseIcon emoji={course.emoji} />
         <h1 className="text-3xl font-bold">{course.title}</h1>
       </div>
       <DropdownMenu>

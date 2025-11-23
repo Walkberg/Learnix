@@ -128,8 +128,13 @@ function computeStats(list: Quiz[]): CourseStats {
     quizzesCompleted === 0
       ? 0
       : Math.round(
-          completed.reduce((acc, q) => acc + (q.lastAttemptSummary?.score ?? 0), 0) /
-            quizzesCompleted
+          completed.reduce((acc, q) => acc + (getScorePercentage(q) ?? 0), 0) / quizzesCompleted
         );
   return { averageScore, quizzesCompleted, totalQuizzes };
+}
+
+function getScorePercentage(quiz: Quiz): number | null {
+  const summary = quiz.lastAttemptSummary;
+  if (!summary || summary.answers.length === 0) return null;
+  return (summary.score / summary.answers.length) * 100;
 }

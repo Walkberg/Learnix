@@ -29,19 +29,21 @@ export function CourseQuizList() {
   return (
     <div className="space-y-3">
       <PageHeader title="Mes quizzes" count={quizzes.length} />
-      {quizzes.map((q) => (
-        <CourseQuizItem
-          key={q.id}
-          quiz={q}
-          onClick={async (id) => {
-            try {
-              navigate(`/quizzes/${id}`);
-            } catch (e) {
-              console.error(e);
-            }
-          }}
-        />
-      ))}
+      <div className="overflow-auto">
+        {quizzes.map((q) => (
+          <CourseQuizItem
+            key={q.id}
+            quiz={q}
+            onClick={async (id) => {
+              try {
+                navigate(`/quizzes/${id}`);
+              } catch (e) {
+                console.error(e);
+              }
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }

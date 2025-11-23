@@ -1,5 +1,4 @@
 // hooks not required directly; component uses course-scoped provider hook
-import { useParams } from 'react-router-dom';
 import { StatCard } from '@/components/StatCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCourseQuizzes } from '../providers/course-quizzes-provider';
@@ -24,8 +23,7 @@ export function QuizStatisticsPanel() {
     <div className="flex flex-row space-y-3 items-center justify-between">
       <StatCard
         title="Score moyen au quizz"
-        value={`${Math.round(stats.averageScore)}%`}
-        subtitle={`${stats.quizzesCompleted} quizz réalisés`}
+        value={`${(Math.round(stats.averageScore) / 100) * 20}/20`}
       />
       <StatCard title="Total de quizz" value={stats.totalQuizzes} />
     </div>

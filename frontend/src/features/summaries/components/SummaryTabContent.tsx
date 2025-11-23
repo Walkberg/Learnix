@@ -47,7 +47,7 @@ export function SummaryTabContent() {
 
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-6 overflow-auto">
         <MarkdownRenderer content={summary.content} />
       </CardContent>
     </Card>
