@@ -6,26 +6,17 @@ interface StackedCardProps {
 }
 
 export function StackedCard({ flashcard, stackOffset }: StackedCardProps) {
-  // Nouvelle logique : la 2e carte est la plus grande, la 3e la plus petite
-  let scale = 0.95;
-  let translateY = -8;
-  let opacity = 0.7;
-  if (stackOffset === 1) {
-    scale = 0.90;
-    translateY = -16;
-    opacity = 0.5;
-  } else if (stackOffset === 2) {
-    scale = 1.0;
-    translateY = 0;
-    opacity = 0.9;
-  }
+  // Logic: cards get smaller and move down as they go back in the stack
+  const scale = 1 - stackOffset * 0.02; // Less aggressive scaling
+  const translateY = stackOffset * 10 +45 ; // More aggressive translation to overcome scaling shrinkage
+  const opacity = Math.max(0, 1 - stackOffset * 0.2);
 
   return (
     <div
-      className="absolute w-full max-w-2xl pointer-events-none"
+      className="absolute top-0 left-0 w-full max-w-2xl pointer-events-none"
       style={{
         transform: `translateY(${translateY}px) scale(${scale})`,
-        zIndex: 1 + stackOffset,
+        zIndex: 5 - stackOffset,
         opacity,
       }}
     >

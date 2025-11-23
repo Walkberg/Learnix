@@ -34,14 +34,15 @@ export class MockAdapter implements AIAdapter {
 
   async generateQuizQuestions(
     text: string,
-    count: number,
+    questionCount: number,
+    answerCount: number,
     type: 'mcq' | 'open' = 'mcq',
   ) {
     if (this.mockResponses.quiz) {
       return this.mockResponses.quiz;
     }
     const questions: any[] = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < questionCount; i++) {
       if (type === 'mcq') {
         questions.push({
           question: `Mock MCQ question ${i + 1}`,

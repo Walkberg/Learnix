@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 // Nouveau composant pour la pile
 function StackedCardsList({ cards }: { cards: Array<{ flashcard: any; stackOffset: number }> }) {
   return (
-    <div className="mb-10">
+    <div className="">
       {cards.map(({ flashcard, stackOffset }) => (
         <StackedCard key={flashcard.id} flashcard={flashcard} stackOffset={stackOffset} />
       ))}
@@ -89,7 +89,7 @@ export function FlashcardStack({ onEdit, onDelete }: FlashcardStackProps) {
       style={{ minHeight: 420 }}
     >
       <div className="relative w-full max-w-2xl h-[380px] mx-auto" style={{ minHeight: 380 }}>
-        <div className="relative top-30">
+        <div className="absolute inset-0 pointer-events-none">
           <StackedCardsList cards={stackCardsData} />
         </div>
         <FlashcardCard
